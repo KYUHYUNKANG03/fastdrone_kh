@@ -1,0 +1,724 @@
+{
+  "controller": "Split",
+  "speed_m_s": 70.0,
+  "case": "lateral",
+  "mission": false,
+  "completed": true,
+  "stop_reason": null,
+  "elapsed_sim_s": 4.0,
+  "wall_seconds": 8.009984900003474,
+  "z_rmse_m": 0.07482125202161671,
+  "z_max_m": 0.20000010750080932,
+  "vx_rmse_m_s": 0.07577689219459234,
+  "velocity_rmse_m_s": 0.13531595550349781,
+  "final_velocity_error_m_s": 0.005576434476041559,
+  "final_z_error_m": 0.0013183602071897838,
+  "saturation_fraction": 0.0,
+  "prop_domain_outside_fraction": 0.0,
+  "optimizer_failures": 0,
+  "optimizer_calls": 100,
+  "solve_log": [
+    {
+      "t": 0.0,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06546740000339923,
+      "scaled_constraint_violation": 2.5902068144541605e-13
+    },
+    {
+      "t": 0.04,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06868390000454383,
+      "scaled_constraint_violation": 1.9774351827750877e-14
+    },
+    {
+      "t": 0.08,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06770710000273539,
+      "scaled_constraint_violation": 1.305455905340305e-14
+    },
+    {
+      "t": 0.12,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06656449999718461,
+      "scaled_constraint_violation": 1.2470143837333919e-14
+    },
+    {
+      "t": 0.16,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06798669999989215,
+      "scaled_constraint_violation": 1.445813778241614e-14
+    },
+    {
+      "t": 0.2,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.07145289999607485,
+      "scaled_constraint_violation": 1.5322482975930146e-14
+    },
+    {
+      "t": 0.24,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06832190000568517,
+      "scaled_constraint_violation": 8.929076457073784e-15
+    },
+    {
+      "t": 0.28,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06673830000363523,
+      "scaled_constraint_violation": 1.5988421659114803e-14
+    },
+    {
+      "t": 0.32,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06795540000166511,
+      "scaled_constraint_violation": 1.467422408079464e-14
+    },
+    {
+      "t": 0.36,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06701089999842225,
+      "scaled_constraint_violation": 1.9158996982595732e-14
+    },
+    {
+      "t": 0.4,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06984589999774471,
+      "scaled_constraint_violation": 1.4337129672425684e-14
+    },
+    {
+      "t": 0.44,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.07116559999849414,
+      "scaled_constraint_violation": 1.2705874344655922e-14
+    },
+    {
+      "t": 0.48,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.0704665000012028,
+      "scaled_constraint_violation": 1.6159326276923255e-14
+    },
+    {
+      "t": 0.52,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06963729999552015,
+      "scaled_constraint_violation": 1.4373667683959087e-14
+    },
+    {
+      "t": 0.56,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.07462259999738308,
+      "scaled_constraint_violation": 1.7632641947685768e-14
+    },
+    {
+      "t": 0.6,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.07656259999930626,
+      "scaled_constraint_violation": 8.863467075307284e-15
+    },
+    {
+      "t": 0.64,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.07752389999950537,
+      "scaled_constraint_violation": 1.4961029531369743e-14
+    },
+    {
+      "t": 0.68,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.08329459999367828,
+      "scaled_constraint_violation": 1.1304765184999719e-14
+    },
+    {
+      "t": 0.72,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.07966389999637613,
+      "scaled_constraint_violation": 1.4519034830140988e-14
+    },
+    {
+      "t": 0.76,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.08390030000009574,
+      "scaled_constraint_violation": 1.3255912195073926e-14
+    },
+    {
+      "t": 0.8,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.08418169999640668,
+      "scaled_constraint_violation": 1.5345564921438758e-14
+    },
+    {
+      "t": 0.84,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.07920610000292072,
+      "scaled_constraint_violation": 1.5845018933827252e-14
+    },
+    {
+      "t": 0.88,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.08161629999813158,
+      "scaled_constraint_violation": 1.3576943499450161e-14
+    },
+    {
+      "t": 0.92,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.0742093999942881,
+      "scaled_constraint_violation": 1.2465232785098043e-14
+    },
+    {
+      "t": 0.96,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06695229999604635,
+      "scaled_constraint_violation": 1.2279595010581967e-14
+    },
+    {
+      "t": 1.0,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06831840000086231,
+      "scaled_constraint_violation": 1.6155397435134555e-14
+    },
+    {
+      "t": 1.04,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06652279999980237,
+      "scaled_constraint_violation": 2.6997036351052306e-14
+    },
+    {
+      "t": 1.08,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06560229999740841,
+      "scaled_constraint_violation": 1.258800909099492e-14
+    },
+    {
+      "t": 1.12,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06698429999960354,
+      "scaled_constraint_violation": 1.8522524612826326e-14
+    },
+    {
+      "t": 1.16,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06813610000244807,
+      "scaled_constraint_violation": 1.5249799402839195e-14
+    },
+    {
+      "t": 1.2,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.070593700002064,
+      "scaled_constraint_violation": 1.04350037907873e-14
+    },
+    {
+      "t": 1.24,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06722399999853224,
+      "scaled_constraint_violation": 9.13078326773072e-15
+    },
+    {
+      "t": 1.28,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.0670795000041835,
+      "scaled_constraint_violation": 1.4787669387443353e-14
+    },
+    {
+      "t": 1.32,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06713279999530641,
+      "scaled_constraint_violation": 1.568393642049055e-14
+    },
+    {
+      "t": 1.36,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06613730000390206,
+      "scaled_constraint_violation": 1.2155836494237916e-14
+    },
+    {
+      "t": 1.4000000000000001,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06650319999607746,
+      "scaled_constraint_violation": 1.2574258144734469e-14
+    },
+    {
+      "t": 1.44,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06582699999853503,
+      "scaled_constraint_violation": 1.7536385323862617e-14
+    },
+    {
+      "t": 1.48,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06715360000089277,
+      "scaled_constraint_violation": 1.1075405002345406e-14
+    },
+    {
+      "t": 1.52,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06771460000163643,
+      "scaled_constraint_violation": 1.3102687365314625e-14
+    },
+    {
+      "t": 1.56,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06865030000335537,
+      "scaled_constraint_violation": 1.4337571450025407e-14
+    },
+    {
+      "t": 1.6,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06788090000191005,
+      "scaled_constraint_violation": 1.197656730294832e-14
+    },
+    {
+      "t": 1.6400000000000001,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06733030000032159,
+      "scaled_constraint_violation": 1.1924034828704614e-14
+    },
+    {
+      "t": 1.68,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06757500000094296,
+      "scaled_constraint_violation": 1.872878880673308e-14
+    },
+    {
+      "t": 1.72,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06541830000060145,
+      "scaled_constraint_violation": 1.3846834245556731e-14
+    },
+    {
+      "t": 1.76,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.0654283999974723,
+      "scaled_constraint_violation": 1.4807321040837355e-14
+    },
+    {
+      "t": 1.8,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06740559999889228,
+      "scaled_constraint_violation": 1.3697415791079093e-14
+    },
+    {
+      "t": 1.84,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06925900000351248,
+      "scaled_constraint_violation": 1.3409382577445022e-14
+    },
+    {
+      "t": 1.8800000000000001,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06734830000641523,
+      "scaled_constraint_violation": 1.4945314164214944e-14
+    },
+    {
+      "t": 1.92,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06752769999729935,
+      "scaled_constraint_violation": 1.432799489816545e-14
+    },
+    {
+      "t": 1.96,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.07383510000363458,
+      "scaled_constraint_violation": 1.484170725197929e-14
+    },
+    {
+      "t": 2.0,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06760960000246996,
+      "scaled_constraint_violation": 1.1136793155293844e-14
+    },
+    {
+      "t": 2.04,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06767150000086986,
+      "scaled_constraint_violation": 1.58784140890312e-14
+    },
+    {
+      "t": 2.08,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06672239999898011,
+      "scaled_constraint_violation": 1.1705984109431762e-14
+    },
+    {
+      "t": 2.12,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06718069999624277,
+      "scaled_constraint_violation": 1.2183338386758817e-14
+    },
+    {
+      "t": 2.16,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06826000000000931,
+      "scaled_constraint_violation": 1.7245159497004862e-14
+    },
+    {
+      "t": 2.2,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06686769999942044,
+      "scaled_constraint_violation": 9.51565481223149e-15
+    },
+    {
+      "t": 2.24,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.0673190999950748,
+      "scaled_constraint_violation": 1.1562090278920623e-14
+    },
+    {
+      "t": 2.2800000000000002,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.0675007000027108,
+      "scaled_constraint_violation": 1.673564342095699e-14
+    },
+    {
+      "t": 2.32,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06776089999766555,
+      "scaled_constraint_violation": 1.4285268743713337e-14
+    },
+    {
+      "t": 2.36,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06801439999981085,
+      "scaled_constraint_violation": 1.1548377831346551e-14
+    },
+    {
+      "t": 2.4,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06668750000244472,
+      "scaled_constraint_violation": 1.1894568515289363e-14
+    },
+    {
+      "t": 2.44,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06641060000401922,
+      "scaled_constraint_violation": 1.0792528393559003e-14
+    },
+    {
+      "t": 2.48,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06730279999464983,
+      "scaled_constraint_violation": 1.3992095319160763e-14
+    },
+    {
+      "t": 2.52,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06840769999689655,
+      "scaled_constraint_violation": 1.5506558367317476e-14
+    },
+    {
+      "t": 2.56,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06773270000121556,
+      "scaled_constraint_violation": 1.5216404247635244e-14
+    },
+    {
+      "t": 2.6,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06786550000106217,
+      "scaled_constraint_violation": 1.3958535846844148e-14
+    },
+    {
+      "t": 2.64,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06895640000584535,
+      "scaled_constraint_violation": 1.2445787516251058e-14
+    },
+    {
+      "t": 2.68,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.0678494999956456,
+      "scaled_constraint_violation": 1.0184540126757672e-14
+    },
+    {
+      "t": 2.72,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06701469999825349,
+      "scaled_constraint_violation": 1.3507320167959448e-14
+    },
+    {
+      "t": 2.7600000000000002,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06528809999872465,
+      "scaled_constraint_violation": 1.3584819277843892e-14
+    },
+    {
+      "t": 2.8000000000000003,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06779399999504676,
+      "scaled_constraint_violation": 1.2811707520339028e-14
+    },
+    {
+      "t": 2.84,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06715840000106255,
+      "scaled_constraint_violation": 1.0687800204628968e-14
+    },
+    {
+      "t": 2.88,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06650170000648359,
+      "scaled_constraint_violation": 1.196234103614444e-14
+    },
+    {
+      "t": 2.92,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06699549999757437,
+      "scaled_constraint_violation": 1.1530373296928513e-14
+    },
+    {
+      "t": 2.96,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06766719999723136,
+      "scaled_constraint_violation": 1.6677587983445767e-14
+    },
+    {
+      "t": 3.0,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06728450000082375,
+      "scaled_constraint_violation": 1.0309280853548898e-14
+    },
+    {
+      "t": 3.04,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06687429999874439,
+      "scaled_constraint_violation": 1.2434293156012031e-14
+    },
+    {
+      "t": 3.08,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06718159999581985,
+      "scaled_constraint_violation": 1.570628170816378e-14
+    },
+    {
+      "t": 3.12,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.0664323000019067,
+      "scaled_constraint_violation": 1.100566806059598e-14
+    },
+    {
+      "t": 3.16,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06725200000073528,
+      "scaled_constraint_violation": 1.4540804939520007e-14
+    },
+    {
+      "t": 3.2,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06769690000510309,
+      "scaled_constraint_violation": 1.1377557491157618e-14
+    },
+    {
+      "t": 3.24,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06693000000086613,
+      "scaled_constraint_violation": 1.022170697636301e-14
+    },
+    {
+      "t": 3.2800000000000002,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06672019999678014,
+      "scaled_constraint_violation": 1.466047313453419e-14
+    },
+    {
+      "t": 3.3200000000000003,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06705890000012005,
+      "scaled_constraint_violation": 1.2018327031633414e-14
+    },
+    {
+      "t": 3.36,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06628600000112783,
+      "scaled_constraint_violation": 1.343651614104823e-14
+    },
+    {
+      "t": 3.4,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06614719999925,
+      "scaled_constraint_violation": 1.2167635831466271e-14
+    },
+    {
+      "t": 3.44,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06691629999841098,
+      "scaled_constraint_violation": 1.2202000385255141e-14
+    },
+    {
+      "t": 3.48,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06647449999582022,
+      "scaled_constraint_violation": 1.3129084271082454e-14
+    },
+    {
+      "t": 3.52,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06565089999639895,
+      "scaled_constraint_violation": 1.412388361190776e-14
+    },
+    {
+      "t": 3.56,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06672399999661138,
+      "scaled_constraint_violation": 1.5366406199364754e-14
+    },
+    {
+      "t": 3.6,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06774320000113221,
+      "scaled_constraint_violation": 1.524457401956113e-14
+    },
+    {
+      "t": 3.64,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06829760000255192,
+      "scaled_constraint_violation": 1.0140033715870055e-14
+    },
+    {
+      "t": 3.68,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06733649999659974,
+      "scaled_constraint_violation": 1.3219324855916657e-14
+    },
+    {
+      "t": 3.72,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06955849999940256,
+      "scaled_constraint_violation": 1.3407131670313495e-14
+    },
+    {
+      "t": 3.7600000000000002,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06728899999870919,
+      "scaled_constraint_violation": 1.047314657660199e-14
+    },
+    {
+      "t": 3.8000000000000003,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06714569999894593,
+      "scaled_constraint_violation": 1.5764968782382488e-14
+    },
+    {
+      "t": 3.84,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06703289999859408,
+      "scaled_constraint_violation": 1.2281559431476318e-14
+    },
+    {
+      "t": 3.88,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.0668022000027122,
+      "scaled_constraint_violation": 1.6482350737737934e-14
+    },
+    {
+      "t": 3.92,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06645879999996396,
+      "scaled_constraint_violation": 1.3676022019776563e-14
+    },
+    {
+      "t": 3.96,
+      "status": "Solve_Succeeded",
+      "accepted": true,
+      "seconds": 0.06611810000322293,
+      "scaled_constraint_violation": 1.2781504549088396e-14
+    }
+  ],
+  "parameter_sha256": "13a1dcc6332987eba93ea4653f4d6087741d1ac085701982ed94c22e6658c807",
+  "tracking_pass": true
+}

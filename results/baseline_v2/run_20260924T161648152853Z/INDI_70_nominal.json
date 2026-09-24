@@ -1,0 +1,23 @@
+{
+  "controller": "INDI",
+  "speed_m_s": 70.0,
+  "case": "nominal",
+  "mission": false,
+  "completed": true,
+  "stop_reason": null,
+  "elapsed_sim_s": 4.0,
+  "wall_seconds": 1.1942024999952991,
+  "z_rmse_m": 0.0784707731785505,
+  "z_max_m": 0.20000416826959366,
+  "vx_rmse_m_s": 0.1666599562478378,
+  "velocity_rmse_m_s": 0.19365728283851427,
+  "final_velocity_error_m_s": 0.05198853205086612,
+  "final_z_error_m": -0.03474870004800579,
+  "saturation_fraction": 0.0,
+  "prop_domain_outside_fraction": 0.0,
+  "optimizer_failures": 0,
+  "optimizer_calls": 0,
+  "solve_log": [],
+  "parameter_sha256": "13a1dcc6332987eba93ea4653f4d6087741d1ac085701982ed94c22e6658c807",
+  "tracking_pass": true
+}

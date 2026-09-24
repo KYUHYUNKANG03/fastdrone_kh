@@ -1,46 +1,13 @@
-# Python
-__pycache__/
-*.pyc
-*.pyo
-*.egg-info/
-dist/
-build/
-
-# ROS2 빌드 산출물
-ros2_ws/build/
-ros2_ws/install/
-ros2_ws/log/
-
-# acados 생성 파일
-c_generated_code/
-acados_ocp_*.json
-
-# IDE
-.vscode/
-.idea/
-
-# OS
-.DS_Store
-Thumbs.db
-
-# 환경
-.env
-*.swp
-*.swo
-
-# Python venv
 .venv/
-
-# SITL 실행 로그/아티팩트 (scripts/sitl_run.sh 출력)
-results/sitl_runs/
-
-# Gazebo SDF (Ubuntu PX4 폴더에 원본 있음, 여기는 임시 복사본)
-*.sdf
-
-# Claude Code 개인 설정 / 개인 작업 문서
-CLAUDE.md
-HANDOFF.md
-TODO.md
-
-# 발표 자료
-ppts/
+__pycache__/
+.pytest_cache/
+*.pyc
+.env
+.DS_Store
+.vscode/
+build/
+dist/
+*.egg-info/
+results/baseline_v2/run_*/
+!results/baseline_v2/run_20260924T161648152853Z/
+validation-local/

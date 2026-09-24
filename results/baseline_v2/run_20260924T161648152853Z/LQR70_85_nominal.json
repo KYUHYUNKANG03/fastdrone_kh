@@ -1,0 +1,23 @@
+{
+  "controller": "LQR70",
+  "speed_m_s": 85.0,
+  "case": "nominal",
+  "mission": false,
+  "completed": true,
+  "stop_reason": null,
+  "elapsed_sim_s": 4.0,
+  "wall_seconds": 0.4974609000055352,
+  "z_rmse_m": 0.054870387743841294,
+  "z_max_m": 0.20000000220978364,
+  "vx_rmse_m_s": 0.09158464690255454,
+  "velocity_rmse_m_s": 0.1495796881019229,
+  "final_velocity_error_m_s": 8.307142814886292e-06,
+  "final_z_error_m": 2.9084759560760176e-06,
+  "saturation_fraction": 0.0,
+  "prop_domain_outside_fraction": 0.0,
+  "optimizer_failures": 0,
+  "optimizer_calls": 0,
+  "solve_log": [],
+  "parameter_sha256": "13a1dcc6332987eba93ea4653f4d6087741d1ac085701982ed94c22e6658c807",
+  "tracking_pass": true
+}

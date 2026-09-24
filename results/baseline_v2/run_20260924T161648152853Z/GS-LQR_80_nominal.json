@@ -1,0 +1,23 @@
+{
+  "controller": "GS-LQR",
+  "speed_m_s": 80.0,
+  "case": "nominal",
+  "mission": false,
+  "completed": true,
+  "stop_reason": null,
+  "elapsed_sim_s": 4.0,
+  "wall_seconds": 0.6914815999989514,
+  "z_rmse_m": 0.057092334467537885,
+  "z_max_m": 0.2000000068350012,
+  "vx_rmse_m_s": 0.0954084569206033,
+  "velocity_rmse_m_s": 0.148768522109708,
+  "final_velocity_error_m_s": 6.970932550265516e-07,
+  "final_z_error_m": 1.0926310523018401e-08,
+  "saturation_fraction": 0.0,
+  "prop_domain_outside_fraction": 0.0,
+  "optimizer_failures": 0,
+  "optimizer_calls": 0,
+  "solve_log": [],
+  "parameter_sha256": "13a1dcc6332987eba93ea4653f4d6087741d1ac085701982ed94c22e6658c807",
+  "tracking_pass": true
+}

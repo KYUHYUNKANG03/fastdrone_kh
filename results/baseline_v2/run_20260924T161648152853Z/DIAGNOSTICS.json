@@ -1,0 +1,1245 @@
+{
+  "parameter_sha256": "13a1dcc6332987eba93ea4653f4d6087741d1ac085701982ed94c22e6658c807",
+  "trims": [
+    {
+      "speed_m_s": 0.0,
+      "theta_deg": 90.0,
+      "residual": 4.337037107034845e-15,
+      "max_rpm": 12434.10616686312,
+      "rpm_margin_percent": 62.320890403445105
+    },
+    {
+      "speed_m_s": 70.0,
+      "theta_deg": 10.385246360059902,
+      "residual": 1.1165291132364357e-13,
+      "max_rpm": 24965.504703738883,
+      "rpm_margin_percent": 24.346955443215514
+    },
+    {
+      "speed_m_s": 80.0,
+      "theta_deg": 8.284436132165304,
+      "residual": 1.810585699907679e-13,
+      "max_rpm": 28342.792536351117,
+      "rpm_margin_percent": 14.1127498898451
+    },
+    {
+      "speed_m_s": 85.0,
+      "theta_deg": 7.460258027473804,
+      "residual": 8.365221075185965e-14,
+      "max_rpm": 30034.028078101193,
+      "rpm_margin_percent": 8.987793702723657
+    }
+  ],
+  "traces": [
+    {
+      "tag": "GS-LQR_70_lqr_smoke",
+      "completed": true,
+      "elapsed_s": 4.0,
+      "first_solver_failure_s": null,
+      "solver_failure_statuses": {},
+      "maximum_rate_norm_rad_s": 0.3849311318275371,
+      "actual_rotor_min_rpm": 22827.68270155714,
+      "actual_rotor_max_rpm": 25075.22065280572,
+      "outside_low_rpm_fraction": 0.0,
+      "outside_high_rpm_fraction": 0.0,
+      "outside_positive_thrust_J_fraction": 0.0,
+      "reverse_axial_flow_fraction": 0.0
+    },
+    {
+      "tag": "LQR70_70_nominal",
+      "completed": true,
+      "elapsed_s": 4.0,
+      "first_solver_failure_s": null,
+      "solver_failure_statuses": {},
+      "maximum_rate_norm_rad_s": 0.3849311318275371,
+      "actual_rotor_min_rpm": 22827.68270155714,
+      "actual_rotor_max_rpm": 25075.22065280572,
+      "outside_low_rpm_fraction": 0.0,
+      "outside_high_rpm_fraction": 0.0,
+      "outside_positive_thrust_J_fraction": 0.0,
+      "reverse_axial_flow_fraction": 0.0
+    },
+    {
+      "tag": "GS-LQR_70_nominal",
+      "completed": true,
+      "elapsed_s": 4.0,
+      "first_solver_failure_s": null,
+      "solver_failure_statuses": {},
+      "maximum_rate_norm_rad_s": 0.3849311318275371,
+      "actual_rotor_min_rpm": 22827.68270155714,
+      "actual_rotor_max_rpm": 25075.22065280572,
+      "outside_low_rpm_fraction": 0.0,
+      "outside_high_rpm_fraction": 0.0,
+      "outside_positive_thrust_J_fraction": 0.0,
+      "reverse_axial_flow_fraction": 0.0
+    },
+    {
+      "tag": "INDI_70_nominal",
+      "completed": true,
+      "elapsed_s": 4.0,
+      "first_solver_failure_s": null,
+      "solver_failure_statuses": {},
+      "maximum_rate_norm_rad_s": 0.7801174255077504,
+      "actual_rotor_min_rpm": 22740.039661687082,
+      "actual_rotor_max_rpm": 25203.92052583184,
+      "outside_low_rpm_fraction": 0.0,
+      "outside_high_rpm_fraction": 0.0,
+      "outside_positive_thrust_J_fraction": 0.0,
+      "reverse_axial_flow_fraction": 0.0
+    },
+    {
+      "tag": "NMPC_70_nominal",
+      "completed": true,
+      "elapsed_s": 4.0,
+      "first_solver_failure_s": null,
+      "solver_failure_statuses": {},
+      "maximum_rate_norm_rad_s": 0.3023469715267209,
+      "actual_rotor_min_rpm": 22054.810009812027,
+      "actual_rotor_max_rpm": 24983.46063291041,
+      "outside_low_rpm_fraction": 0.0,
+      "outside_high_rpm_fraction": 0.0,
+      "outside_positive_thrust_J_fraction": 0.0005,
+      "reverse_axial_flow_fraction": 0.0
+    },
+    {
+      "tag": "Naive_70_nominal",
+      "completed": true,
+      "elapsed_s": 4.0,
+      "first_solver_failure_s": null,
+      "solver_failure_statuses": {},
+      "maximum_rate_norm_rad_s": 0.3260220443477354,
+      "actual_rotor_min_rpm": 22041.082531753516,
+      "actual_rotor_max_rpm": 25006.824850882687,
+      "outside_low_rpm_fraction": 0.0,
+      "outside_high_rpm_fraction": 0.0,
+      "outside_positive_thrust_J_fraction": 0.0015,
+      "reverse_axial_flow_fraction": 0.0
+    },
+    {
+      "tag": "Split_70_nominal",
+      "completed": true,
+      "elapsed_s": 4.0,
+      "first_solver_failure_s": null,
+      "solver_failure_statuses": {},
+      "maximum_rate_norm_rad_s": 0.37121346920011994,
+      "actual_rotor_min_rpm": 22609.461866281534,
+      "actual_rotor_max_rpm": 25042.032840560605,
+      "outside_low_rpm_fraction": 0.0,
+      "outside_high_rpm_fraction": 0.0,
+      "outside_positive_thrust_J_fraction": 0.0,
+      "reverse_axial_flow_fraction": 0.0
+    },
+    {
+      "tag": "LQR70_70_aero_plus",
+      "completed": true,
+      "elapsed_s": 4.0,
+      "first_solver_failure_s": null,
+      "solver_failure_statuses": {},
+      "maximum_rate_norm_rad_s": 0.26579724210812494,
+      "actual_rotor_min_rpm": 22761.271103762465,
+      "actual_rotor_max_rpm": 25114.98812519831,
+      "outside_low_rpm_fraction": 0.0,
+      "outside_high_rpm_fraction": 0.0,
+      "outside_positive_thrust_J_fraction": 0.0,
+      "reverse_axial_flow_fraction": 0.0
+    },
+    {
+      "tag": "GS-LQR_70_aero_plus",
+      "completed": true,
+      "elapsed_s": 4.0,
+      "first_solver_failure_s": null,
+      "solver_failure_statuses": {},
+      "maximum_rate_norm_rad_s": 0.26579724210812494,
+      "actual_rotor_min_rpm": 22761.271103762465,
+      "actual_rotor_max_rpm": 25114.98812519831,
+      "outside_low_rpm_fraction": 0.0,
+      "outside_high_rpm_fraction": 0.0,
+      "outside_positive_thrust_J_fraction": 0.0,
+      "reverse_axial_flow_fraction": 0.0
+    },
+    {
+      "tag": "INDI_70_aero_plus",
+      "completed": true,
+      "elapsed_s": 4.0,
+      "first_solver_failure_s": null,
+      "solver_failure_statuses": {},
+      "maximum_rate_norm_rad_s": 2.393675246959237,
+      "actual_rotor_min_rpm": 21611.307617473158,
+      "actual_rotor_max_rpm": 25665.564537975475,
+      "outside_low_rpm_fraction": 0.0,
+      "outside_high_rpm_fraction": 0.0,
+      "outside_positive_thrust_J_fraction": 0.0,
+      "reverse_axial_flow_fraction": 0.0
+    },
+    {
+      "tag": "NMPC_70_aero_plus",
+      "completed": true,
+      "elapsed_s": 4.0,
+      "first_solver_failure_s": null,
+      "solver_failure_statuses": {},
+      "maximum_rate_norm_rad_s": 0.21636955611842926,
+      "actual_rotor_min_rpm": 21996.61120229645,
+      "actual_rotor_max_rpm": 25194.51316154356,
+      "outside_low_rpm_fraction": 0.0,
+      "outside_high_rpm_fraction": 0.0,
+      "outside_positive_thrust_J_fraction": 0.0,
+      "reverse_axial_flow_fraction": 0.0
+    },
+    {
+      "tag": "Naive_70_aero_plus",
+      "completed": true,
+      "elapsed_s": 4.0,
+      "first_solver_failure_s": 0.04,
+      "solver_failure_statuses": {
+        "Maximum_Iterations_Exceeded": 1
+      },
+      "maximum_rate_norm_rad_s": 0.24206374502507957,
+      "actual_rotor_min_rpm": 21878.376913506785,
+      "actual_rotor_max_rpm": 25213.728380123295,
+      "outside_low_rpm_fraction": 0.0,
+      "outside_high_rpm_fraction": 0.0,
+      "outside_positive_thrust_J_fraction": 0.0135,
+      "reverse_axial_flow_fraction": 0.0
+    },
+    {
+      "tag": "Split_70_aero_plus",
+      "completed": true,
+      "elapsed_s": 4.0,
+      "first_solver_failure_s": null,
+      "solver_failure_statuses": {},
+      "maximum_rate_norm_rad_s": 3.533570877975372,
+      "actual_rotor_min_rpm": 20978.848180082285,
+      "actual_rotor_max_rpm": 26225.918245558158,
+      "outside_low_rpm_fraction": 0.0,
+      "outside_high_rpm_fraction": 0.0,
+      "outside_positive_thrust_J_fraction": 0.004,
+      "reverse_axial_flow_fraction": 0.0
+    },
+    {
+      "tag": "LQR70_70_aero_minus",
+      "completed": true,
+      "elapsed_s": 4.0,
+      "first_solver_failure_s": null,
+      "solver_failure_statuses": {},
+      "maximum_rate_norm_rad_s": 0.5186206892901016,
+      "actual_rotor_min_rpm": 22878.091706909232,
+      "actual_rotor_max_rpm": 25059.296169267305,
+      "outside_low_rpm_fraction": 0.0,
+      "outside_high_rpm_fraction": 0.0,
+      "outside_positive_thrust_J_fraction": 0.0,
+      "reverse_axial_flow_fraction": 0.0
+    },
+    {
+      "tag": "GS-LQR_70_aero_minus",
+      "completed": true,
+      "elapsed_s": 4.0,
+      "first_solver_failure_s": null,
+      "solver_failure_statuses": {},
+      "maximum_rate_norm_rad_s": 0.5186206892901016,
+      "actual_rotor_min_rpm": 22878.091706909232,
+      "actual_rotor_max_rpm": 25059.296169267305,
+      "outside_low_rpm_fraction": 0.0,
+      "outside_high_rpm_fraction": 0.0,
+      "outside_positive_thrust_J_fraction": 0.0,
+      "reverse_axial_flow_fraction": 0.0
+    },
+    {
+      "tag": "INDI_70_aero_minus",
+      "completed": true,
+      "elapsed_s": 4.0,
+      "first_solver_failure_s": null,
+      "solver_failure_statuses": {},
+      "maximum_rate_norm_rad_s": 0.8186419072493418,
+      "actual_rotor_min_rpm": 22741.934358900984,
+      "actual_rotor_max_rpm": 25039.39562180047,
+      "outside_low_rpm_fraction": 0.0,
+      "outside_high_rpm_fraction": 0.0,
+      "outside_positive_thrust_J_fraction": 0.0,
+      "reverse_axial_flow_fraction": 0.0
+    },
+    {
+      "tag": "NMPC_70_aero_minus",
+      "completed": true,
+      "elapsed_s": 4.0,
+      "first_solver_failure_s": null,
+      "solver_failure_statuses": {},
+      "maximum_rate_norm_rad_s": 0.6853184231790859,
+      "actual_rotor_min_rpm": 22054.810009812027,
+      "actual_rotor_max_rpm": 24885.35164328913,
+      "outside_low_rpm_fraction": 0.0,
+      "outside_high_rpm_fraction": 0.0,
+      "outside_positive_thrust_J_fraction": 0.0015,
+      "reverse_axial_flow_fraction": 0.0
+    },
+    {
+      "tag": "Naive_70_aero_minus",
+      "completed": true,
+      "elapsed_s": 4.0,
+      "first_solver_failure_s": null,
+      "solver_failure_statuses": {},
+      "maximum_rate_norm_rad_s": 0.49822877659896664,
+      "actual_rotor_min_rpm": 22175.226977014998,
+      "actual_rotor_max_rpm": 24885.35164328913,
+      "outside_low_rpm_fraction": 0.0,
+      "outside_high_rpm_fraction": 0.0,
+      "outside_positive_thrust_J_fraction": 0.0,
+      "reverse_axial_flow_fraction": 0.0
+    },
+    {
+      "tag": "Split_70_aero_minus",
+      "completed": true,
+      "elapsed_s": 4.0,
+      "first_solver_failure_s": null,
+      "solver_failure_statuses": {},
+      "maximum_rate_norm_rad_s": 0.5790303680416052,
+      "actual_rotor_min_rpm": 22702.787031699467,
+      "actual_rotor_max_rpm": 24965.504703738883,
+      "outside_low_rpm_fraction": 0.0,
+      "outside_high_rpm_fraction": 0.0,
+      "outside_positive_thrust_J_fraction": 0.0,
+      "reverse_axial_flow_fraction": 0.0
+    },
+    {
+      "tag": "LQR70_70_vertical",
+      "completed": true,
+      "elapsed_s": 4.0,
+      "first_solver_failure_s": null,
+      "solver_failure_statuses": {},
+      "maximum_rate_norm_rad_s": 0.3849311318275371,
+      "actual_rotor_min_rpm": 22827.68270155714,
+      "actual_rotor_max_rpm": 25075.22065280572,
+      "outside_low_rpm_fraction": 0.0,
+      "outside_high_rpm_fraction": 0.0,
+      "outside_positive_thrust_J_fraction": 0.0,
+      "reverse_axial_flow_fraction": 0.0
+    },
+    {
+      "tag": "GS-LQR_70_vertical",
+      "completed": true,
+      "elapsed_s": 4.0,
+      "first_solver_failure_s": null,
+      "solver_failure_statuses": {},
+      "maximum_rate_norm_rad_s": 0.3849311318275371,
+      "actual_rotor_min_rpm": 22827.68270155714,
+      "actual_rotor_max_rpm": 25075.22065280572,
+      "outside_low_rpm_fraction": 0.0,
+      "outside_high_rpm_fraction": 0.0,
+      "outside_positive_thrust_J_fraction": 0.0,
+      "reverse_axial_flow_fraction": 0.0
+    },
+    {
+      "tag": "INDI_70_vertical",
+      "completed": true,
+      "elapsed_s": 4.0,
+      "first_solver_failure_s": null,
+      "solver_failure_statuses": {},
+      "maximum_rate_norm_rad_s": 0.7801174255077504,
+      "actual_rotor_min_rpm": 22740.039661687082,
+      "actual_rotor_max_rpm": 25211.47722763369,
+      "outside_low_rpm_fraction": 0.0,
+      "outside_high_rpm_fraction": 0.0,
+      "outside_positive_thrust_J_fraction": 0.0,
+      "reverse_axial_flow_fraction": 0.0
+    },
+    {
+      "tag": "NMPC_70_vertical",
+      "completed": true,
+      "elapsed_s": 4.0,
+      "first_solver_failure_s": null,
+      "solver_failure_statuses": {},
+      "maximum_rate_norm_rad_s": 0.3023469715267209,
+      "actual_rotor_min_rpm": 22054.810009812027,
+      "actual_rotor_max_rpm": 24988.28601508901,
+      "outside_low_rpm_fraction": 0.0,
+      "outside_high_rpm_fraction": 0.0,
+      "outside_positive_thrust_J_fraction": 0.0005,
+      "reverse_axial_flow_fraction": 0.0
+    },
+    {
+      "tag": "Naive_70_vertical",
+      "completed": true,
+      "elapsed_s": 4.0,
+      "first_solver_failure_s": null,
+      "solver_failure_statuses": {},
+      "maximum_rate_norm_rad_s": 0.3260220443477354,
+      "actual_rotor_min_rpm": 22041.082531753516,
+      "actual_rotor_max_rpm": 25006.824850882687,
+      "outside_low_rpm_fraction": 0.0,
+      "outside_high_rpm_fraction": 0.0,
+      "outside_positive_thrust_J_fraction": 0.0015,
+      "reverse_axial_flow_fraction": 0.0
+    },
+    {
+      "tag": "Split_70_vertical",
+      "completed": true,
+      "elapsed_s": 4.0,
+      "first_solver_failure_s": null,
+      "solver_failure_statuses": {},
+      "maximum_rate_norm_rad_s": 0.37121346920011994,
+      "actual_rotor_min_rpm": 22609.461866281534,
+      "actual_rotor_max_rpm": 25042.032840560605,
+      "outside_low_rpm_fraction": 0.0,
+      "outside_high_rpm_fraction": 0.0,
+      "outside_positive_thrust_J_fraction": 0.0,
+      "reverse_axial_flow_fraction": 0.0
+    },
+    {
+      "tag": "LQR70_70_lateral",
+      "completed": true,
+      "elapsed_s": 4.0,
+      "first_solver_failure_s": null,
+      "solver_failure_statuses": {},
+      "maximum_rate_norm_rad_s": 0.3849311318275371,
+      "actual_rotor_min_rpm": 22827.68270155714,
+      "actual_rotor_max_rpm": 25097.405991176256,
+      "outside_low_rpm_fraction": 0.0,
+      "outside_high_rpm_fraction": 0.0,
+      "outside_positive_thrust_J_fraction": 0.0,
+      "reverse_axial_flow_fraction": 0.0
+    },
+    {
+      "tag": "GS-LQR_70_lateral",
+      "completed": true,
+      "elapsed_s": 4.0,
+      "first_solver_failure_s": null,
+      "solver_failure_statuses": {},
+      "maximum_rate_norm_rad_s": 0.3849311318275371,
+      "actual_rotor_min_rpm": 22827.68270155714,
+      "actual_rotor_max_rpm": 25097.405991176256,
+      "outside_low_rpm_fraction": 0.0,
+      "outside_high_rpm_fraction": 0.0,
+      "outside_positive_thrust_J_fraction": 0.0,
+      "reverse_axial_flow_fraction": 0.0
+    },
+    {
+      "tag": "INDI_70_lateral",
+      "completed": true,
+      "elapsed_s": 4.0,
+      "first_solver_failure_s": null,
+      "solver_failure_statuses": {},
+      "maximum_rate_norm_rad_s": 0.7801174255077504,
+      "actual_rotor_min_rpm": 22740.039661687082,
+      "actual_rotor_max_rpm": 25203.92052583184,
+      "outside_low_rpm_fraction": 0.0,
+      "outside_high_rpm_fraction": 0.0,
+      "outside_positive_thrust_J_fraction": 0.0,
+      "reverse_axial_flow_fraction": 0.0
+    },
+    {
+      "tag": "NMPC_70_lateral",
+      "completed": true,
+      "elapsed_s": 4.0,
+      "first_solver_failure_s": null,
+      "solver_failure_statuses": {},
+      "maximum_rate_norm_rad_s": 0.3023469715267209,
+      "actual_rotor_min_rpm": 22054.810009812027,
+      "actual_rotor_max_rpm": 25096.94308290494,
+      "outside_low_rpm_fraction": 0.0,
+      "outside_high_rpm_fraction": 0.0,
+      "outside_positive_thrust_J_fraction": 0.0005,
+      "reverse_axial_flow_fraction": 0.0
+    },
+    {
+      "tag": "Naive_70_lateral",
+      "completed": true,
+      "elapsed_s": 4.0,
+      "first_solver_failure_s": null,
+      "solver_failure_statuses": {},
+      "maximum_rate_norm_rad_s": 0.3260220443477354,
+      "actual_rotor_min_rpm": 22041.082531753516,
+      "actual_rotor_max_rpm": 25065.604745746175,
+      "outside_low_rpm_fraction": 0.0,
+      "outside_high_rpm_fraction": 0.0,
+      "outside_positive_thrust_J_fraction": 0.0015,
+      "reverse_axial_flow_fraction": 0.0
+    },
+    {
+      "tag": "Split_70_lateral",
+      "completed": true,
+      "elapsed_s": 4.0,
+      "first_solver_failure_s": null,
+      "solver_failure_statuses": {},
+      "maximum_rate_norm_rad_s": 0.37121346920011994,
+      "actual_rotor_min_rpm": 22609.461866281534,
+      "actual_rotor_max_rpm": 25087.843657868638,
+      "outside_low_rpm_fraction": 0.0,
+      "outside_high_rpm_fraction": 0.0,
+      "outside_positive_thrust_J_fraction": 0.0,
+      "reverse_axial_flow_fraction": 0.0
+    },
+    {
+      "tag": "LQR70_80_nominal",
+      "completed": true,
+      "elapsed_s": 4.0,
+      "first_solver_failure_s": null,
+      "solver_failure_statuses": {},
+      "maximum_rate_norm_rad_s": 0.4146595243465539,
+      "actual_rotor_min_rpm": 26287.56020019359,
+      "actual_rotor_max_rpm": 28450.471119808808,
+      "outside_low_rpm_fraction": 0.0,
+      "outside_high_rpm_fraction": 0.0,
+      "outside_positive_thrust_J_fraction": 0.0,
+      "reverse_axial_flow_fraction": 0.0
+    },
+    {
+      "tag": "GS-LQR_80_nominal",
+      "completed": true,
+      "elapsed_s": 4.0,
+      "first_solver_failure_s": null,
+      "solver_failure_statuses": {},
+      "maximum_rate_norm_rad_s": 0.3919466760930806,
+      "actual_rotor_min_rpm": 26307.026646009035,
+      "actual_rotor_max_rpm": 28451.830157393833,
+      "outside_low_rpm_fraction": 0.0,
+      "outside_high_rpm_fraction": 0.0,
+      "outside_positive_thrust_J_fraction": 0.0,
+      "reverse_axial_flow_fraction": 0.0
+    },
+    {
+      "tag": "INDI_80_nominal",
+      "completed": true,
+      "elapsed_s": 4.0,
+      "first_solver_failure_s": null,
+      "solver_failure_statuses": {},
+      "maximum_rate_norm_rad_s": 4.8770078426383074,
+      "actual_rotor_min_rpm": 23545.50362289579,
+      "actual_rotor_max_rpm": 29305.58188265517,
+      "outside_low_rpm_fraction": 0.0,
+      "outside_high_rpm_fraction": 0.0,
+      "outside_positive_thrust_J_fraction": 0.0075,
+      "reverse_axial_flow_fraction": 0.0
+    },
+    {
+      "tag": "NMPC_80_nominal",
+      "completed": true,
+      "elapsed_s": 4.0,
+      "first_solver_failure_s": null,
+      "solver_failure_statuses": {},
+      "maximum_rate_norm_rad_s": 0.35488090173008435,
+      "actual_rotor_min_rpm": 25328.995627503446,
+      "actual_rotor_max_rpm": 28363.198091695027,
+      "outside_low_rpm_fraction": 0.0,
+      "outside_high_rpm_fraction": 0.0,
+      "outside_positive_thrust_J_fraction": 0.0005,
+      "reverse_axial_flow_fraction": 0.0
+    },
+    {
+      "tag": "Naive_80_nominal",
+      "completed": true,
+      "elapsed_s": 4.0,
+      "first_solver_failure_s": null,
+      "solver_failure_statuses": {},
+      "maximum_rate_norm_rad_s": 0.38403618936713757,
+      "actual_rotor_min_rpm": 25314.63247064264,
+      "actual_rotor_max_rpm": 28433.969157643005,
+      "outside_low_rpm_fraction": 0.0,
+      "outside_high_rpm_fraction": 0.0,
+      "outside_positive_thrust_J_fraction": 0.001,
+      "reverse_axial_flow_fraction": 0.0
+    },
+    {
+      "tag": "Split_80_nominal",
+      "completed": false,
+      "elapsed_s": 2.04,
+      "first_solver_failure_s": 1.48,
+      "solver_failure_statuses": {
+        "Maximum_Iterations_Exceeded": 9,
+        "Restoration_Failed": 3
+      },
+      "maximum_rate_norm_rad_s": 10.668184197044315,
+      "actual_rotor_min_rpm": 9451.898431765845,
+      "actual_rotor_max_rpm": 30099.878242581093,
+      "outside_low_rpm_fraction": 0.0029411764705882353,
+      "outside_high_rpm_fraction": 0.0,
+      "outside_positive_thrust_J_fraction": 0.0,
+      "reverse_axial_flow_fraction": 0.0
+    },
+    {
+      "tag": "LQR70_80_vertical",
+      "completed": true,
+      "elapsed_s": 4.0,
+      "first_solver_failure_s": null,
+      "solver_failure_statuses": {},
+      "maximum_rate_norm_rad_s": 0.4146595243465539,
+      "actual_rotor_min_rpm": 26287.56020019359,
+      "actual_rotor_max_rpm": 28450.471119808808,
+      "outside_low_rpm_fraction": 0.0,
+      "outside_high_rpm_fraction": 0.0,
+      "outside_positive_thrust_J_fraction": 0.0,
+      "reverse_axial_flow_fraction": 0.0
+    },
+    {
+      "tag": "GS-LQR_80_vertical",
+      "completed": true,
+      "elapsed_s": 4.0,
+      "first_solver_failure_s": null,
+      "solver_failure_statuses": {},
+      "maximum_rate_norm_rad_s": 0.3919466760930806,
+      "actual_rotor_min_rpm": 26307.026646009035,
+      "actual_rotor_max_rpm": 28451.830157393833,
+      "outside_low_rpm_fraction": 0.0,
+      "outside_high_rpm_fraction": 0.0,
+      "outside_positive_thrust_J_fraction": 0.0,
+      "reverse_axial_flow_fraction": 0.0
+    },
+    {
+      "tag": "INDI_80_vertical",
+      "completed": true,
+      "elapsed_s": 4.0,
+      "first_solver_failure_s": null,
+      "solver_failure_statuses": {},
+      "maximum_rate_norm_rad_s": 5.736256854874732,
+      "actual_rotor_min_rpm": 23158.53361580268,
+      "actual_rotor_max_rpm": 29578.34799186887,
+      "outside_low_rpm_fraction": 0.0,
+      "outside_high_rpm_fraction": 0.0,
+      "outside_positive_thrust_J_fraction": 0.014,
+      "reverse_axial_flow_fraction": 0.0
+    },
+    {
+      "tag": "NMPC_80_vertical",
+      "completed": true,
+      "elapsed_s": 4.0,
+      "first_solver_failure_s": null,
+      "solver_failure_statuses": {},
+      "maximum_rate_norm_rad_s": 0.35488090173008435,
+      "actual_rotor_min_rpm": 25328.995627503446,
+      "actual_rotor_max_rpm": 28370.19681584513,
+      "outside_low_rpm_fraction": 0.0,
+      "outside_high_rpm_fraction": 0.0,
+      "outside_positive_thrust_J_fraction": 0.0005,
+      "reverse_axial_flow_fraction": 0.0
+    },
+    {
+      "tag": "Naive_80_vertical",
+      "completed": true,
+      "elapsed_s": 4.0,
+      "first_solver_failure_s": null,
+      "solver_failure_statuses": {},
+      "maximum_rate_norm_rad_s": 0.38403618936713757,
+      "actual_rotor_min_rpm": 25314.63247064264,
+      "actual_rotor_max_rpm": 28433.969157643005,
+      "outside_low_rpm_fraction": 0.0,
+      "outside_high_rpm_fraction": 0.0,
+      "outside_positive_thrust_J_fraction": 0.001,
+      "reverse_axial_flow_fraction": 0.0
+    },
+    {
+      "tag": "Split_80_vertical",
+      "completed": true,
+      "elapsed_s": 4.0,
+      "first_solver_failure_s": 1.48,
+      "solver_failure_statuses": {
+        "Maximum_Iterations_Exceeded": 13,
+        "Restoration_Failed": 3
+      },
+      "maximum_rate_norm_rad_s": 16.192791536795532,
+      "actual_rotor_min_rpm": 4066.8594565419885,
+      "actual_rotor_max_rpm": 32998.09288853716,
+      "outside_low_rpm_fraction": 0.0055,
+      "outside_high_rpm_fraction": 0.0,
+      "outside_positive_thrust_J_fraction": 0.03,
+      "reverse_axial_flow_fraction": 0.0
+    },
+    {
+      "tag": "LQR70_85_nominal",
+      "completed": true,
+      "elapsed_s": 4.0,
+      "first_solver_failure_s": null,
+      "solver_failure_statuses": {},
+      "maximum_rate_norm_rad_s": 0.4290510548537966,
+      "actual_rotor_min_rpm": 28025.69373987224,
+      "actual_rotor_max_rpm": 30140.644330305167,
+      "outside_low_rpm_fraction": 0.0,
+      "outside_high_rpm_fraction": 0.0,
+      "outside_positive_thrust_J_fraction": 0.0,
+      "reverse_axial_flow_fraction": 0.0
+    },
+    {
+      "tag": "GS-LQR_85_nominal",
+      "completed": true,
+      "elapsed_s": 4.0,
+      "first_solver_failure_s": null,
+      "solver_failure_statuses": {},
+      "maximum_rate_norm_rad_s": 0.39378767751584315,
+      "actual_rotor_min_rpm": 28053.365591261136,
+      "actual_rotor_max_rpm": 30141.232167555823,
+      "outside_low_rpm_fraction": 0.0,
+      "outside_high_rpm_fraction": 0.0,
+      "outside_positive_thrust_J_fraction": 0.0,
+      "reverse_axial_flow_fraction": 0.0
+    },
+    {
+      "tag": "INDI_85_nominal",
+      "completed": true,
+      "elapsed_s": 4.0,
+      "first_solver_failure_s": null,
+      "solver_failure_statuses": {},
+      "maximum_rate_norm_rad_s": 7.940476594018869,
+      "actual_rotor_min_rpm": 23183.08918375395,
+      "actual_rotor_max_rpm": 31519.791225015568,
+      "outside_low_rpm_fraction": 0.0,
+      "outside_high_rpm_fraction": 0.0,
+      "outside_positive_thrust_J_fraction": 0.028,
+      "reverse_axial_flow_fraction": 0.0
+    },
+    {
+      "tag": "NMPC_85_nominal",
+      "completed": true,
+      "elapsed_s": 4.0,
+      "first_solver_failure_s": null,
+      "solver_failure_statuses": {},
+      "maximum_rate_norm_rad_s": 0.37722442994605765,
+      "actual_rotor_min_rpm": 26950.982443989873,
+      "actual_rotor_max_rpm": 30055.603793638544,
+      "outside_low_rpm_fraction": 0.0,
+      "outside_high_rpm_fraction": 0.0,
+      "outside_positive_thrust_J_fraction": 0.0005,
+      "reverse_axial_flow_fraction": 0.0
+    },
+    {
+      "tag": "Naive_85_nominal",
+      "completed": true,
+      "elapsed_s": 4.0,
+      "first_solver_failure_s": null,
+      "solver_failure_statuses": {},
+      "maximum_rate_norm_rad_s": 0.4093487163324047,
+      "actual_rotor_min_rpm": 26936.473476406274,
+      "actual_rotor_max_rpm": 30153.491826685353,
+      "outside_low_rpm_fraction": 0.0,
+      "outside_high_rpm_fraction": 0.0,
+      "outside_positive_thrust_J_fraction": 0.001,
+      "reverse_axial_flow_fraction": 0.0
+    },
+    {
+      "tag": "Split_85_nominal",
+      "completed": false,
+      "elapsed_s": 1.32,
+      "first_solver_failure_s": 1.16,
+      "solver_failure_statuses": {
+        "Maximum_Iterations_Exceeded": 5
+      },
+      "maximum_rate_norm_rad_s": 6.0191880379703635,
+      "actual_rotor_min_rpm": 21329.322042056858,
+      "actual_rotor_max_rpm": 31015.86468701555,
+      "outside_low_rpm_fraction": 0.0,
+      "outside_high_rpm_fraction": 0.0,
+      "outside_positive_thrust_J_fraction": 0.0030303030303030303,
+      "reverse_axial_flow_fraction": 0.0
+    },
+    {
+      "tag": "LQR70_85_vertical",
+      "completed": true,
+      "elapsed_s": 4.0,
+      "first_solver_failure_s": null,
+      "solver_failure_statuses": {},
+      "maximum_rate_norm_rad_s": 0.4290510548537966,
+      "actual_rotor_min_rpm": 28025.69373987224,
+      "actual_rotor_max_rpm": 30140.644330305167,
+      "outside_low_rpm_fraction": 0.0,
+      "outside_high_rpm_fraction": 0.0,
+      "outside_positive_thrust_J_fraction": 0.0,
+      "reverse_axial_flow_fraction": 0.0
+    },
+    {
+      "tag": "GS-LQR_85_vertical",
+      "completed": true,
+      "elapsed_s": 4.0,
+      "first_solver_failure_s": null,
+      "solver_failure_statuses": {},
+      "maximum_rate_norm_rad_s": 0.39378767751584315,
+      "actual_rotor_min_rpm": 28053.365591261136,
+      "actual_rotor_max_rpm": 30141.232167555823,
+      "outside_low_rpm_fraction": 0.0,
+      "outside_high_rpm_fraction": 0.0,
+      "outside_positive_thrust_J_fraction": 0.0,
+      "reverse_axial_flow_fraction": 0.0
+    },
+    {
+      "tag": "INDI_85_vertical",
+      "completed": true,
+      "elapsed_s": 4.0,
+      "first_solver_failure_s": null,
+      "solver_failure_statuses": {},
+      "maximum_rate_norm_rad_s": 7.828889583014406,
+      "actual_rotor_min_rpm": 23517.981365846772,
+      "actual_rotor_max_rpm": 31421.23121629376,
+      "outside_low_rpm_fraction": 0.0,
+      "outside_high_rpm_fraction": 0.0,
+      "outside_positive_thrust_J_fraction": 0.03,
+      "reverse_axial_flow_fraction": 0.0
+    },
+    {
+      "tag": "NMPC_85_vertical",
+      "completed": true,
+      "elapsed_s": 4.0,
+      "first_solver_failure_s": null,
+      "solver_failure_statuses": {},
+      "maximum_rate_norm_rad_s": 0.37722442994605765,
+      "actual_rotor_min_rpm": 26950.982443989873,
+      "actual_rotor_max_rpm": 30067.268432688186,
+      "outside_low_rpm_fraction": 0.0,
+      "outside_high_rpm_fraction": 0.0,
+      "outside_positive_thrust_J_fraction": 0.0005,
+      "reverse_axial_flow_fraction": 0.0
+    },
+    {
+      "tag": "Naive_85_vertical",
+      "completed": true,
+      "elapsed_s": 4.0,
+      "first_solver_failure_s": null,
+      "solver_failure_statuses": {},
+      "maximum_rate_norm_rad_s": 0.4093487163324047,
+      "actual_rotor_min_rpm": 26936.473476406274,
+      "actual_rotor_max_rpm": 30153.491826685353,
+      "outside_low_rpm_fraction": 0.0,
+      "outside_high_rpm_fraction": 0.0,
+      "outside_positive_thrust_J_fraction": 0.001,
+      "reverse_axial_flow_fraction": 0.0
+    },
+    {
+      "tag": "Split_85_vertical",
+      "completed": false,
+      "elapsed_s": 1.32,
+      "first_solver_failure_s": 1.16,
+      "solver_failure_statuses": {
+        "Maximum_Iterations_Exceeded": 5
+      },
+      "maximum_rate_norm_rad_s": 6.0191880379703635,
+      "actual_rotor_min_rpm": 21329.322042056858,
+      "actual_rotor_max_rpm": 31015.86468701555,
+      "outside_low_rpm_fraction": 0.0,
+      "outside_high_rpm_fraction": 0.0,
+      "outside_positive_thrust_J_fraction": 0.0030303030303030303,
+      "reverse_axial_flow_fraction": 0.0
+    },
+    {
+      "tag": "LQR70_70_legacy_vertical10_mission",
+      "completed": false,
+      "elapsed_s": 8.232,
+      "first_solver_failure_s": null,
+      "solver_failure_statuses": {},
+      "maximum_rate_norm_rad_s": 30.915387922896446,
+      "actual_rotor_min_rpm": 1557.857810249574,
+      "actual_rotor_max_rpm": 32290.851844470068,
+      "outside_low_rpm_fraction": 0.13532555879494654,
+      "outside_high_rpm_fraction": 0.0,
+      "outside_positive_thrust_J_fraction": 0.0,
+      "reverse_axial_flow_fraction": 0.1151603498542274
+    },
+    {
+      "tag": "GS-LQR_70_legacy_vertical10_mission",
+      "completed": true,
+      "elapsed_s": 65.0,
+      "first_solver_failure_s": null,
+      "solver_failure_statuses": {},
+      "maximum_rate_norm_rad_s": 7.783799125025765,
+      "actual_rotor_min_rpm": 7.012859951831185e-33,
+      "actual_rotor_max_rpm": 25169.774278669647,
+      "outside_low_rpm_fraction": 0.046523076923076924,
+      "outside_high_rpm_fraction": 0.0,
+      "outside_positive_thrust_J_fraction": 0.07923076923076923,
+      "reverse_axial_flow_fraction": 0.14043076923076922
+    },
+    {
+      "tag": "INDI_70_legacy_vertical10_mission",
+      "completed": true,
+      "elapsed_s": 65.0,
+      "first_solver_failure_s": null,
+      "solver_failure_statuses": {},
+      "maximum_rate_norm_rad_s": 11.93524856261636,
+      "actual_rotor_min_rpm": 508.0618227292654,
+      "actual_rotor_max_rpm": 25257.796654067577,
+      "outside_low_rpm_fraction": 0.07624615384615385,
+      "outside_high_rpm_fraction": 0.0,
+      "outside_positive_thrust_J_fraction": 0.06766153846153847,
+      "reverse_axial_flow_fraction": 0.23396923076923076
+    },
+    {
+      "tag": "NMPC_70_legacy_vertical10_mission",
+      "completed": false,
+      "elapsed_s": 46.12,
+      "first_solver_failure_s": 45.96,
+      "solver_failure_statuses": {
+        "Maximum_Iterations_Exceeded": 5
+      },
+      "maximum_rate_norm_rad_s": 0.6211394891642331,
+      "actual_rotor_min_rpm": 10861.350276748262,
+      "actual_rotor_max_rpm": 25081.046799882162,
+      "outside_low_rpm_fraction": 0.0,
+      "outside_high_rpm_fraction": 0.0,
+      "outside_positive_thrust_J_fraction": 0.0,
+      "reverse_axial_flow_fraction": 0.0
+    },
+    {
+      "tag": "Naive_70_legacy_vertical10_mission",
+      "completed": false,
+      "elapsed_s": 46.12,
+      "first_solver_failure_s": 45.96,
+      "solver_failure_statuses": {
+        "Maximum_Iterations_Exceeded": 5
+      },
+      "maximum_rate_norm_rad_s": 0.5296569617469964,
+      "actual_rotor_min_rpm": 10861.35027674826,
+      "actual_rotor_max_rpm": 25081.041241666466,
+      "outside_low_rpm_fraction": 0.0,
+      "outside_high_rpm_fraction": 0.0,
+      "outside_positive_thrust_J_fraction": 0.0,
+      "reverse_axial_flow_fraction": 0.0
+    },
+    {
+      "tag": "Split_70_legacy_vertical10_mission",
+      "completed": false,
+      "elapsed_s": 46.4,
+      "first_solver_failure_s": 46.24,
+      "solver_failure_statuses": {
+        "Maximum_Iterations_Exceeded": 5
+      },
+      "maximum_rate_norm_rad_s": 0.5255177326250537,
+      "actual_rotor_min_rpm": 10945.02152978855,
+      "actual_rotor_max_rpm": 25106.626430706347,
+      "outside_low_rpm_fraction": 0.0,
+      "outside_high_rpm_fraction": 0.0,
+      "outside_positive_thrust_J_fraction": 0.0,
+      "reverse_axial_flow_fraction": 0.0
+    }
+  ],
+  "mission_phases": [
+    {
+      "controller": "LQR70",
+      "phase": "이륙",
+      "interval_s": [
+        0.0,
+        10.0
+      ],
+      "phase_completed": false,
+      "z_rmse_m": 4.435435310029032,
+      "z_max_m": 14.893566108676197,
+      "vx_rmse_m_s": 5.618572590225564
+    },
+    {
+      "controller": "GS-LQR",
+      "phase": "이륙",
+      "interval_s": [
+        0.0,
+        10.0
+      ],
+      "phase_completed": true,
+      "z_rmse_m": 3.9227562400949227,
+      "z_max_m": 5.564877292341567,
+      "vx_rmse_m_s": 5.715532250937698e-12
+    },
+    {
+      "controller": "GS-LQR",
+      "phase": "안정화",
+      "interval_s": [
+        10.0,
+        13.0
+      ],
+      "phase_completed": true,
+      "z_rmse_m": 0.16906526118609413,
+      "z_max_m": 0.6963438200918688,
+      "vx_rmse_m_s": 5.290188404325126e-12
+    },
+    {
+      "controller": "GS-LQR",
+      "phase": "가속",
+      "interval_s": [
+        13.0,
+        28.0
+      ],
+      "phase_completed": true,
+      "z_rmse_m": 0.10166712224835098,
+      "z_max_m": 0.26751700836890535,
+      "vx_rmse_m_s": 3.0088947322553237
+    },
+    {
+      "controller": "GS-LQR",
+      "phase": "순항",
+      "interval_s": [
+        28.0,
+        43.0
+      ],
+      "phase_completed": true,
+      "z_rmse_m": 0.1314069572170956,
+      "z_max_m": 0.7101307647986133,
+      "vx_rmse_m_s": 0.03313369694962271
+    },
+    {
+      "controller": "GS-LQR",
+      "phase": "감속",
+      "interval_s": [
+        43.0,
+        58.0
+      ],
+      "phase_completed": true,
+      "z_rmse_m": 1.9175306500296452,
+      "z_max_m": 5.928295033156715,
+      "vx_rmse_m_s": 4.373459365474779
+    },
+    {
+      "controller": "GS-LQR",
+      "phase": "호버링",
+      "interval_s": [
+        58.0,
+        65.0
+      ],
+      "phase_completed": true,
+      "z_rmse_m": 0.016020972103424826,
+      "z_max_m": 0.07067424345954976,
+      "vx_rmse_m_s": 0.25371285594253384
+    },
+    {
+      "controller": "INDI",
+      "phase": "이륙",
+      "interval_s": [
+        0.0,
+        10.0
+      ],
+      "phase_completed": true,
+      "z_rmse_m": 4.439979621740191,
+      "z_max_m": 6.361685933654137,
+      "vx_rmse_m_s": 1.1150992843424734e-14
+    },
+    {
+      "controller": "INDI",
+      "phase": "안정화",
+      "interval_s": [
+        10.0,
+        13.0
+      ],
+      "phase_completed": true,
+      "z_rmse_m": 1.109395735394374,
+      "z_max_m": 1.3868943569010597,
+      "vx_rmse_m_s": 1.9709349450946975e-14
+    },
+    {
+      "controller": "INDI",
+      "phase": "가속",
+      "interval_s": [
+        13.0,
+        28.0
+      ],
+      "phase_completed": true,
+      "z_rmse_m": 0.3623523821368436,
+      "z_max_m": 0.7983427181066887,
+      "vx_rmse_m_s": 3.8299920013715782
+    },
+    {
+      "controller": "INDI",
+      "phase": "순항",
+      "interval_s": [
+        28.0,
+        43.0
+      ],
+      "phase_completed": true,
+      "z_rmse_m": 0.2101737186118145,
+      "z_max_m": 0.40079816583102,
+      "vx_rmse_m_s": 0.2246718781189251
+    },
+    {
+      "controller": "INDI",
+      "phase": "감속",
+      "interval_s": [
+        43.0,
+        58.0
+      ],
+      "phase_completed": true,
+      "z_rmse_m": 0.5278760962439446,
+      "z_max_m": 1.2222928100370467,
+      "vx_rmse_m_s": 2.868866211178375
+    },
+    {
+      "controller": "INDI",
+      "phase": "호버링",
+      "interval_s": [
+        58.0,
+        65.0
+      ],
+      "phase_completed": true,
+      "z_rmse_m": 0.04702131176387153,
+      "z_max_m": 0.08528362540000956,
+      "vx_rmse_m_s": 0.32382475691100104
+    },
+    {
+      "controller": "NMPC",
+      "phase": "이륙",
+      "interval_s": [
+        0.0,
+        10.0
+      ],
+      "phase_completed": true,
+      "z_rmse_m": 5.057406672629362,
+      "z_max_m": 7.2571633079756666,
+      "vx_rmse_m_s": 1.1307511933721142e-14
+    },
+    {
+      "controller": "NMPC",
+      "phase": "안정화",
+      "interval_s": [
+        10.0,
+        13.0
+      ],
+      "phase_completed": true,
+      "z_rmse_m": 0.6215512057579449,
+      "z_max_m": 1.7214959859608783,
+      "vx_rmse_m_s": 2.0155528321958868e-14
+    },
+    {
+      "controller": "NMPC",
+      "phase": "가속",
+      "interval_s": [
+        13.0,
+        28.0
+      ],
+      "phase_completed": true,
+      "z_rmse_m": 0.1459362399791784,
+      "z_max_m": 0.25655394015885946,
+      "vx_rmse_m_s": 0.995667253203581
+    },
+    {
+      "controller": "NMPC",
+      "phase": "순항",
+      "interval_s": [
+        28.0,
+        43.0
+      ],
+      "phase_completed": true,
+      "z_rmse_m": 0.16688712031741595,
+      "z_max_m": 0.748481573805698,
+      "vx_rmse_m_s": 0.03431013289654098
+    },
+    {
+      "controller": "NMPC",
+      "phase": "감속",
+      "interval_s": [
+        43.0,
+        58.0
+      ],
+      "phase_completed": false,
+      "z_rmse_m": 0.017167846390448355,
+      "z_max_m": 0.03450442254879249,
+      "vx_rmse_m_s": 0.26376131686117954
+    },
+    {
+      "controller": "Naive",
+      "phase": "이륙",
+      "interval_s": [
+        0.0,
+        10.0
+      ],
+      "phase_completed": true,
+      "z_rmse_m": 5.057406672629362,
+      "z_max_m": 7.2571633079756666,
+      "vx_rmse_m_s": 1.13074347674654e-14
+    },
+    {
+      "controller": "Naive",
+      "phase": "안정화",
+      "interval_s": [
+        10.0,
+        13.0
+      ],
+      "phase_completed": true,
+      "z_rmse_m": 0.6215512057579404,
+      "z_max_m": 1.7214959859608712,
+      "vx_rmse_m_s": 2.0156306827160618e-14
+    },
+    {
+      "controller": "Naive",
+      "phase": "가속",
+      "interval_s": [
+        13.0,
+        28.0
+      ],
+      "phase_completed": true,
+      "z_rmse_m": 0.1459238812745017,
+      "z_max_m": 0.2565444551466243,
+      "vx_rmse_m_s": 0.9956559575287643
+    },
+    {
+      "controller": "Naive",
+      "phase": "순항",
+      "interval_s": [
+        28.0,
+        43.0
+      ],
+      "phase_completed": true,
+      "z_rmse_m": 0.13022256646849942,
+      "z_max_m": 0.5870676250234581,
+      "vx_rmse_m_s": 0.02033752152691781
+    },
+    {
+      "controller": "Naive",
+      "phase": "감속",
+      "interval_s": [
+        43.0,
+        58.0
+      ],
+      "phase_completed": false,
+      "z_rmse_m": 0.017160555472678512,
+      "z_max_m": 0.03451115835878937,
+      "vx_rmse_m_s": 0.2637564490084512
+    },
+    {
+      "controller": "Split",
+      "phase": "이륙",
+      "interval_s": [
+        0.0,
+        10.0
+      ],
+      "phase_completed": true,
+      "z_rmse_m": 4.814509709737803,
+      "z_max_m": 6.863499804047674,
+      "vx_rmse_m_s": 1.1201418679996962e-14
+    },
+    {
+      "controller": "Split",
+      "phase": "안정화",
+      "interval_s": [
+        10.0,
+        13.0
+      ],
+      "phase_completed": true,
+      "z_rmse_m": 0.5831654834092738,
+      "z_max_m": 1.616946515178924,
+      "vx_rmse_m_s": 2.001358497956709e-14
+    },
+    {
+      "controller": "Split",
+      "phase": "가속",
+      "interval_s": [
+        13.0,
+        28.0
+      ],
+      "phase_completed": true,
+      "z_rmse_m": 0.12215302918625738,
+      "z_max_m": 0.2530958635602616,
+      "vx_rmse_m_s": 1.226562884815331
+    },
+    {
+      "controller": "Split",
+      "phase": "순항",
+      "interval_s": [
+        28.0,
+        43.0
+      ],
+      "phase_completed": true,
+      "z_rmse_m": 0.10998256146948347,
+      "z_max_m": 0.480748825012725,
+      "vx_rmse_m_s": 0.017378616244297887
+    },
+    {
+      "controller": "Split",
+      "phase": "감속",
+      "interval_s": [
+        43.0,
+        58.0
+      ],
+      "phase_completed": false,
+      "z_rmse_m": 0.0014927382110959207,
+      "z_max_m": 0.0033685777307752574,
+      "vx_rmse_m_s": 0.5217197102540857
+    }
+  ]
+}
