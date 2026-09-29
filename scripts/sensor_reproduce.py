@@ -72,7 +72,7 @@ def reproduce(reference, output):
 
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument('--reference', type=Path, default=ROOT/'scripts/data/sensor_reproduction_v8.json')
+    p.add_argument('--reference', type=Path, default=ROOT/'scripts/data/sensor_reproduction_v9.json')
     p.add_argument('--output', type=Path, required=True)
     a = p.parse_args(argv)
     result = reproduce(a.reference, a.output)

@@ -90,3 +90,14 @@ venv/
 !/results/sensor_readiness_v8/tests.xml
 !/results/sensor_readiness_v8/report_tests.xml
 !/results/sensor_readiness_v8/rotor_report_tests.xml
+
+!/results/sensor_readiness_v9/
+/results/sensor_readiness_v9/*
+!/results/sensor_readiness_v9/report.md
+!/results/sensor_readiness_v9/comparison.png
+!/results/sensor_readiness_v9/outcomes.json
+!/results/sensor_readiness_v9/verification.json
+!/results/sensor_readiness_v9/tests.xml
+!/results/sensor_readiness_v9/report_tests.xml
+!/results/sensor_readiness_v9/rotor_tests.xml
+!/results/sensor_readiness_v9/findings.md

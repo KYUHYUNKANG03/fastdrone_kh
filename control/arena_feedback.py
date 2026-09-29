@@ -4,6 +4,7 @@ from scipy.spatial.transform import Rotation
 
 from control.arena_estimator import NavigationFilter
 from control.arena_sensors import SensorSuite, load_sensor_profile
+from control.rotor_estimator import TimestampedRotorEstimator
 
 
 class RotorObserver:
@@ -18,16 +19,23 @@ class RotorObserver:
         self.last_command = self.n.copy()
         self._pending = []
         self._last_sample_time = None
-        self._time = 0.0
+        self._time = -float(spec['rotor_observer'].get('prehistory_s', 0.))
+        self._projector = None
+        if self.source == 'telemetry_predictor':
+            options = spec['rotor_observer']
+            self._projector = TimestampedRotorEstimator(self.n, start_time=self._time,
+                **{k: options[k] for k in ('motor_tau_s', 'history_s', 'max_age_s')})
 
     @property
     def ready(self):
         """Availability, not accuracy: telemetry must have arrived at least once."""
+        if self._projector is not None:
+            return self._projector.ready
         return self.source == "predictor" or self._last_sample_time is not None
 
     @property
     def sample_time(self):
-        return self._last_sample_time
+        return self._projector.sample_time if self._projector is not None else self._last_sample_time
 
     def update(self, command, measurements, *, now):
         """Use only arrived RPM packets, or propagate the applied command.
@@ -36,6 +44,11 @@ class RotorObserver:
         Predictor mode deliberately ignores all telemetry.
         """
         command = np.asarray(command, dtype=float)
+        if self._projector is not None:
+            self.n = self._projector.update(command, measurements, now=now)
+            self.last_command = command.copy()
+            self._time = float(now)
+            return self.n.copy()
         elapsed = float(now) - self._time
         if elapsed < -1e-9:
             raise ValueError("rotor observer time must be nondecreasing")
@@ -93,14 +106,25 @@ class ArenaSensorFeedback:
 
     @property
     def diagnostics(self):
-        return dict(self.filter.diagnostics)
+        result = dict(self.filter.diagnostics)
+        if self.rotors._projector is not None:
+            result['rotor_observer'] = self.rotors._projector.diagnostics
+        if self.profile['rotor_observer'].get('prehistory_s', 0.):
+            result['rotor_prehistory_s'] = self.profile['rotor_observer']['prehistory_s']
+        return result
 
-    def initial_packets(self, t, x_true, xdot_true):
+    def initial_packets(self, t, x_true, xdot_true, *, initial_command=None):
+        duration = self.profile['rotor_observer'].get('prehistory_s', 0.)
+        if duration:
+            if t != 0. or initial_command is None or self.rotors._time != -duration:
+                raise ValueError('rotor prehistory requires first initialization at zero and known past command')
+            for sample_time, past_packets in self.sensors.rotor_prehistory(x_true[13:17], duration):
+                self.rotors.update(initial_command, past_packets, now=sample_time)
         packets = self.sensors.sample(t, x_true, xdot_true)
         self._last_packets = packets
         self.filter.advance(t, [m for m in packets if m.kind != "rpm"])
         self._state[:13] = self.filter.state[:13]
-        self._state[13:17] = self.rotors.update(self.rotors.n, packets, now=t)
+        self._state[13:17] = self.rotors.update(initial_command if duration else self.rotors.n, packets, now=t)
         return packets
 
     def step(self, t, x_true, xdot_true, command):

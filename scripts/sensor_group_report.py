@@ -41,7 +41,8 @@ def summarize(sources, output):
                     'tracking_pass', 'model_domain_valid', 'passed', 'failure_reasons',
                     'campaign_timed_out', 'stop_reason', 'paper_failed', 'paper_reasons',
                     'rmse_z', 'rmse_velocity', 'max_omega', 'prop_domain_outside_fraction',
-                    'optimizer_calls', 'optimizer_failures', 'command_total_variation')
+                    'optimizer_calls', 'optimizer_failures', 'command_total_variation',
+                    'estimator_diagnostics')
             row = {k: record.get(k) for k in keys}
             row['condition'] = (record.get('sensor_profile') if record['variant'] == 'baseline'
                                 and str(record.get('sensor_profile', '')).startswith('rotor_')
@@ -53,6 +54,13 @@ def summarize(sources, output):
             row['diagnostics'] = ({k:v for k,v in detail.items() if k not in ('source', 'trace')}
                                   if detail else None)
             if path:
+                manifest = json.loads((path.parent/'manifest.json').read_text(encoding='utf-8'))
+                if any(manifest.get('source_sha256', {}).get(k) != v for k, v in hashes.items()):
+                    raise ValueError(f'trial runtime differs from experiment: {path}')
+                if manifest.get('sensor_profile_sha256') != record.get('sensor_profile_sha256'):
+                    raise ValueError(f'trial sensor profile differs from experiment: {path}')
+                row['config_sha256'] = manifest['config_sha256']
+                row['controller_settings'] = manifest.get('controller_settings', {})
                 row['startup'] = startup(record, source)
                 with np.load(path, allow_pickle=False) as trace:
                     n = min(len(trace['xs']), len(trace['xs_est']))
@@ -81,7 +89,13 @@ def summarize(sources, output):
         'not claims of perfectly accurate state estimation. No controller receives truth-state feedback. '
         'The optional timing conditions keep all nominal sensor errors: `rotor_unfiltered` removes '
         'only extra telemetry smoothing (tau = 1 microsecond), `rotor_no_latency` removes only '
-        'telemetry transport latency, and `rotor_direct` removes both. Neither changes physical motor lag.', '',
+        'telemetry transport latency, and `rotor_direct` removes both. Neither changes physical motor lag. '
+        '`rotor_projected_*` uses a telemetry anchor at its sample time and recorded commands to '
+        'predict the present rotor state, retaining nominal sensor noise and 4 ms latency. '
+        '`warm` conditions replay 0.1 s of noisy steady-trim rotor prehistory; `cold` conditions '
+        'start with no arrived rotor measurement. `rotor_telemetry_warm` keeps the 20 ms measurement '
+        'filter; `rotor_unfiltered_warm` uses 1 microsecond. Projected tau10ms/tau40ms conditions '
+        'change only the declared observer motor time constant from its nominal 20 ms.', '',
         'All outcomes, including early stops and timeouts, are retained. RMSE on a stopped run '
         'covers only its recorded prefix and is not directly comparable with full-duration RMSE. '
         'These runs do not estimate failure probabilities or a maximum usable sensor specification.', '',
@@ -92,10 +106,11 @@ def summarize(sources, output):
         text.append(f"| {r['controller']} | {r['condition']} | {r['sensor_seed']} | "
                     f"{number(r['simulated_seconds'])} | {r['tracking_pass']} | {r['model_domain_valid']} | "
                     f"{number(r['rmse_z'])} | {number(r['rmse_velocity'])} | {r['optimizer_failures']} |")
-    text += ['', 'The delayed-telemetry cases start the rotor observer without an available '
-             'measurement. The startup diagnostics record allocations made before first telemetry '
-             'arrival. Thus latency comparisons include startup availability as well as in-flight '
-             'delay; they cannot establish an ESC latency tolerance by themselves.', '',
+    text += ['', 'Cold delayed-telemetry cases start without an available measurement; warm '
+             'cases use an explicit steady-trim measurement/command prehistory. This is not a '
+             'simulation of a complete takeoff or real preflight procedure. Startup diagnostics '
+             'record allocations made before first telemetry arrival. Compare warm/cold and '
+             'observer changes separately before interpreting any ESC latency tolerance.', '',
              'Raw traces remain in the local checkout at the relative paths in `outcomes.json`. '
              'The JSON includes exact experiment contracts and runtime hashes. Reproduce each campaign '
              'with the axes in its contract, using a new output directory.', '', '![Recorded outcomes](comparison.png)', '']

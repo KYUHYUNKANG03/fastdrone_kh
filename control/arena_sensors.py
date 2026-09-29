@@ -91,8 +91,23 @@ def load_sensor_profile(profile):
             value = np.asarray(tone.get(key, [0., 0., 0.]))
             if value.shape != (3,) or not np.all(np.isfinite(value)):
                 raise ValueError(f'gyro vibration {key} must be a finite 3-vector')
-    if merged["rotor_observer"].get("source") not in ("telemetry", "predictor"):
-        raise ValueError("rotor_observer.source must be telemetry or predictor")
+    rotor = merged['rotor_observer']
+    if rotor.get('source') not in ('telemetry', 'predictor', 'telemetry_predictor'):
+        raise ValueError('rotor_observer.source must be telemetry, predictor or telemetry_predictor')
+    duration = rotor.get('prehistory_s', 0.)
+    if not np.isfinite(duration) or duration < 0:
+        raise ValueError('rotor_observer.prehistory_s must be finite and nonnegative')
+    if duration and (not merged['rpm']['enabled'] or rotor['source'] == 'predictor'):
+        raise ValueError('rotor prehistory requires an enabled telemetry observer')
+    if rotor['source'] == 'telemetry_predictor':
+        for key in ('motor_tau_s', 'history_s', 'max_age_s'):
+            if key not in rotor or not np.isfinite(rotor[key]) or rotor[key] <= 0:
+                raise ValueError(f'rotor_observer.{key} must be explicitly finite and positive')
+        if rotor['history_s'] < max(rotor['max_age_s'], merged['rpm']['latency_s']):
+            raise ValueError('rotor history must cover nominal latency and maximum ready age')
+        initial = np.asarray(rotor.get('initial_rpm', [0.]*4))
+        if initial.shape != (4,) or not np.all(np.isfinite(initial)):
+            raise ValueError('initial_rpm must be a finite 4-vector (mechanical rad/s)')
     if not isinstance(merged['estimator'].get('trace_updates', False), bool):
         raise ValueError('estimator.trace_updates must be boolean')
     if merged['estimator'].get('preflight_baro_rng', 'shared') not in ('shared', 'independent'):
@@ -142,14 +157,32 @@ class SensorSuite:
         self.gravity = float(gravity)
         names = ("imu", "gnss", "barometer", "magnetometer", "rpm")
         # Appending a child preserves the existing five flight streams exactly.
-        streams = np.random.SeedSequence(int(seed)).spawn(len(names)+1)
+        streams = np.random.SeedSequence(int(seed)).spawn(len(names)+2)
         self._rng = {name: np.random.default_rng(stream) for name, stream in zip(names, streams)}
-        self._preflight_rng = np.random.default_rng(streams[-1])
+        self._preflight_rng = np.random.default_rng(streams[len(names)])
+        self._rotor_prehistory_rng = np.random.default_rng(streams[len(names)+1])
         self._bias = {"accel": np.asarray(self.profile["imu"].get("accel_bias", [0]*3), dtype=float),
                       "gyro": np.asarray(self.profile["imu"].get("gyro_bias", [0]*3), dtype=float)}
         self._next = {name: 0 for name in ("imu", "gnss", "barometer", "magnetometer", "rpm")}
         self._seq = 0
         self._last_imu_time = None
+
+    def rotor_prehistory(self, rotor_truth, duration):
+        """Sample a declared steady-trim rotor history before flight time zero.
+
+        This models past measurements, not full aircraft preflight dynamics.
+        A separate RNG preserves all five flight streams and baro calibration.
+        """
+        spec, rng = self.profile['rpm'], self._rotor_prehistory_rng
+        period = 1./spec['rate_hz']
+        for index in range(int(np.ceil(duration/period))):
+            t = -duration+index*period
+            if t >= 0.:
+                break
+            dropped = rng.random() < spec['dropout_prob'] or any(
+                start <= t < end for start, end in spec.get('outage_windows', []))
+            value = np.asarray(rotor_truth)+np.asarray(spec['bias'])+spec['sigma']*rng.normal(size=4)
+            yield t, ([] if dropped else [self._packet('rpm', t, value, spec)])
 
     def _due(self, name, t):
         rate = float(self.profile[name].get("rate_hz", 0.0))

@@ -1,20 +1,20 @@
-# Windows sensor development package — v8
+# Windows sensor development package — v9
 
 This package exercises the sensor path on the team aircraft. It is not the
-final tuning release. Candidate high-speed sensor runs currently fail. A
+final tuning release. The new observer has bounded development checks only. A
 successful software/reproduction check must not be reported as successful
 flight performance. No existing checkout needs to be removed.
 
 ## Receive and check the package
 
-Copy `sensor-development-v8.zip` and its receipt to the school computer. Compare
+Copy `sensor-development-v9.zip` and its receipt to the school computer. Compare
 the ZIP SHA-256 with the receipt, then extract into a **new empty directory**.
 The ZIP has its repository files at the top level; open PowerShell there.
 It excludes Git metadata, credentials, Python environments, and result trees.
 Python 3.13 and the five packages in `requirements-lock.txt` are required.
 
 ```powershell
-Get-FileHash .\sensor-development-v8.zip -Algorithm SHA256
+Get-FileHash .\sensor-development-v9.zip -Algorithm SHA256
 ```
 
 After extraction, run one command at a time from the extracted directory:
@@ -48,17 +48,21 @@ again after opening a new PowerShell session.
 if ($LASTEXITCODE -ne 0) { throw "Sensor reproduction differs; inspect comparison.json" }
 ```
 
-The reference is an actual 12-second V13 run at 20 m/s, development seed 4,
-using the joint barometer-bias candidate. It passed tracking and **failed the
-propulsion-domain check**. Replay must reproduce both outcomes, sensor identity,
+The default reference is an actual 12-second V13 run at 85 m/s, development seed 3,
+with the joint barometer filter, timestamp-aware rotor observer and 0.1 s of
+steady-trim rotor measurement history. It passed tracking and the propulsion
+domain check. Replay must reproduce both outcomes, sensor identity,
 solver counts, and numeric metrics within `rtol=1e-3`, `atol=1e-9`. Trajectory
 bit identity is recorded separately. Keep `comparison.json`, the run manifest,
 logs, and trace files. Each retry uses a new output folder.
 
-The default fixture is now `scripts/data/sensor_reproduction_v8.json`, recorded
-from a fresh v8 run. It reproduces the v7 reference trajectory exactly on the
-reference Mac. The archived v7 fixture keeps its original runtime hashes and
-belongs to its original code revision; it is not silently relabeled as v8.
+The default fixture is `scripts/data/sensor_reproduction_v9.json`. The source
+package check retains the baseline v6 configuration/model checks; this numerical
+replay additionally enforces the v9 development configuration and runtime hashes.
+To replay the separate legacy-observer regression at 20 m/s, pass
+`--reference scripts/data/sensor_legacy_reproduction_v9.json`. That recorded run
+retains its known propulsion-domain failure and is bit-identical to v8 on the
+reference Mac. Archived fixtures are not silently relabeled for newer code.
 
 This checks one sensor-inclusive serial case. It does not replace the original
 full tuning-path reproduction or Windows orphan-worker check in
@@ -96,6 +100,7 @@ For the new group and rotor timing diagnosis, run in separate output folders:
 ```powershell
 .\.venv\Scripts\python.exe -m control.sensor_matching_screen --output results\sensor_groups_windows --controllers V13 F13 --variants quiet_sampled imu_only navigation_only rotor_only baseline --seeds 3 --timeout-s 900
 .\.venv\Scripts\python.exe scripts\sensor_rotor_screen.py --output results\rotor_timing_windows --controllers V13 F13 --seeds 3
+.\.venv\Scripts\python.exe scripts\sensor_rotor_screen.py --output results\rotor_observer_windows --controllers V13 F13 --seeds 3 --conditions rotor_projected_warm rotor_projected_cold rotor_telemetry_warm rotor_unfiltered_warm
 ```
 
 These commands use fixed team gains and development seeds. Zero-latency controls

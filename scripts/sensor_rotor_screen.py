@@ -17,7 +17,11 @@ from control.arena import load_config, config_sha256
 from control.sensor_matching_screen import run, write_atomic
 from control.sensor_binding import runtime_source_hashes
 
-CONDITIONS = ('rotor_unfiltered', 'rotor_no_latency', 'rotor_direct')
+TIMING_CONDITIONS = ('rotor_unfiltered', 'rotor_no_latency', 'rotor_direct')
+OBSERVER_CONDITIONS = ('rotor_projected_cold', 'rotor_projected_warm',
+    'rotor_telemetry_warm', 'rotor_unfiltered_warm',
+    'rotor_projected_warm_tau10ms', 'rotor_projected_warm_tau40ms')
+CONDITIONS = TIMING_CONDITIONS + OBSERVER_CONDITIONS
 
 
 def condition_config(base, condition):
@@ -34,6 +38,19 @@ def condition_config(base, condition):
         profile['rotor_observer']['tau_s'] = 1e-6
     if condition in ('rotor_no_latency', 'rotor_direct'):
         profile['rpm']['latency_s'] = 0.
+    if condition in OBSERVER_CONDITIONS:
+        if condition.startswith('rotor_projected_'):
+            # Declared observer assumptions; never read the perturbed plant tau.
+            profile['rotor_observer'] = dict(source='telemetry_predictor', motor_tau_s=.02,
+                history_s=.5, max_age_s=.05)
+        if 'warm' in condition:
+            profile['rotor_observer']['prehistory_s'] = .1
+        if condition == 'rotor_unfiltered_warm':
+            profile['rotor_observer']['tau_s'] = 1e-6
+        if condition.endswith('tau10ms'):
+            profile['rotor_observer']['motor_tau_s'] = .01
+        if condition.endswith('tau40ms'):
+            profile['rotor_observer']['motor_tau_s'] = .04
     profile['name'] = condition
     return result
 
@@ -69,7 +86,7 @@ def main():
     p.add_argument('--output', type=Path, required=True)
     p.add_argument('--controllers', nargs='+', choices=['V13', 'F13'], default=['V13', 'F13'])
     p.add_argument('--seeds', nargs='+', type=int, default=[3])
-    p.add_argument('--conditions', nargs='+', choices=CONDITIONS, default=list(CONDITIONS))
+    p.add_argument('--conditions', nargs='+', choices=CONDITIONS, default=list(TIMING_CONDITIONS))
     p.add_argument('--cases', nargs='+', default=['gust_lateral_p10_VH'])
     p.add_argument('--timeout-s', type=float, default=900.)
     a = p.parse_args()

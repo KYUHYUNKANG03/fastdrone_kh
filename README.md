@@ -14,17 +14,18 @@ model attribution and notices remain in `models/team_light/` and `external/`.
 ## Current status
 
 **Development software, not validated flight hardware or final paper results.**
-The v8 checkpoint passed 250 software tests, with eight long legacy tests skipped.
-Paired 85 m/s comparisons now hold the joint estimator and its covariance
-assumptions fixed. Both V13/F13 pass quiet, IMU-only and navigation-only controls,
-and fail rotor-only and full nominal sensor feedback. Both pass with full nominal
-sensor noise when rotor transport delay and extra measurement smoothing are removed.
-That last case is diagnostic, not a claim of achievable zero-latency hardware.
-Latency comparisons still include startup without an available rotor measurement.
-These are single-seed development findings, not hardware limits or failure probabilities.
+The v9 checkpoint implements a timestamp-aware rotor observer and an explicit
+steady-trim measurement-history startup. It passed 277 distinct software tests,
+with eight long legacy tests skipped. Both V13/F13 now pass a full 85 m/s trial
+with nominal sensor noise and the original 4 ms rotor telemetry delay when using
+the declared nominal motor model and startup history. Cold starts and incorrect
+observer models are tested separately and retain their failures. These are
+development findings, not hardware limits or failure probabilities; wider
+validation and controller matching remain necessary.
 
-- [Latest report and comparison figure](results/sensor_readiness_v8/report.md)
-- [What the rotor diagnosis means and what remains](docs/SENSOR_GROUP_DIAGNOSIS.md)
+- [Latest report and comparison figure](results/sensor_readiness_v9/report.md)
+- [Rotor observer equations, startup assumptions and commands](docs/ROTOR_OBSERVER.md)
+- [Historical v8 diagnosis](docs/SENSOR_GROUP_DIAGNOSIS.md)
 - [Historical v7 report](results/sensor_readiness_v7/report.md)
 - [Sensor equations and implementation](docs/SENSOR_FUSION.md)
 - [Sensor–controller matching protocol](docs/SENSOR_PAPER_PROTOCOL.md)
@@ -65,11 +66,23 @@ Reproduce the recorded sensor-inclusive development case:
 python scripts/sensor_reproduce.py --output results/my_sensor_reproduction
 ```
 
-A reproduction pass means agreement with the recorded outcomes, including the
-reference's known model-domain failure. Each replay uses a new output folder.
-The active v8 fixture comes from a fresh run and reproduces the historical v7
-reference trajectory exactly on the pinned Mac environment. Old fixtures retain
-their original runtime hashes and require their corresponding code revision.
+A reproduction pass means agreement with a recorded outcome, not validation of
+the full operating envelope. The active v9 fixture is a passing 85 m/s V13 run
+with the new observer. Each replay uses a new output folder. The separate
+`scripts/data/sensor_legacy_reproduction_v9.json` fixture preserves the 20 m/s
+legacy-observer regression, including its known model-domain failure. Its fresh
+v9 trajectory is identical to v8 on the pinned Mac. Archived fixtures retain
+their original runtime hashes and require their own code revision.
+
+Compare the new observer and startup policies without changing controller gains:
+
+```sh
+python scripts/sensor_rotor_screen.py --output results/my_rotor_observer --controllers V13 F13 --seeds 3 --conditions rotor_projected_warm rotor_projected_cold rotor_telemetry_warm rotor_unfiltered_warm
+```
+
+`configs/arena_rotor_projected_development_v9.json` exposes the new configuration
+with development seed 3. The original v6 candidate and main-paper configuration
+remain unchanged; no final tuning profile has been frozen.
 
 Run or resume a paired high-speed development comparison:
 
@@ -111,7 +124,7 @@ truth-only tuning records are not final sensor-inclusive tuning results.
 
 `origin` is this repository. Future verified changes are committed and pushed
 here in coherent checkpoints. Python environments, credentials, caches, local
-backups, bulk traces, and generated archives are ignored. Selected v7/v8 summaries
+backups, bulk traces, and generated archives are ignored. Selected v7/v8/v9 summaries
 and reference fixtures are versioned; raw campaigns remain in the local Desktop
 checkout. Historical documentation can refer to those local-only artifacts.
 

@@ -416,3 +416,12 @@ Each condition saves its full derived configuration. The parent screen verifies
 its axes, base configuration, runtime and driver hashes on resume. The nested
 matching screens retain completed failures and reject reserved evaluation seeds.
 Use separate output folders for concurrent controllers or repeats.
+
+## Timestamp-aware rotor observer and startup history
+
+The optional `telemetry_predictor` mode now projects delayed telemetry through
+recorded motor commands using a declared `motor_tau_s`. An independent optional
+`prehistory_s` policy supplies past noisy rotor measurements from steady initial
+trim. Neither feature changes the legacy feedback defaults. Read
+[the rotor observer equations, assumptions and comparison commands](ROTOR_OBSERVER.md)
+before using `configs/arena_rotor_projected_development_v9.json`.

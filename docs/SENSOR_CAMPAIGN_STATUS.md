@@ -1,6 +1,20 @@
-# Sensor campaign status — 2026-09-30, sensor group and rotor timing diagnosis
+# Sensor campaign status — 2026-09-30, causal rotor observation
 
 ## Current checkpoint
+
+V9 implements timestamp-aware rotor projection and an independent steady-trim
+measurement-history startup. Both controllers pass the nominal 85 m/s case with
+the original 4 ms rotor latency. Cold-start and motor-model-mismatch conditions
+retain their failures. The full source/seed/configuration contracts and outcomes
+are in [the v9 report](../results/sensor_readiness_v9/report.md); see
+[the observer assumptions](ROTOR_OBSERVER.md) before interpreting sensor limits.
+
+V9 passed 277 distinct tests, with eight long legacy tests skipped. The default
+reproduction fixture exercises the new observer. A separate fresh legacy fixture
+and local replay remain bit-identical to v8. Controller defaults, aircraft, main
+configuration and held-out seeds remain unchanged; final tuning has not started.
+
+## Previous v8 checkpoint
 
 V8 adds fixed-covariance group controls and explicit rotor timing comparisons.
 At 85 m/s, both controllers pass quiet/IMU-only/navigation-only feedback but

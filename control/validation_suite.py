@@ -193,7 +193,7 @@ def run_trial(factory, label, profile, case, limits, feedback=None, sensor_profi
             raise ValueError('sensor feedback requires a sensor profile')
         sensor_feedback = ArenaSensorFeedback(x, sensor_profile, dt, seed=sensor_seed)
         xdot0 = np.asarray(plant.evaluate_xdot(x, trim['control'], np.zeros(3)), dtype=float)
-        sensor_feedback.initial_packets(0.0, x, xdot0)
+        sensor_feedback.initial_packets(0.0, x, xdot0, initial_command=trim['control'])
     elif feedback != 'truth':
         raise ValueError(f'unknown feedback mode {feedback!r}')
     wind = gust_wind(profile, case)

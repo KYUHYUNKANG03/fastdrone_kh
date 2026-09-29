@@ -3,15 +3,23 @@
 Status: development candidate, 2026-09-30. The team controller gains, aircraft
 model, allocation rules, and original truth-feedback configurations are unchanged.
 
-The current v8 checkpoint adds fixed-covariance sensor-group controls and a rotor
+The current v9 checkpoint adds a timestamp-aware rotor observer and an explicit
+steady-trim measurement-history policy. Both controllers pass the nominal
+85 m/s development case with the original 4 ms telemetry latency. The default
+reproduction fixture now exercises this new observer. The original candidate
+and main-paper configuration remain unchanged. Read [the observer assumptions](ROTOR_OBSERVER.md)
+and [all v9 outcomes](../results/sensor_readiness_v9/report.md); final tuning
+and hardware limits have not been established.
+
+The previous v8 checkpoint added fixed-covariance sensor-group controls and a rotor
 timing screen. Both controllers pass isolated IMU and navigation errors at
 85 m/s but fail the nominal rotor path; both pass the diagnostic configuration
 with rotor delay and extra smoothing removed. Startup availability remains a
 confound, so this is not a measured ESC latency limit. Read
 [the v8 diagnosis](SENSOR_GROUP_DIAGNOSIS.md) and
 [the recorded report](../results/sensor_readiness_v8/report.md) before choosing
-the next observer implementation. The default numerical reproduction fixture
-is v8; it was freshly executed and is bit-identical to v7 on the reference Mac.
+the next observer implementation. Its historical numerical reproduction fixture
+was freshly executed and is bit-identical to v7 on the reference Mac.
 
 The v7 continuation adds a strict resumable development screen, a sensor-inclusive
 numerical reproduction check, and a portable checksum-verified source package.
