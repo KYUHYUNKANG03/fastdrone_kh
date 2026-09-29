@@ -122,3 +122,17 @@ def test_bias_walk_is_independent_of_plant_step_and_continues_through_loss():
             np.testing.assert_array_equal(packets[0][0].value, packets[2][0].value)
         else:
             assert packets[2] == []
+
+
+def test_legacy_estimator_noise_override_keeps_covariance_independent_of_sensor_noise():
+    nominal = load_sensor_profile('configs/sensors/nominal.json')
+    quiet = load_sensor_profile(nominal)
+    for key in ('accel_noise_density', 'gyro_noise_density'):
+        quiet['estimator'][key] = nominal['imu'][key]
+        quiet['imu'][key] = 0.
+    a, b = [NavigationFilter(state(), p) for p in (nominal, quiet)]
+    for _ in range(5):
+        for f in (a, b):
+            f._propagate(np.array([.1, .2, 9.8, .01, .02, .03]), .002)
+    np.testing.assert_array_equal(a.state, b.state)
+    np.testing.assert_array_equal(a.P, b.P)

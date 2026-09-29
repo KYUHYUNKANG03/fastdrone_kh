@@ -14,14 +14,18 @@ model attribution and notices remain in `models/team_light/` and `external/`.
 ## Current status
 
 **Development software, not validated flight hardware or final paper results.**
-The v7 checkpoint passed 230 software tests, with eight long legacy tests skipped.
-Nineteen development trials use Python 3.13.7 and the pinned dependencies.
-Both V13/F13 pass the 85 m/s truth and ideal-sensor references. All eleven tested
-noisy high-speed variants fail tracking and propulsion-domain checks. Four
-20 m/s baseline/fault runs pass tracking but exceed the propulsion model's domain.
-These are limited development comparisons, not estimated failure probabilities.
+The v8 checkpoint passed 250 software tests, with eight long legacy tests skipped.
+Paired 85 m/s comparisons now hold the joint estimator and its covariance
+assumptions fixed. Both V13/F13 pass quiet, IMU-only and navigation-only controls,
+and fail rotor-only and full nominal sensor feedback. Both pass with full nominal
+sensor noise when rotor transport delay and extra measurement smoothing are removed.
+That last case is diagnostic, not a claim of achievable zero-latency hardware.
+Latency comparisons still include startup without an available rotor measurement.
+These are single-seed development findings, not hardware limits or failure probabilities.
 
-- [Latest report and comparison figure](results/sensor_readiness_v7/report.md)
+- [Latest report and comparison figure](results/sensor_readiness_v8/report.md)
+- [What the rotor diagnosis means and what remains](docs/SENSOR_GROUP_DIAGNOSIS.md)
+- [Historical v7 report](results/sensor_readiness_v7/report.md)
 - [Sensor equations and implementation](docs/SENSOR_FUSION.md)
 - [Sensor–controller matching protocol](docs/SENSOR_PAPER_PROTOCOL.md)
 - [Team handoff and remaining experimental gates](docs/SENSOR_TEAM_HANDOFF.md)
@@ -63,11 +67,22 @@ python scripts/sensor_reproduce.py --output results/my_sensor_reproduction
 
 A reproduction pass means agreement with the recorded outcomes, including the
 reference's known model-domain failure. Each replay uses a new output folder.
+The active v8 fixture comes from a fresh run and reproduces the historical v7
+reference trajectory exactly on the pinned Mac environment. Old fixtures retain
+their original runtime hashes and require their corresponding code revision.
 
 Run or resume a paired high-speed development comparison:
 
 ```sh
 python -m control.sensor_matching_screen --output results/my_matching_screen --controllers V13 F13 --variants baseline startup_guard gyro_quiet rotor_tau2ms --seeds 3
+```
+
+Isolate sensor groups with fixed estimator assumptions, or separate rotor timing:
+
+```sh
+python -m control.sensor_matching_screen --output results/my_sensor_groups --controllers V13 F13 --variants quiet_sampled imu_only navigation_only rotor_only baseline --seeds 3 --timeout-s 900
+python scripts/sensor_rotor_screen.py --output results/my_rotor_timing --controllers V13 F13 --seeds 3
+python scripts/sensor_group_report.py results/my_sensor_groups/experiment.json --output results/my_group_report
 ```
 
 Repeat the same command to resume; source/configuration changes require a new
@@ -96,7 +111,7 @@ truth-only tuning records are not final sensor-inclusive tuning results.
 
 `origin` is this repository. Future verified changes are committed and pushed
 here in coherent checkpoints. Python environments, credentials, caches, local
-backups, bulk traces, and generated archives are ignored. Selected v7 summaries
+backups, bulk traces, and generated archives are ignored. Selected v7/v8 summaries
 and reference fixtures are versioned; raw campaigns remain in the local Desktop
 checkout. Historical documentation can refer to those local-only artifacts.
 

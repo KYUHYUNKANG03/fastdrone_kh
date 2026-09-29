@@ -126,6 +126,7 @@ def test_reference_error_is_not_a_truth_altitude_change():
 
 
 @pytest.mark.parametrize('bad', [dict(kind='unknown'),dict(baro_bias_rw_density_m_sqrt_s=-1.),
-                               dict(initial_position_error_m=[0.,float('nan'),0.]),dict(nis_gates={'gnss':-1.})])
+                               dict(initial_position_error_m=[0.,float('nan'),0.]),dict(nis_gates={'gnss':-1.}),
+                               dict(accel_noise_density=-1.), dict(gyro_noise_density=float('nan'))])
 def test_invalid_estimator_options_fail_early(bad):
     with pytest.raises(ValueError):profile(**bad)

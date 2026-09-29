@@ -1,4 +1,4 @@
-# Windows sensor development package — v7
+# Windows sensor development package — v8
 
 This package exercises the sensor path on the team aircraft. It is not the
 final tuning release. Candidate high-speed sensor runs currently fail. A
@@ -7,14 +7,14 @@ flight performance. No existing checkout needs to be removed.
 
 ## Receive and check the package
 
-Copy `sensor-development-v7.zip` and its receipt to the school computer. Compare
+Copy `sensor-development-v8.zip` and its receipt to the school computer. Compare
 the ZIP SHA-256 with the receipt, then extract into a **new empty directory**.
 The ZIP has its repository files at the top level; open PowerShell there.
 It excludes Git metadata, credentials, Python environments, and result trees.
 Python 3.13 and the five packages in `requirements-lock.txt` are required.
 
 ```powershell
-Get-FileHash .\sensor-development-v7.zip -Algorithm SHA256
+Get-FileHash .\sensor-development-v8.zip -Algorithm SHA256
 ```
 
 After extraction, run one command at a time from the extracted directory:
@@ -55,6 +55,11 @@ solver counts, and numeric metrics within `rtol=1e-3`, `atol=1e-9`. Trajectory
 bit identity is recorded separately. Keep `comparison.json`, the run manifest,
 logs, and trace files. Each retry uses a new output folder.
 
+The default fixture is now `scripts/data/sensor_reproduction_v8.json`, recorded
+from a fresh v8 run. It reproduces the v7 reference trajectory exactly on the
+reference Mac. The archived v7 fixture keeps its original runtime hashes and
+belongs to its original code revision; it is not silently relabeled as v8.
+
 This checks one sensor-inclusive serial case. It does not replace the original
 full tuning-path reproduction or Windows orphan-worker check in
 `DISTRIBUTED_RUN.md`. Native Windows execution of these new commands remains
@@ -83,6 +88,19 @@ The fault screen can be run with:
 ```powershell
 .\.venv\Scripts\python.exe -m control.sensor_matching_screen --output results\sensor_faults_windows --controllers V13 --variants baseline --faults nominal baro_drift gnss_outlier gnss_outage --cases gust_lateral_p10_VL --seeds 4
 ```
+
+## Sensor group and rotor timing checks
+
+For the new group and rotor timing diagnosis, run in separate output folders:
+
+```powershell
+.\.venv\Scripts\python.exe -m control.sensor_matching_screen --output results\sensor_groups_windows --controllers V13 F13 --variants quiet_sampled imu_only navigation_only rotor_only baseline --seeds 3 --timeout-s 900
+.\.venv\Scripts\python.exe scripts\sensor_rotor_screen.py --output results\rotor_timing_windows --controllers V13 F13 --seeds 3
+```
+
+These commands use fixed team gains and development seeds. Zero-latency controls
+are diagnostic; they do not specify achievable ESC hardware timing. See
+[the sensor equations and protocol](SENSOR_FUSION.md#keep-sensor-noise-and-estimator-assumptions-separate).
 
 ## Return results
 

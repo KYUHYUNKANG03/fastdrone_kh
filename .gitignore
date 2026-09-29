@@ -79,3 +79,14 @@ venv/
 !/results/sensor_readiness_v7/portable_tools_tests.xml
 !/results/sensor_readiness_v7/requirements-macos-reference.txt
 !/results/sensor_readiness_v7/build_report.py
+
+# Reviewed sensor-group diagnosis checkpoint; raw campaigns remain ignored.
+!/results/sensor_readiness_v8/
+/results/sensor_readiness_v8/*
+!/results/sensor_readiness_v8/report.md
+!/results/sensor_readiness_v8/comparison.png
+!/results/sensor_readiness_v8/outcomes.json
+!/results/sensor_readiness_v8/verification.json
+!/results/sensor_readiness_v8/tests.xml
+!/results/sensor_readiness_v8/report_tests.xml
+!/results/sensor_readiness_v8/rotor_report_tests.xml

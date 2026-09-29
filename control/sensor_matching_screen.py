@@ -13,10 +13,54 @@ from control.arena_sensors import load_sensor_profile
 from control.sensor_binding import nonnegative_seed, resolve_feedback, runtime_source_hashes
 from control.sensor_campaign import run_campaign
 
+GROUP_VARIANTS = ('quiet_sampled', 'imu_only', 'navigation_only', 'rotor_only')
 VARIANTS = ('baseline', 'startup_guard', 'gyro_quiet', 'rotor_tau2ms',
-            'cutoff25', 'aligned50', 'guarded_fast', 'guarded_fast25')
+            'cutoff25', 'aligned50', 'guarded_fast', 'guarded_fast25') + GROUP_VARIANTS
 FAULTS = ('nominal', 'baro_drift', 'gnss_outlier', 'baro_outlier', 'gnss_outage',
           'gyro_vibration', 'initial_error')
+
+
+def sensor_group_profile(profile, variant):
+    """Remove sensor errors, then restore one nominal group for diagnosis.
+
+    Rates, enabled sensors, clipping, initialization and navigation algorithm
+    stay fixed. Pin the filter's nominal Q and preflight covariance explicitly:
+    changing the generated IMU/barometer noise must not also retune the filter.
+    This is a sampled, quiet measurement control, not truth-state feedback.
+    """
+    if variant not in GROUP_VARIANTS:
+        raise ValueError('unknown sensor group variant')
+    nominal = load_sensor_profile(profile)
+    result = deepcopy(nominal)
+    e, imu = result['estimator'], nominal['imu']
+    for target, source in (('accel_noise_density', 'accel_noise_density'),
+                           ('gyro_noise_density', 'gyro_noise_density'),
+                           ('accel_bias_rw_density', 'accel_bias_rw'),
+                           ('gyro_bias_rw_density', 'gyro_bias_rw')):
+        e.setdefault(target, imu[source])
+    e.setdefault('preflight_baro_sigma_m', nominal['barometer']['sigma'])
+    scalar_errors = ('sigma', 'pos_sigma', 'vel_sigma', 'accel_noise_density',
+                     'gyro_noise_density', 'accel_bias_rw', 'gyro_bias_rw',
+                     'latency_s', 'dropout_prob', 'bias_rate_m_s')
+    for sensor in ('imu', 'gnss', 'barometer', 'magnetometer', 'rpm'):
+        spec = result[sensor]
+        for key in scalar_errors:
+            if key in spec:
+                spec[key] = 0.
+        for key in ('bias', 'accel_bias', 'gyro_bias', 'pos_bias', 'vel_bias'):
+            if key in spec:
+                spec[key] = [0.]*len(spec[key]) if isinstance(spec[key], list) else 0.
+        for key in ('outage_windows', 'outlier_windows', 'gyro_vibration'):
+            if key in spec:
+                spec[key] = []
+    # Near-instant observation filter; no extra command/plant truth access.
+    result['rotor_observer'] = dict(source='telemetry', tau_s=1e-6)
+    restored = {'quiet_sampled': (), 'imu_only': ('imu',),
+                'navigation_only': ('gnss', 'barometer', 'magnetometer'),
+                'rotor_only': ('rpm', 'rotor_observer')}[variant]
+    for sensor in restored:
+        result[sensor] = deepcopy(nominal[sensor])
+    return load_sensor_profile(result)
 
 
 def variant_config(base, controller, variant, fault='nominal'):
@@ -26,6 +70,8 @@ def variant_config(base, controller, variant, fault='nominal'):
     profile = resolve_feedback(result).profile
     if profile is None:
         raise ValueError('matching screen requires an inline sensor feedback profile')
+    if variant in GROUP_VARIANTS:
+        profile = sensor_group_profile(profile, variant)
     if variant in ('startup_guard', 'guarded_fast', 'guarded_fast25'):
         result['controllers'][controller]['rotor_startup_guard'] = True
     if variant == 'gyro_quiet':

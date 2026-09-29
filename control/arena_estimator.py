@@ -105,8 +105,9 @@ class NavigationFilter:
         F = np.eye(15); F[0:3, 3:6] = np.eye(3)*dt
         F[3:6, 6:9] = -R @ _skew(f)*dt; F[3:6, 9:12] = -R*dt
         F[6:9, 6:9] = np.eye(3)-_skew(w)*dt; F[6:9, 12:15] = -np.eye(3)*dt
-        qa = float(self.profile["imu"].get("accel_noise_density", .03))**2
-        qg = float(self.profile["imu"].get("gyro_noise_density", .002))**2
+        imu, e = self.profile['imu'], self.profile['estimator']
+        qa = float(e.get('accel_noise_density', imu['accel_noise_density']))**2
+        qg = float(e.get('gyro_noise_density', imu['gyro_noise_density']))**2
         Q = np.zeros((15, 15)); Q[3:6, 3:6] = np.eye(3)*qa*dt
         Q[6:9, 6:9] = np.eye(3)*qg*dt; Q[9:12, 9:12] = np.eye(3)*1e-7*dt
         Q[12:15, 12:15] = np.eye(3)*1e-9*dt

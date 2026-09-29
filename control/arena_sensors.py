@@ -107,7 +107,8 @@ def load_sensor_profile(profile):
     if e.get('kind','legacy15') not in ('legacy15','joint_baro'):
         raise ValueError('estimator.kind must be legacy15 or joint_baro')
     for key in ('initial_baro_bias_sigma_m','preflight_reference_sigma_m','preflight_baro_sigma_m',
-                'baro_bias_rw_density_m_sqrt_s','accel_bias_rw_density','gyro_bias_rw_density'):
+                'baro_bias_rw_density_m_sqrt_s','accel_bias_rw_density','gyro_bias_rw_density',
+                'accel_noise_density','gyro_noise_density'):
         if key in e and (not np.isfinite(e[key]) or float(e[key]) < 0):
             raise ValueError(f'estimator.{key} must be finite and nonnegative')
     for key in ('initial_position_error_m','initial_velocity_error_m_s','initial_attitude_error_deg'):

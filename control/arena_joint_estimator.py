@@ -55,8 +55,8 @@ class JointNavigationFilter(NavigationFilter):
         A[3:6,6:9] = -R@_skew(f); A[3:6,9:12] = -R
         A[6:9,6:9] = -_skew(w); A[6:9,12:15] = -np.eye(3)
         imu, e = self.profile['imu'], self.profile['estimator']
-        L = np.diag(np.r_[np.zeros(3), np.full(3,float(imu['accel_noise_density'])**2),
-                         np.full(3,float(imu['gyro_noise_density'])**2),
+        L = np.diag(np.r_[np.zeros(3), np.full(3,float(e.get('accel_noise_density',imu['accel_noise_density']))**2),
+                         np.full(3,float(e.get('gyro_noise_density',imu['gyro_noise_density']))**2),
                          np.full(3,float(e.get('accel_bias_rw_density',imu['accel_bias_rw']))**2),
                          np.full(3,float(e.get('gyro_bias_rw_density',imu['gyro_bias_rw']))**2),
                          float(e.get('baro_bias_rw_density_m_sqrt_s',.03))**2])

@@ -1,6 +1,22 @@
-# Sensor campaign status — 2026-09-30, locked-environment matching screen
+# Sensor campaign status — 2026-09-30, sensor group and rotor timing diagnosis
 
 ## Current checkpoint
+
+V8 adds fixed-covariance group controls and explicit rotor timing comparisons.
+At 85 m/s, both controllers pass quiet/IMU-only/navigation-only feedback but
+fail rotor-only and nominal full feedback. Both pass with full nominal sensor
+noise when extra rotor smoothing and transport latency are removed. That is a
+diagnostic zero-latency condition, not a hardware specification. Delayed cases
+also start without an available rotor measurement. See
+[the interpretation and next observer boundary](SENSOR_GROUP_DIAGNOSIS.md) and
+[all v8 outcomes](../results/sensor_readiness_v8/report.md).
+
+V8 passed 250 distinct software tests (eight long legacy tests skipped). A fresh
+low-speed reference and local replay are bit-identical to v7. Controller gains,
+aircraft, truth configurations and held-out seeds are unchanged. Final tuning
+remains unstarted.
+
+## Previous v7 checkpoint
 
 V7 establishes the team's exact Python 3.13.7 environment with pinned packages,
 and adds strict source/configuration resume checks to a paired development
