@@ -1,0 +1,4953 @@
+[
+  {
+    "profile": "rotor_tau2ms_nominal",
+    "sensor_seed": 3,
+    "feedback": "sensors",
+    "sweep": null,
+    "sweep_value": null,
+    "returncode": 0,
+    "campaign_timed_out": false,
+    "run_dir": "/Users/leo/.codex/.chatgpt-projects/g-p-697716ea005481918efd3fc013c6d984/review/sensor-timing-checkpoint/results/matching_v13_v7/runs/rotor_tau2ms/nominal/V13/gust_lateral_p10_VH/seed_3/runs/rotor_tau2ms_nominal/V13/arena_20260929T155129393574Z",
+    "case_id": "gust_lateral_p10_VH",
+    "factors": {},
+    "extra_params": {},
+    "gust_direction": "lateral",
+    "gust_peak": 10.0,
+    "wind_reference": "absolute",
+    "flow_angle_deg": 6.7098368077569335,
+    "scenario_id": "gust_lateral_p10_VH",
+    "scenario_type": "gust",
+    "controller": "V13",
+    "label": "SMOKE",
+    "rmse_z": 5.319123363298463,
+    "rmse_vx": 24.316106409184666,
+    "rmse_velocity": 30.978654026045252,
+    "max_z_error": 10.261657547108454,
+    "max_velocity_error": 47.763365407886496,
+    "max_omega": 20.32943741613083,
+    "omega_sustained_seconds": 0.0,
+    "simulated_seconds": 12.0,
+    "phases": [
+      {
+        "name": "순항",
+        "samples": 1500,
+        "rmse_z": 4.703702676949942,
+        "rmse_velocity": 29.637211801313054
+      },
+      {
+        "name": "돌풍",
+        "samples": 1000,
+        "rmse_z": 6.886952204177019,
+        "rmse_velocity": 29.658947319128266
+      },
+      {
+        "name": "회복",
+        "samples": 3501,
+        "rmse_z": 5.046750709465532,
+        "rmse_velocity": 31.896281443431814
+      }
+    ],
+    "motor_saturation_fraction": 0.7980416666666666,
+    "pre_gust_ready": false,
+    "recovered": false,
+    "recovery_seconds": null,
+    "gust_max_z_error": 10.261657547108454,
+    "gust_max_velocity_error": 44.01198091483904,
+    "passed": false,
+    "failure_reasons": [
+      "altitude_error",
+      "velocity_error",
+      "pre_gust_not_settled",
+      "gust_not_recovered",
+      "propulsion_model_domain"
+    ],
+    "tracking_pass": false,
+    "model_domain_valid": false,
+    "prop_domain_outside_fraction": 0.14566666666666667,
+    "optimizer_calls": 600,
+    "optimizer_failures": 8,
+    "wall_seconds": 160.30987537500914,
+    "stop_reason": null,
+    "truth_parameter_sha256": "13a1dcc6332987eba93ea4653f4d6087741d1ac085701982ed94c22e6658c807",
+    "trajectory_sha256": "8e6a65932aaffab34b66e9af97717bc925f421160f1b088678dee1ea98d889e3",
+    "sensor_profile": "rotor_tau2ms_nominal",
+    "sensor_profile_sha256": "100713320a68c28e6b9cdd87cea131f5590c90128997a28cc38993eab2dc4200",
+    "estimator_diagnostics": {
+      "updates": 286,
+      "replays": 6001,
+      "delayed_updates": 286,
+      "rejected_updates": 33,
+      "stale_measurements": 0,
+      "nis": {
+        "gnss": 2.2996403343618015,
+        "barometer": 2.526073668919806,
+        "magnetometer": 0.3293116830981788
+      },
+      "barometer_bias_estimate": -0.02167181829184871,
+      "error_state_dimension": 16,
+      "barometer_bias_variance": 0.005844670286760716,
+      "filter_kind": "joint_baro"
+    },
+    "feedback_delay_s": {
+      "state": 0.0,
+      "rotor": 0.0
+    },
+    "nu_decomposition": {
+      "applicable": true,
+      "normalization": "D_nu = diag(m*g, 100, 100, 100)",
+      "scale": [
+        11.5176828132,
+        100.0,
+        100.0,
+        100.0
+      ],
+      "steps": 6000,
+      "steps_without_alloc": 1,
+      "allocation_residual": {
+        "components": [
+          "thrust",
+          "alpha_x",
+          "alpha_y",
+          "alpha_z"
+        ],
+        "integral": [
+          2.1824225840049816,
+          8.084108123414941,
+          10.186446923647962,
+          10.074232737204873
+        ],
+        "max": [
+          5.6835920285921135,
+          2.994329298347665,
+          6.787262328721555,
+          6.434450342944241
+        ],
+        "norm_integral": 18.164265487957824,
+        "norm_max": 9.196970813125455
+      },
+      "realization_error": {
+        "components": [
+          "thrust",
+          "alpha_x",
+          "alpha_y",
+          "alpha_z"
+        ],
+        "integral": [
+          5.044524102046126,
+          2.1906119608227255,
+          4.6843541401672,
+          4.740945465098964
+        ],
+        "max": [
+          7.016594346619993,
+          2.4336550066199725,
+          6.4573746082572345,
+          5.941465620816594
+        ],
+        "norm_integral": 10.748294130711296,
+        "norm_max": 7.93488298643197
+      }
+    },
+    "controller_model_sha256": "2582197db2546d329b62bee631beef5f89459c2c4b11a2131ab024240177956d",
+    "integrators": null,
+    "paper_failed": true,
+    "paper_reasons": [
+      "paper_state_limit",
+      "paper_tracking_failure"
+    ],
+    "paper_z_error_run_seconds": 1.624,
+    "paper_omega_run_seconds": 0.016000000000000014,
+    "paper_cruise_velocity_run_seconds": 6.126,
+    "paper_max_consecutive_solver_failures": 2,
+    "window": [
+      0.0,
+      12.0
+    ],
+    "window_complete": true,
+    "window_rmse_velocity": 30.978654026045252,
+    "window_rmse_z": 5.319123363298463,
+    "window_max_velocity_error": 47.763365407886496,
+    "window_max_z_error": 10.261657547108454,
+    "window_p95_velocity_error": 42.71381914888029,
+    "window_p95_z_error": 9.418169762864625,
+    "window_max_omega": 20.32943741613083,
+    "command_total_variation": 655.4281324384438,
+    "paper_recovery_seconds": null,
+    "trial_id": "rotor_tau2ms/nominal/V13/gust_lateral_p10_VH/seed_3",
+    "variant": "rotor_tau2ms",
+    "fault": "nominal",
+    "source": "results/matching_v13_v7/experiment.json",
+    "feedback_diagnostics": {
+      "scenario_id": "gust_lateral_p10_VH",
+      "profile": "rotor_tau2ms_nominal",
+      "variant": "rotor_tau2ms",
+      "controller": "V13",
+      "sensor_seed": 3,
+      "tracking_pass": false,
+      "model_domain_valid": false,
+      "passed": false,
+      "failure_reasons": [
+        "altitude_error",
+        "velocity_error",
+        "pre_gust_not_settled",
+        "gust_not_recovered",
+        "propulsion_model_domain"
+      ],
+      "rmse_velocity": 30.978654026045252,
+      "rmse_z": 5.319123363298463,
+      "prop_domain_outside_fraction": 0.14566666666666667,
+      "optimizer_failures": 8,
+      "campaign_timed_out": false,
+      "source": "/Users/leo/.codex/.chatgpt-projects/g-p-697716ea005481918efd3fc013c6d984/review/sensor-timing-checkpoint/results/matching_v13_v7/experiment.json",
+      "trace": "/Users/leo/.codex/.chatgpt-projects/g-p-697716ea005481918efd3fc013c6d984/review/sensor-timing-checkpoint/results/matching_v13_v7/runs/rotor_tau2ms/nominal/V13/gust_lateral_p10_VH/seed_3/runs/rotor_tau2ms_nominal/V13/arena_20260929T155129393574Z/gust_lateral_p10_VH_V13.npz",
+      "diagnostic_start_s": 0.5,
+      "minimum_rotor_rpm": 0.5651323520183942,
+      "assumed_minimum_rpm": 10000,
+      "below_minimum_rpm_samples": 655,
+      "above_maximum_rpm_samples": 0,
+      "above_advance_ratio_limit_samples": 768,
+      "reverse_flow_samples": 74,
+      "below_minimum_rpm_after_settle_samples": 552,
+      "domain_first_s": 0.004,
+      "domain_last_s": 9.072000000000001,
+      "command_slew_rms_rad_s2": 429709.819940492,
+      "indi_cutoff_hz": 50.0,
+      "time_align": "S1",
+      "rotor_startup_guard": false,
+      "angular_accel_error_raw_rms_rad_s2": 54.51402909731741,
+      "angular_accel_error_filtered_rms_rad_s2": 20.614514246408103
+    },
+    "startup": {
+      "first_rotor_ready_s": 0.004,
+      "allocation_before_rotor_ready": 1,
+      "all_zero_commands_before_rotor_ready": 1,
+      "minimum_startup_command_rpm": 0.0,
+      "minimum_startup_actual_rpm": 0.5651323520183942,
+      "first_paths": [
+        "fallback_init",
+        "A1",
+        "A1",
+        "A1"
+      ],
+      "first_commands_rad_s": [
+        [
+          1339.2871509424112,
+          1354.9426244028955,
+          1350.3262835009602,
+          1361.4452467100518
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          3146.219056624501,
+          3176.737769511485,
+          3328.3813775079366,
+          3300.248265070048
+        ],
+        [
+          2970.7537497458743,
+          2940.1072979465253,
+          3221.9118975742467,
+          3205.7621199111545
+        ]
+      ],
+      "first_estimated_rotors_rad_s": [
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          2979.3641794290766,
+          2973.840514247722,
+          3145.26433824076,
+          3136.986330340389
+        ],
+        [
+          2882.5069612412317,
+          2885.7077252003733,
+          3040.0212060327026,
+          3034.619488285406
+        ]
+      ]
+    },
+    "estimation_rms": {
+      "position_m": 0.2307854946071834,
+      "velocity_m_s": 0.27656934083510354,
+      "attitude_deg": 0.9550766064538426,
+      "body_rate_rad_s": 0.0884571195787288,
+      "rotor_rad_s": 230.0378726692289
+    },
+    "run_dir_relative": "results/matching_v13_v7/runs/rotor_tau2ms/nominal/V13/gust_lateral_p10_VH/seed_3/runs/rotor_tau2ms_nominal/V13/arena_20260929T155129393574Z"
+  },
+  {
+    "profile": "startup_guard_nominal",
+    "sensor_seed": 3,
+    "feedback": "sensors",
+    "sweep": null,
+    "sweep_value": null,
+    "returncode": 0,
+    "campaign_timed_out": false,
+    "run_dir": "/Users/leo/.codex/.chatgpt-projects/g-p-697716ea005481918efd3fc013c6d984/review/sensor-timing-checkpoint/results/matching_v13_v7/runs/startup_guard/nominal/V13/gust_lateral_p10_VH/seed_3/runs/startup_guard_nominal/V13/arena_20260929T155419007728Z",
+    "case_id": "gust_lateral_p10_VH",
+    "factors": {},
+    "extra_params": {},
+    "gust_direction": "lateral",
+    "gust_peak": 10.0,
+    "wind_reference": "absolute",
+    "flow_angle_deg": 6.7098368077569335,
+    "scenario_id": "gust_lateral_p10_VH",
+    "scenario_type": "gust",
+    "controller": "V13",
+    "label": "SMOKE",
+    "rmse_z": 4.75182809640437,
+    "rmse_vx": 22.999175766499445,
+    "rmse_velocity": 29.23313607279448,
+    "max_z_error": 10.1742245900893,
+    "max_velocity_error": 48.674216894232934,
+    "max_omega": 21.09399814385977,
+    "omega_sustained_seconds": 0.0,
+    "simulated_seconds": 12.0,
+    "phases": [
+      {
+        "name": "순항",
+        "samples": 1500,
+        "rmse_z": 4.489005650899754,
+        "rmse_velocity": 26.728651683008703
+      },
+      {
+        "name": "돌풍",
+        "samples": 1000,
+        "rmse_z": 5.7425876591065315,
+        "rmse_velocity": 27.844684404867582
+      },
+      {
+        "name": "회복",
+        "samples": 3501,
+        "rmse_z": 4.54429250188301,
+        "rmse_velocity": 30.61473548717875
+      }
+    ],
+    "motor_saturation_fraction": 0.8177083333333334,
+    "pre_gust_ready": false,
+    "recovered": false,
+    "recovery_seconds": null,
+    "gust_max_z_error": 10.1742245900893,
+    "gust_max_velocity_error": 48.674216894232934,
+    "passed": false,
+    "failure_reasons": [
+      "altitude_error",
+      "velocity_error",
+      "pre_gust_not_settled",
+      "gust_not_recovered",
+      "propulsion_model_domain"
+    ],
+    "tracking_pass": false,
+    "model_domain_valid": false,
+    "prop_domain_outside_fraction": 0.11533333333333333,
+    "optimizer_calls": 600,
+    "optimizer_failures": 4,
+    "wall_seconds": 177.96421170793474,
+    "stop_reason": null,
+    "truth_parameter_sha256": "13a1dcc6332987eba93ea4653f4d6087741d1ac085701982ed94c22e6658c807",
+    "trajectory_sha256": "56e3e6f78d4bca241f799db07e6c7a4bf443951ebfc8d24ee76af8d60ab736c8",
+    "sensor_profile": "startup_guard_nominal",
+    "sensor_profile_sha256": "57eff3d36b142339340775f848441e840b6c50fc2946582e2eb772737cd0306a",
+    "estimator_diagnostics": {
+      "updates": 310,
+      "replays": 6001,
+      "delayed_updates": 310,
+      "rejected_updates": 9,
+      "stale_measurements": 0,
+      "nis": {
+        "gnss": 2.831349390893881,
+        "barometer": 2.77358223618496,
+        "magnetometer": 8.123918241428735
+      },
+      "barometer_bias_estimate": -0.020895641846359718,
+      "error_state_dimension": 16,
+      "barometer_bias_variance": 0.005869365848049439,
+      "filter_kind": "joint_baro"
+    },
+    "feedback_delay_s": {
+      "state": 0.0,
+      "rotor": 0.0
+    },
+    "nu_decomposition": {
+      "applicable": true,
+      "normalization": "D_nu = diag(m*g, 100, 100, 100)",
+      "scale": [
+        11.5176828132,
+        100.0,
+        100.0,
+        100.0
+      ],
+      "steps": 6000,
+      "steps_without_alloc": 3,
+      "allocation_residual": {
+        "components": [
+          "thrust",
+          "alpha_x",
+          "alpha_y",
+          "alpha_z"
+        ],
+        "integral": [
+          2.284243445257913,
+          8.263042638899568,
+          10.587476254193419,
+          10.912293353257777
+        ],
+        "max": [
+          4.591716834275648,
+          2.322906139457171,
+          5.615474624602755,
+          5.294096169513409
+        ],
+        "norm_integral": 19.065770626742697,
+        "norm_max": 7.464554533021847
+      },
+      "realization_error": {
+        "components": [
+          "thrust",
+          "alpha_x",
+          "alpha_y",
+          "alpha_z"
+        ],
+        "integral": [
+          4.151330161206744,
+          2.234180284233189,
+          4.55814761328592,
+          4.797101147690829
+        ],
+        "max": [
+          6.841549928238886,
+          1.5470797426389198,
+          6.2058557129719505,
+          5.404500045151619
+        ],
+        "norm_integral": 10.089776331204005,
+        "norm_max": 8.174103843180635
+      }
+    },
+    "controller_model_sha256": "2582197db2546d329b62bee631beef5f89459c2c4b11a2131ab024240177956d",
+    "integrators": null,
+    "paper_failed": true,
+    "paper_reasons": [
+      "paper_state_limit",
+      "paper_tracking_failure"
+    ],
+    "paper_z_error_run_seconds": 1.102,
+    "paper_omega_run_seconds": 0.028000000000000025,
+    "paper_cruise_velocity_run_seconds": 4.331999999999999,
+    "paper_max_consecutive_solver_failures": 1,
+    "window": [
+      0.0,
+      12.0
+    ],
+    "window_complete": true,
+    "window_rmse_velocity": 29.23313607279448,
+    "window_rmse_z": 4.75182809640437,
+    "window_max_velocity_error": 48.674216894232934,
+    "window_max_z_error": 10.1742245900893,
+    "window_p95_velocity_error": 39.70527376141397,
+    "window_p95_z_error": 9.391018556866923,
+    "window_max_omega": 21.09399814385977,
+    "command_total_variation": 398.2425262726,
+    "paper_recovery_seconds": null,
+    "trial_id": "startup_guard/nominal/V13/gust_lateral_p10_VH/seed_3",
+    "variant": "startup_guard",
+    "fault": "nominal",
+    "source": "results/matching_v13_v7/experiment.json",
+    "feedback_diagnostics": {
+      "scenario_id": "gust_lateral_p10_VH",
+      "profile": "startup_guard_nominal",
+      "variant": "startup_guard",
+      "controller": "V13",
+      "sensor_seed": 3,
+      "tracking_pass": false,
+      "model_domain_valid": false,
+      "passed": false,
+      "failure_reasons": [
+        "altitude_error",
+        "velocity_error",
+        "pre_gust_not_settled",
+        "gust_not_recovered",
+        "propulsion_model_domain"
+      ],
+      "rmse_velocity": 29.23313607279448,
+      "rmse_z": 4.75182809640437,
+      "prop_domain_outside_fraction": 0.11533333333333333,
+      "optimizer_failures": 4,
+      "campaign_timed_out": false,
+      "source": "/Users/leo/.codex/.chatgpt-projects/g-p-697716ea005481918efd3fc013c6d984/review/sensor-timing-checkpoint/results/matching_v13_v7/experiment.json",
+      "trace": "/Users/leo/.codex/.chatgpt-projects/g-p-697716ea005481918efd3fc013c6d984/review/sensor-timing-checkpoint/results/matching_v13_v7/runs/startup_guard/nominal/V13/gust_lateral_p10_VH/seed_3/runs/startup_guard_nominal/V13/arena_20260929T155419007728Z/gust_lateral_p10_VH_V13.npz",
+      "diagnostic_start_s": 0.5,
+      "minimum_rotor_rpm": 0.011669402433059023,
+      "assumed_minimum_rpm": 10000,
+      "below_minimum_rpm_samples": 509,
+      "above_maximum_rpm_samples": 0,
+      "above_advance_ratio_limit_samples": 464,
+      "reverse_flow_samples": 190,
+      "below_minimum_rpm_after_settle_samples": 369,
+      "domain_first_s": 0.004,
+      "domain_last_s": 11.112,
+      "command_slew_rms_rad_s2": 290059.0953884238,
+      "indi_cutoff_hz": 50.0,
+      "time_align": "S1",
+      "rotor_startup_guard": true,
+      "angular_accel_error_raw_rms_rad_s2": 54.510726469917564,
+      "angular_accel_error_filtered_rms_rad_s2": 20.61256784373907
+    },
+    "startup": {
+      "first_rotor_ready_s": 0.004,
+      "allocation_before_rotor_ready": 0,
+      "all_zero_commands_before_rotor_ready": 0,
+      "minimum_startup_command_rpm": 0.0,
+      "minimum_startup_actual_rpm": 0.011669402433059023,
+      "first_paths": [
+        "fallback_rotor_unavailable",
+        "fallback_rotor_unavailable",
+        "fallback_init",
+        "A1"
+      ],
+      "first_commands_rad_s": [
+        [
+          1339.2871509424112,
+          1354.9426244028955,
+          1350.3262835009602,
+          1361.4452467100518
+        ],
+        [
+          1339.2871509424112,
+          1354.9426244028955,
+          1350.3262835009602,
+          1361.4452467100518
+        ],
+        [
+          1339.2871509424112,
+          1354.9426244028955,
+          1350.3262835009602,
+          1361.4452467100518
+        ],
+        [
+          2948.599248760726,
+          2895.142485858715,
+          3198.059790461985,
+          3191.2823252799158
+        ]
+      ],
+      "first_estimated_rotors_rad_s": [
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          2979.3641794290766,
+          2973.840514247722,
+          3145.26433824076,
+          3136.986330340389
+        ],
+        [
+          2964.7828106761112,
+          2960.572564575304,
+          3129.420512161979,
+          3121.5755153282807
+        ]
+      ]
+    },
+    "estimation_rms": {
+      "position_m": 0.338556411450668,
+      "velocity_m_s": 0.3512664877524632,
+      "attitude_deg": 1.396691645978451,
+      "body_rate_rad_s": 0.08807596121844644,
+      "rotor_rad_s": 504.3905665435231
+    },
+    "run_dir_relative": "results/matching_v13_v7/runs/startup_guard/nominal/V13/gust_lateral_p10_VH/seed_3/runs/startup_guard_nominal/V13/arena_20260929T155419007728Z"
+  },
+  {
+    "profile": "gyro_quiet_nominal",
+    "sensor_seed": 3,
+    "feedback": "sensors",
+    "sweep": null,
+    "sweep_value": null,
+    "returncode": 0,
+    "campaign_timed_out": false,
+    "run_dir": "/Users/leo/.codex/.chatgpt-projects/g-p-697716ea005481918efd3fc013c6d984/review/sensor-timing-checkpoint/results/matching_v13_v7/runs/gyro_quiet/nominal/V13/gust_lateral_p10_VH/seed_3/runs/gyro_quiet_nominal/V13/arena_20260929T155725235988Z",
+    "case_id": "gust_lateral_p10_VH",
+    "factors": {},
+    "extra_params": {},
+    "gust_direction": "lateral",
+    "gust_peak": 10.0,
+    "wind_reference": "absolute",
+    "flow_angle_deg": 6.7098368077569335,
+    "scenario_id": "gust_lateral_p10_VH",
+    "scenario_type": "gust",
+    "controller": "V13",
+    "label": "SMOKE",
+    "rmse_z": 0.5778194319217864,
+    "rmse_vx": 5.855989816401049,
+    "rmse_velocity": 7.206062803761459,
+    "max_z_error": 1.832605842054459,
+    "max_velocity_error": 17.079941846060475,
+    "max_omega": 35.15328979675945,
+    "omega_sustained_seconds": 0.02400000000000002,
+    "simulated_seconds": 0.81,
+    "phases": [
+      {
+        "name": "순항",
+        "samples": 406,
+        "rmse_z": 0.5778194319217864,
+        "rmse_velocity": 7.206062803761459
+      },
+      {
+        "name": "돌풍",
+        "samples": 0,
+        "rmse_z": null,
+        "rmse_velocity": null
+      },
+      {
+        "name": "회복",
+        "samples": 0,
+        "rmse_z": null,
+        "rmse_velocity": null
+      }
+    ],
+    "motor_saturation_fraction": 0.13580246913580246,
+    "pre_gust_ready": false,
+    "recovered": false,
+    "recovery_seconds": null,
+    "gust_max_z_error": null,
+    "gust_max_velocity_error": null,
+    "passed": false,
+    "failure_reasons": [
+      "incomplete",
+      "simulation_error",
+      "velocity_error",
+      "omega_peak",
+      "pre_gust_not_settled",
+      "gust_not_recovered",
+      "propulsion_model_domain"
+    ],
+    "tracking_pass": false,
+    "model_domain_valid": false,
+    "prop_domain_outside_fraction": 0.4469135802469136,
+    "optimizer_calls": 41,
+    "optimizer_failures": 0,
+    "wall_seconds": 8.542917124927044,
+    "stop_reason": "body-rate or altitude divergence stop",
+    "truth_parameter_sha256": "13a1dcc6332987eba93ea4653f4d6087741d1ac085701982ed94c22e6658c807",
+    "trajectory_sha256": "7705bef58f98c96e57bb0a4d15b502525abe2020d439a714ffed24046aae6e33",
+    "sensor_profile": "gyro_quiet_nominal",
+    "sensor_profile_sha256": "25e7aa0d5303594e76d2e8fa3d3786d15d99d0805d0da29de6f47f60ab7845c8",
+    "estimator_diagnostics": {
+      "updates": 111,
+      "replays": 405,
+      "delayed_updates": 111,
+      "rejected_updates": 16,
+      "stale_measurements": 0,
+      "nis": {
+        "gnss": 7.05810243998273,
+        "barometer": 6.167308402559858,
+        "magnetometer": 102.06291120244582
+      },
+      "barometer_bias_estimate": 0.044559313978563206,
+      "error_state_dimension": 16,
+      "barometer_bias_variance": 0.0013151405682638878,
+      "filter_kind": "joint_baro"
+    },
+    "feedback_delay_s": {
+      "state": 0.0,
+      "rotor": 0.0
+    },
+    "nu_decomposition": {
+      "applicable": true,
+      "normalization": "D_nu = diag(m*g, 100, 100, 100)",
+      "scale": [
+        11.5176828132,
+        100.0,
+        100.0,
+        100.0
+      ],
+      "steps": 405,
+      "steps_without_alloc": 1,
+      "allocation_residual": {
+        "components": [
+          "thrust",
+          "alpha_x",
+          "alpha_y",
+          "alpha_z"
+        ],
+        "integral": [
+          0.32979620973554385,
+          0.21460226535994126,
+          0.44523941294047503,
+          0.5190681663894068
+        ],
+        "max": [
+          5.50958168816732,
+          1.3812121661659629,
+          5.256806566550207,
+          7.792000158269177
+        ],
+        "norm_integral": 0.9870178840759566,
+        "norm_max": 9.060891861600977
+      },
+      "realization_error": {
+        "components": [
+          "thrust",
+          "alpha_x",
+          "alpha_y",
+          "alpha_z"
+        ],
+        "integral": [
+          0.28247701722259383,
+          0.10814068084128715,
+          0.6723291556618279,
+          0.28370738657132416
+        ],
+        "max": [
+          1.4633758593293527,
+          0.8860945989608495,
+          3.7020869693832514,
+          2.8433661566576416
+        ],
+        "norm_integral": 0.9132279541079743,
+        "norm_max": 3.8287015836253264
+      }
+    },
+    "controller_model_sha256": "2582197db2546d329b62bee631beef5f89459c2c4b11a2131ab024240177956d",
+    "integrators": null,
+    "paper_failed": false,
+    "paper_reasons": [],
+    "paper_z_error_run_seconds": 0.0,
+    "paper_omega_run_seconds": 0.038000000000000034,
+    "paper_cruise_velocity_run_seconds": 0.0,
+    "paper_max_consecutive_solver_failures": 0,
+    "window": [
+      0.0,
+      12.0
+    ],
+    "window_complete": false,
+    "window_rmse_velocity": 7.206062803761459,
+    "window_rmse_z": 0.5778194319217864,
+    "window_max_velocity_error": 17.079941846060475,
+    "window_max_z_error": 1.832605842054459,
+    "window_p95_velocity_error": 16.80663631872374,
+    "window_p95_z_error": 1.5292727456926114,
+    "window_max_omega": 35.15328979675945,
+    "command_total_variation": 138.11587695672196,
+    "paper_recovery_seconds": null,
+    "trial_id": "gyro_quiet/nominal/V13/gust_lateral_p10_VH/seed_3",
+    "variant": "gyro_quiet",
+    "fault": "nominal",
+    "source": "results/matching_v13_v7/experiment.json",
+    "feedback_diagnostics": {
+      "scenario_id": "gust_lateral_p10_VH",
+      "profile": "gyro_quiet_nominal",
+      "variant": "gyro_quiet",
+      "controller": "V13",
+      "sensor_seed": 3,
+      "tracking_pass": false,
+      "model_domain_valid": false,
+      "passed": false,
+      "failure_reasons": [
+        "incomplete",
+        "simulation_error",
+        "velocity_error",
+        "omega_peak",
+        "pre_gust_not_settled",
+        "gust_not_recovered",
+        "propulsion_model_domain"
+      ],
+      "rmse_velocity": 7.206062803761459,
+      "rmse_z": 0.5778194319217864,
+      "prop_domain_outside_fraction": 0.4469135802469136,
+      "optimizer_failures": 0,
+      "campaign_timed_out": false,
+      "source": "/Users/leo/.codex/.chatgpt-projects/g-p-697716ea005481918efd3fc013c6d984/review/sensor-timing-checkpoint/results/matching_v13_v7/experiment.json",
+      "trace": "/Users/leo/.codex/.chatgpt-projects/g-p-697716ea005481918efd3fc013c6d984/review/sensor-timing-checkpoint/results/matching_v13_v7/runs/gyro_quiet/nominal/V13/gust_lateral_p10_VH/seed_3/runs/gyro_quiet_nominal/V13/arena_20260929T155725235988Z/gust_lateral_p10_VH_V13.npz",
+      "diagnostic_start_s": 0.5,
+      "minimum_rotor_rpm": 985.6925289274405,
+      "assumed_minimum_rpm": 10000,
+      "below_minimum_rpm_samples": 90,
+      "above_maximum_rpm_samples": 0,
+      "above_advance_ratio_limit_samples": 181,
+      "reverse_flow_samples": 0,
+      "below_minimum_rpm_after_settle_samples": 90,
+      "domain_first_s": 0.004,
+      "domain_last_s": 0.806,
+      "command_slew_rms_rad_s2": 1543921.9991034192,
+      "indi_cutoff_hz": 50.0,
+      "time_align": "S1",
+      "rotor_startup_guard": false,
+      "angular_accel_error_raw_rms_rad_s2": 1.2614438877823448,
+      "angular_accel_error_filtered_rms_rad_s2": 0.712495027624448
+    },
+    "startup": {
+      "first_rotor_ready_s": 0.004,
+      "allocation_before_rotor_ready": 1,
+      "all_zero_commands_before_rotor_ready": 1,
+      "minimum_startup_command_rpm": 0.0,
+      "minimum_startup_actual_rpm": 20759.129068616512,
+      "first_paths": [
+        "fallback_init",
+        "A1",
+        "A1",
+        "A1"
+      ],
+      "first_commands_rad_s": [
+        [
+          1354.9803173216721,
+          1354.9803173216721,
+          1347.847710890848,
+          1347.847710890848
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          3135.4477230874313,
+          3130.2809829174626,
+          3343.8336728382515,
+          3336.450815742885
+        ],
+        [
+          3013.5736032859704,
+          3009.2433409749383,
+          3277.2467371185676,
+          3269.750554731474
+        ]
+      ],
+      "first_estimated_rotors_rad_s": [
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          2979.3641794290766,
+          2973.840514247722,
+          3145.26433824076,
+          3136.986330340389
+        ],
+        [
+          2964.924926687955,
+          2960.572905919247,
+          3129.398066414199,
+          3121.4523771728045
+        ]
+      ]
+    },
+    "estimation_rms": {
+      "position_m": 0.3234763341120036,
+      "velocity_m_s": 0.2612671007184122,
+      "attitude_deg": 1.1043336606899052,
+      "body_rate_rad_s": 0.030339116050724688,
+      "rotor_rad_s": 616.517371430052
+    },
+    "run_dir_relative": "results/matching_v13_v7/runs/gyro_quiet/nominal/V13/gust_lateral_p10_VH/seed_3/runs/gyro_quiet_nominal/V13/arena_20260929T155725235988Z"
+  },
+  {
+    "profile": "nominal_joint_baro_candidate_v6",
+    "sensor_seed": 3,
+    "feedback": "sensors",
+    "sweep": null,
+    "sweep_value": null,
+    "returncode": 0,
+    "campaign_timed_out": false,
+    "run_dir": "/Users/leo/.codex/.chatgpt-projects/g-p-697716ea005481918efd3fc013c6d984/review/sensor-timing-checkpoint/results/matching_v13_v7/runs/baseline/nominal/V13/gust_lateral_p10_VH/seed_3/runs/nominal_joint_baro_candidate_v6/V13/arena_20260929T155743322725Z",
+    "case_id": "gust_lateral_p10_VH",
+    "factors": {},
+    "extra_params": {},
+    "gust_direction": "lateral",
+    "gust_peak": 10.0,
+    "wind_reference": "absolute",
+    "flow_angle_deg": 6.7098368077569335,
+    "scenario_id": "gust_lateral_p10_VH",
+    "scenario_type": "gust",
+    "controller": "V13",
+    "label": "SMOKE",
+    "rmse_z": 10.635074085138529,
+    "rmse_vx": 26.375370824575665,
+    "rmse_velocity": 34.86906270374471,
+    "max_z_error": 26.205893350069314,
+    "max_velocity_error": 54.845031868748336,
+    "max_omega": 27.5399702288478,
+    "omega_sustained_seconds": 0.0600000000000005,
+    "simulated_seconds": 12.0,
+    "phases": [
+      {
+        "name": "순항",
+        "samples": 1500,
+        "rmse_z": 2.546698104991132,
+        "rmse_velocity": 21.662072107669687
+      },
+      {
+        "name": "돌풍",
+        "samples": 1000,
+        "rmse_z": 4.549402989427021,
+        "rmse_velocity": 32.375336659817414
+      },
+      {
+        "name": "회복",
+        "samples": 3501,
+        "rmse_z": 13.608097954967837,
+        "rmse_velocity": 39.79487026176482
+      }
+    ],
+    "motor_saturation_fraction": 0.795125,
+    "pre_gust_ready": false,
+    "recovered": false,
+    "recovery_seconds": null,
+    "gust_max_z_error": 26.205893350069314,
+    "gust_max_velocity_error": 54.845031868748336,
+    "passed": false,
+    "failure_reasons": [
+      "altitude_error",
+      "velocity_error",
+      "pre_gust_not_settled",
+      "gust_not_recovered",
+      "propulsion_model_domain"
+    ],
+    "tracking_pass": false,
+    "model_domain_valid": false,
+    "prop_domain_outside_fraction": 0.14283333333333334,
+    "optimizer_calls": 600,
+    "optimizer_failures": 9,
+    "wall_seconds": 219.20183341705706,
+    "stop_reason": null,
+    "truth_parameter_sha256": "13a1dcc6332987eba93ea4653f4d6087741d1ac085701982ed94c22e6658c807",
+    "trajectory_sha256": "a0bd8efe98a27d4c50a1f766b2321ee891f1b0526013b28b0816235f15f542dd",
+    "sensor_profile": "nominal_joint_baro_candidate_v6",
+    "sensor_profile_sha256": "a719bda956879c6c6059770a21e11afa5c82b8090a447ce419996c6bb048918b",
+    "estimator_diagnostics": {
+      "updates": 318,
+      "replays": 6001,
+      "delayed_updates": 318,
+      "rejected_updates": 1,
+      "stale_measurements": 0,
+      "nis": {
+        "gnss": 3.082587298806723,
+        "barometer": 2.5306557928482123,
+        "magnetometer": 3.3269574247863805
+      },
+      "barometer_bias_estimate": -0.025579841559714735,
+      "error_state_dimension": 16,
+      "barometer_bias_variance": 0.005829864838874954,
+      "filter_kind": "joint_baro"
+    },
+    "feedback_delay_s": {
+      "state": 0.0,
+      "rotor": 0.0
+    },
+    "nu_decomposition": {
+      "applicable": true,
+      "normalization": "D_nu = diag(m*g, 100, 100, 100)",
+      "scale": [
+        11.5176828132,
+        100.0,
+        100.0,
+        100.0
+      ],
+      "steps": 6000,
+      "steps_without_alloc": 1,
+      "allocation_residual": {
+        "components": [
+          "thrust",
+          "alpha_x",
+          "alpha_y",
+          "alpha_z"
+        ],
+        "integral": [
+          3.246550315138224,
+          8.538085370013622,
+          10.305752167827073,
+          10.750406711497837
+        ],
+        "max": [
+          8.021869853634946,
+          3.7204921750256634,
+          7.416246083875191,
+          8.45676498376385
+        ],
+        "norm_integral": 19.62179585463646,
+        "norm_max": 11.425705108574807
+      },
+      "realization_error": {
+        "components": [
+          "thrust",
+          "alpha_x",
+          "alpha_y",
+          "alpha_z"
+        ],
+        "integral": [
+          3.5869205513046722,
+          2.211675928514269,
+          4.923077196132704,
+          4.804456426386573
+        ],
+        "max": [
+          7.017347884976409,
+          2.838703295409557,
+          6.63565809389176,
+          5.0086758858361415
+        ],
+        "norm_integral": 10.085424836093305,
+        "norm_max": 8.720818025841833
+      }
+    },
+    "controller_model_sha256": "2582197db2546d329b62bee631beef5f89459c2c4b11a2131ab024240177956d",
+    "integrators": null,
+    "paper_failed": true,
+    "paper_reasons": [
+      "paper_ground_contact",
+      "paper_state_limit",
+      "paper_tracking_failure"
+    ],
+    "paper_z_error_run_seconds": 3.702,
+    "paper_omega_run_seconds": 0.1979999999999995,
+    "paper_cruise_velocity_run_seconds": 7.9159999999999995,
+    "paper_max_consecutive_solver_failures": 2,
+    "window": [
+      0.0,
+      12.0
+    ],
+    "window_complete": true,
+    "window_rmse_velocity": 34.86906270374471,
+    "window_rmse_z": 10.635074085138529,
+    "window_max_velocity_error": 54.845031868748336,
+    "window_max_z_error": 26.205893350069314,
+    "window_p95_velocity_error": 50.40126247392619,
+    "window_p95_z_error": 24.01181166637759,
+    "window_max_omega": 27.5399702288478,
+    "command_total_variation": 595.418114939313,
+    "paper_recovery_seconds": null,
+    "trial_id": "baseline/nominal/V13/gust_lateral_p10_VH/seed_3",
+    "variant": "baseline",
+    "fault": "nominal",
+    "source": "results/matching_v13_v7/experiment.json",
+    "feedback_diagnostics": {
+      "scenario_id": "gust_lateral_p10_VH",
+      "profile": "nominal_joint_baro_candidate_v6",
+      "variant": "baseline",
+      "controller": "V13",
+      "sensor_seed": 3,
+      "tracking_pass": false,
+      "model_domain_valid": false,
+      "passed": false,
+      "failure_reasons": [
+        "altitude_error",
+        "velocity_error",
+        "pre_gust_not_settled",
+        "gust_not_recovered",
+        "propulsion_model_domain"
+      ],
+      "rmse_velocity": 34.86906270374471,
+      "rmse_z": 10.635074085138529,
+      "prop_domain_outside_fraction": 0.14283333333333334,
+      "optimizer_failures": 9,
+      "campaign_timed_out": false,
+      "source": "/Users/leo/.codex/.chatgpt-projects/g-p-697716ea005481918efd3fc013c6d984/review/sensor-timing-checkpoint/results/matching_v13_v7/experiment.json",
+      "trace": "/Users/leo/.codex/.chatgpt-projects/g-p-697716ea005481918efd3fc013c6d984/review/sensor-timing-checkpoint/results/matching_v13_v7/runs/baseline/nominal/V13/gust_lateral_p10_VH/seed_3/runs/nominal_joint_baro_candidate_v6/V13/arena_20260929T155743322725Z/gust_lateral_p10_VH_V13.npz",
+      "diagnostic_start_s": 0.5,
+      "minimum_rotor_rpm": 132.38934092060956,
+      "assumed_minimum_rpm": 10000,
+      "below_minimum_rpm_samples": 553,
+      "above_maximum_rpm_samples": 0,
+      "above_advance_ratio_limit_samples": 749,
+      "reverse_flow_samples": 104,
+      "below_minimum_rpm_after_settle_samples": 553,
+      "domain_first_s": 0.004,
+      "domain_last_s": 8.946,
+      "command_slew_rms_rad_s2": 486447.7069622497,
+      "indi_cutoff_hz": 50.0,
+      "time_align": "S1",
+      "rotor_startup_guard": false,
+      "angular_accel_error_raw_rms_rad_s2": 54.50959528603831,
+      "angular_accel_error_filtered_rms_rad_s2": 20.6124741996316
+    },
+    "startup": {
+      "first_rotor_ready_s": 0.004,
+      "allocation_before_rotor_ready": 1,
+      "all_zero_commands_before_rotor_ready": 1,
+      "minimum_startup_command_rpm": 0.0,
+      "minimum_startup_actual_rpm": 18776.129987583412,
+      "first_paths": [
+        "fallback_init",
+        "A1",
+        "A1",
+        "A1"
+      ],
+      "first_commands_rad_s": [
+        [
+          1339.2871509424112,
+          1354.9426244028955,
+          1350.3262835009602,
+          1361.4452467100518
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          3146.219056624501,
+          3176.737769511485,
+          3328.3813775079366,
+          3300.248265070048
+        ],
+        [
+          3027.180520432881,
+          2991.272992090846,
+          3284.6619879294963,
+          3266.191532966906
+        ]
+      ],
+      "first_estimated_rotors_rad_s": [
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          2979.3641794290766,
+          2973.840514247722,
+          3145.26433824076,
+          3136.986330340389
+        ],
+        [
+          2964.7828106761112,
+          2960.572564575304,
+          3129.420512161979,
+          3121.5755153282807
+        ]
+      ]
+    },
+    "estimation_rms": {
+      "position_m": 0.2209196928606261,
+      "velocity_m_s": 0.19327009623772692,
+      "attitude_deg": 0.5447000311147931,
+      "body_rate_rad_s": 0.07827605842617505,
+      "rotor_rad_s": 490.66961087425705
+    },
+    "run_dir_relative": "results/matching_v13_v7/runs/baseline/nominal/V13/gust_lateral_p10_VH/seed_3/runs/nominal_joint_baro_candidate_v6/V13/arena_20260929T155743322725Z"
+  },
+  {
+    "profile": "rotor_tau2ms_nominal",
+    "sensor_seed": 3,
+    "feedback": "sensors",
+    "sweep": null,
+    "sweep_value": null,
+    "returncode": 0,
+    "campaign_timed_out": false,
+    "run_dir": "/Users/leo/.codex/.chatgpt-projects/g-p-697716ea005481918efd3fc013c6d984/review/sensor-timing-checkpoint/results/matching_f13_v7/runs/rotor_tau2ms/nominal/F13/gust_lateral_p10_VH/seed_3/runs/rotor_tau2ms_nominal/F13/arena_20260929T155129384207Z",
+    "case_id": "gust_lateral_p10_VH",
+    "factors": {},
+    "extra_params": {},
+    "gust_direction": "lateral",
+    "gust_peak": 10.0,
+    "wind_reference": "absolute",
+    "flow_angle_deg": 6.7098368077569335,
+    "scenario_id": "gust_lateral_p10_VH",
+    "scenario_type": "gust",
+    "controller": "F13",
+    "label": "SMOKE",
+    "rmse_z": 0.9428065905997496,
+    "rmse_vx": 3.6297265505980496,
+    "rmse_velocity": 5.872045541846928,
+    "max_z_error": 1.7571292856217902,
+    "max_velocity_error": 10.411552565539193,
+    "max_omega": 12.727139292746822,
+    "omega_sustained_seconds": 0.0,
+    "simulated_seconds": 1.8800000000000001,
+    "phases": [
+      {
+        "name": "순항",
+        "samples": 941,
+        "rmse_z": 0.9428065905997496,
+        "rmse_velocity": 5.872045541846928
+      },
+      {
+        "name": "돌풍",
+        "samples": 0,
+        "rmse_z": null,
+        "rmse_velocity": null
+      },
+      {
+        "name": "회복",
+        "samples": 0,
+        "rmse_z": null,
+        "rmse_velocity": null
+      }
+    ],
+    "motor_saturation_fraction": 0.5015957446808511,
+    "pre_gust_ready": false,
+    "recovered": false,
+    "recovery_seconds": null,
+    "gust_max_z_error": null,
+    "gust_max_velocity_error": null,
+    "passed": false,
+    "failure_reasons": [
+      "incomplete",
+      "simulation_error",
+      "pre_gust_not_settled",
+      "gust_not_recovered",
+      "propulsion_model_domain"
+    ],
+    "tracking_pass": false,
+    "model_domain_valid": false,
+    "prop_domain_outside_fraction": 0.1372340425531915,
+    "optimizer_calls": 95,
+    "optimizer_failures": 7,
+    "wall_seconds": 58.779377041966654,
+    "stop_reason": "5 consecutive optimizer failures",
+    "truth_parameter_sha256": "13a1dcc6332987eba93ea4653f4d6087741d1ac085701982ed94c22e6658c807",
+    "trajectory_sha256": "578b55eb225501dac49809098c8fb4c1094b1be825bb4be39090087331867db2",
+    "sensor_profile": "rotor_tau2ms_nominal",
+    "sensor_profile_sha256": "100713320a68c28e6b9cdd87cea131f5590c90128997a28cc38993eab2dc4200",
+    "estimator_diagnostics": {
+      "updates": 137,
+      "replays": 941,
+      "delayed_updates": 137,
+      "rejected_updates": 163,
+      "stale_measurements": 0,
+      "nis": {
+        "gnss": 9.43578608183839,
+        "barometer": 0.01123405316796341,
+        "magnetometer": 34.55826392539028
+      },
+      "barometer_bias_estimate": 0.05250871522517618,
+      "error_state_dimension": 16,
+      "barometer_bias_variance": 0.0020718283920042463,
+      "filter_kind": "joint_baro"
+    },
+    "feedback_delay_s": {
+      "state": 0.0,
+      "rotor": 0.0
+    },
+    "nu_decomposition": {
+      "applicable": true,
+      "normalization": "D_nu = diag(m*g, 100, 100, 100)",
+      "scale": [
+        11.5176828132,
+        100.0,
+        100.0,
+        100.0
+      ],
+      "steps": 940,
+      "steps_without_alloc": 130,
+      "allocation_residual": {
+        "components": [
+          "thrust",
+          "alpha_x",
+          "alpha_y",
+          "alpha_z"
+        ],
+        "integral": [
+          1.0703700570749504,
+          0.1927430674554695,
+          0.9987791755519655,
+          0.7953705120374511
+        ],
+        "max": [
+          3.9182004761892384,
+          1.0302999136343938,
+          2.657160849707036,
+          2.096780775427204
+        ],
+        "norm_integral": 1.8772944787420134,
+        "norm_max": 4.079669744354769
+      },
+      "realization_error": {
+        "components": [
+          "thrust",
+          "alpha_x",
+          "alpha_y",
+          "alpha_z"
+        ],
+        "integral": [
+          0.7890319091787357,
+          0.2255652252845092,
+          1.3659331904135497,
+          0.9615704419100868
+        ],
+        "max": [
+          1.9360288959624765,
+          1.0094531564327014,
+          3.2930234152908544,
+          2.8897227123551796
+        ],
+        "norm_integral": 2.120987183712038,
+        "norm_max": 3.645777147123252
+      }
+    },
+    "controller_model_sha256": "2582197db2546d329b62bee631beef5f89459c2c4b11a2131ab024240177956d",
+    "integrators": null,
+    "paper_failed": true,
+    "paper_reasons": [
+      "paper_upper_update_failure"
+    ],
+    "paper_z_error_run_seconds": 0.0,
+    "paper_omega_run_seconds": 0.0,
+    "paper_cruise_velocity_run_seconds": 0.0,
+    "paper_max_consecutive_solver_failures": 5,
+    "window": [
+      0.0,
+      12.0
+    ],
+    "window_complete": false,
+    "window_rmse_velocity": 5.872045541846928,
+    "window_rmse_z": 0.9428065905997496,
+    "window_max_velocity_error": 10.411552565539193,
+    "window_max_z_error": 1.7571292856217902,
+    "window_p95_velocity_error": 9.566757664365388,
+    "window_p95_z_error": 1.6996196521336557,
+    "window_max_omega": 12.727139292746822,
+    "command_total_variation": 40.34005784350363,
+    "paper_recovery_seconds": null,
+    "trial_id": "rotor_tau2ms/nominal/F13/gust_lateral_p10_VH/seed_3",
+    "variant": "rotor_tau2ms",
+    "fault": "nominal",
+    "source": "results/matching_f13_v7/experiment.json",
+    "feedback_diagnostics": {
+      "scenario_id": "gust_lateral_p10_VH",
+      "profile": "rotor_tau2ms_nominal",
+      "variant": "rotor_tau2ms",
+      "controller": "F13",
+      "sensor_seed": 3,
+      "tracking_pass": false,
+      "model_domain_valid": false,
+      "passed": false,
+      "failure_reasons": [
+        "incomplete",
+        "simulation_error",
+        "pre_gust_not_settled",
+        "gust_not_recovered",
+        "propulsion_model_domain"
+      ],
+      "rmse_velocity": 5.872045541846928,
+      "rmse_z": 0.9428065905997496,
+      "prop_domain_outside_fraction": 0.1372340425531915,
+      "optimizer_failures": 7,
+      "campaign_timed_out": false,
+      "source": "/Users/leo/.codex/.chatgpt-projects/g-p-697716ea005481918efd3fc013c6d984/review/sensor-timing-checkpoint/results/matching_f13_v7/experiment.json",
+      "trace": "/Users/leo/.codex/.chatgpt-projects/g-p-697716ea005481918efd3fc013c6d984/review/sensor-timing-checkpoint/results/matching_f13_v7/runs/rotor_tau2ms/nominal/F13/gust_lateral_p10_VH/seed_3/runs/rotor_tau2ms_nominal/F13/arena_20260929T155129384207Z/gust_lateral_p10_VH_F13.npz",
+      "diagnostic_start_s": 0.5,
+      "minimum_rotor_rpm": 4564.639363208682,
+      "assumed_minimum_rpm": 10000,
+      "below_minimum_rpm_samples": 45,
+      "above_maximum_rpm_samples": 0,
+      "above_advance_ratio_limit_samples": 129,
+      "reverse_flow_samples": 0,
+      "below_minimum_rpm_after_settle_samples": 0,
+      "domain_first_s": 0.004,
+      "domain_last_s": 0.26,
+      "command_slew_rms_rad_s2": 62371.812060186836,
+      "indi_cutoff_hz": 50.0,
+      "time_align": "S0",
+      "rotor_startup_guard": false,
+      "angular_accel_error_raw_rms_rad_s2": 55.187319134360074,
+      "angular_accel_error_filtered_rms_rad_s2": 16.859376074256808
+    },
+    "startup": {
+      "first_rotor_ready_s": 0.004,
+      "allocation_before_rotor_ready": 0,
+      "all_zero_commands_before_rotor_ready": 0,
+      "minimum_startup_command_rpm": 0.0,
+      "minimum_startup_actual_rpm": 4564.639363208682,
+      "first_paths": [
+        "fallback_init",
+        "fallback_singular",
+        "A0",
+        "A0"
+      ],
+      "first_commands_rad_s": [
+        [
+          1333.7407045548312,
+          1348.5291147233613,
+          1349.2884320341138,
+          1358.065694800986
+        ],
+        [
+          1335.7509330892813,
+          1347.4254474111885,
+          1349.561878610635,
+          1356.913257610876
+        ],
+        [
+          2973.788793181074,
+          2990.0008895522296,
+          3153.8666586250715,
+          3124.0276037872586
+        ],
+        [
+          2962.7421445938835,
+          2934.9277972957248,
+          3183.30263355835,
+          3164.330448617109
+        ]
+      ],
+      "first_estimated_rotors_rad_s": [
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          2979.3641794290766,
+          2973.840514247722,
+          3145.26433824076,
+          3136.986330340389
+        ],
+        [
+          2882.1733190611626,
+          2885.3219255005565,
+          3039.9587748827753,
+          3034.4161939618325
+        ]
+      ]
+    },
+    "estimation_rms": {
+      "position_m": 0.45401628648001563,
+      "velocity_m_s": 0.38003188127266774,
+      "attitude_deg": 2.8956211663083935,
+      "body_rate_rad_s": 0.1001182535576677,
+      "rotor_rad_s": 295.252446537326
+    },
+    "run_dir_relative": "results/matching_f13_v7/runs/rotor_tau2ms/nominal/F13/gust_lateral_p10_VH/seed_3/runs/rotor_tau2ms_nominal/F13/arena_20260929T155129384207Z"
+  },
+  {
+    "profile": "startup_guard_nominal",
+    "sensor_seed": 3,
+    "feedback": "sensors",
+    "sweep": null,
+    "sweep_value": null,
+    "returncode": 0,
+    "campaign_timed_out": false,
+    "run_dir": "/Users/leo/.codex/.chatgpt-projects/g-p-697716ea005481918efd3fc013c6d984/review/sensor-timing-checkpoint/results/matching_f13_v7/runs/startup_guard/nominal/F13/gust_lateral_p10_VH/seed_3/runs/startup_guard_nominal/F13/arena_20260929T155241945014Z",
+    "case_id": "gust_lateral_p10_VH",
+    "factors": {},
+    "extra_params": {},
+    "gust_direction": "lateral",
+    "gust_peak": 10.0,
+    "wind_reference": "absolute",
+    "flow_angle_deg": 6.7098368077569335,
+    "scenario_id": "gust_lateral_p10_VH",
+    "scenario_type": "gust",
+    "controller": "F13",
+    "label": "SMOKE",
+    "rmse_z": 0.6695280149417924,
+    "rmse_vx": 4.123891132469291,
+    "rmse_velocity": 5.459934852864092,
+    "max_z_error": 1.164519431226502,
+    "max_velocity_error": 8.239629014557039,
+    "max_omega": 12.00638261165672,
+    "omega_sustained_seconds": 0.0,
+    "simulated_seconds": 0.44,
+    "phases": [
+      {
+        "name": "순항",
+        "samples": 221,
+        "rmse_z": 0.6695280149417924,
+        "rmse_velocity": 5.459934852864092
+      },
+      {
+        "name": "돌풍",
+        "samples": 0,
+        "rmse_z": null,
+        "rmse_velocity": null
+      },
+      {
+        "name": "회복",
+        "samples": 0,
+        "rmse_z": null,
+        "rmse_velocity": null
+      }
+    ],
+    "motor_saturation_fraction": 0.19886363636363635,
+    "pre_gust_ready": false,
+    "recovered": false,
+    "recovery_seconds": null,
+    "gust_max_z_error": null,
+    "gust_max_velocity_error": null,
+    "passed": false,
+    "failure_reasons": [
+      "incomplete",
+      "simulation_error",
+      "pre_gust_not_settled",
+      "gust_not_recovered",
+      "propulsion_model_domain"
+    ],
+    "tracking_pass": false,
+    "model_domain_valid": false,
+    "prop_domain_outside_fraction": 0.5954545454545455,
+    "optimizer_calls": 23,
+    "optimizer_failures": 7,
+    "wall_seconds": 23.08315112499986,
+    "stop_reason": "5 consecutive optimizer failures",
+    "truth_parameter_sha256": "13a1dcc6332987eba93ea4653f4d6087741d1ac085701982ed94c22e6658c807",
+    "trajectory_sha256": "e19471ef56fbffb79735c97e7752049b61c80f1e8f82b92344dbdf475ee69b79",
+    "sensor_profile": "startup_guard_nominal",
+    "sensor_profile_sha256": "57eff3d36b142339340775f848441e840b6c50fc2946582e2eb772737cd0306a",
+    "estimator_diagnostics": {
+      "updates": 39,
+      "replays": 221,
+      "delayed_updates": 39,
+      "rejected_updates": 31,
+      "stale_measurements": 0,
+      "nis": {
+        "gnss": 4.058511119113475,
+        "barometer": 0.25467502258624847,
+        "magnetometer": 74.53709746268271
+      },
+      "barometer_bias_estimate": 0.04784751798554623,
+      "error_state_dimension": 16,
+      "barometer_bias_variance": 0.0010101296907974494,
+      "filter_kind": "joint_baro"
+    },
+    "feedback_delay_s": {
+      "state": 0.0,
+      "rotor": 0.0
+    },
+    "nu_decomposition": {
+      "applicable": true,
+      "normalization": "D_nu = diag(m*g, 100, 100, 100)",
+      "scale": [
+        11.5176828132,
+        100.0,
+        100.0,
+        100.0
+      ],
+      "steps": 220,
+      "steps_without_alloc": 138,
+      "allocation_residual": {
+        "components": [
+          "thrust",
+          "alpha_x",
+          "alpha_y",
+          "alpha_z"
+        ],
+        "integral": [
+          0.11241061627333661,
+          0.009806563621239661,
+          0.07366510229411591,
+          0.011638117374679915
+        ],
+        "max": [
+          4.745954011663458,
+          1.094283479138062,
+          2.454323356392477,
+          0.4755542399440925
+        ],
+        "norm_integral": 0.14786475370037064,
+        "norm_max": 4.873352610656979
+      },
+      "realization_error": {
+        "components": [
+          "thrust",
+          "alpha_x",
+          "alpha_y",
+          "alpha_z"
+        ],
+        "integral": [
+          0.12131824740532392,
+          0.010020672493985649,
+          0.07864531593041478,
+          0.026437915561343738
+        ],
+        "max": [
+          1.530224156350523,
+          1.09225648907325,
+          2.5010157316267767,
+          0.4377476866692929
+        ],
+        "norm_integral": 0.16512060461170452,
+        "norm_max": 2.9453999627647107
+      }
+    },
+    "controller_model_sha256": "2582197db2546d329b62bee631beef5f89459c2c4b11a2131ab024240177956d",
+    "integrators": null,
+    "paper_failed": true,
+    "paper_reasons": [
+      "paper_upper_update_failure"
+    ],
+    "paper_z_error_run_seconds": 0.0,
+    "paper_omega_run_seconds": 0.0,
+    "paper_cruise_velocity_run_seconds": 0.0,
+    "paper_max_consecutive_solver_failures": 5,
+    "window": [
+      0.0,
+      12.0
+    ],
+    "window_complete": false,
+    "window_rmse_velocity": 5.459934852864092,
+    "window_rmse_z": 0.6695280149417924,
+    "window_max_velocity_error": 8.239629014557039,
+    "window_max_z_error": 1.164519431226502,
+    "window_p95_velocity_error": 7.9038364181872796,
+    "window_p95_z_error": 1.157972191834947,
+    "window_max_omega": 12.00638261165672,
+    "command_total_variation": 14.840096130492924,
+    "paper_recovery_seconds": null,
+    "trial_id": "startup_guard/nominal/F13/gust_lateral_p10_VH/seed_3",
+    "variant": "startup_guard",
+    "fault": "nominal",
+    "source": "results/matching_f13_v7/experiment.json",
+    "feedback_diagnostics": {
+      "scenario_id": "gust_lateral_p10_VH",
+      "profile": "startup_guard_nominal",
+      "variant": "startup_guard",
+      "controller": "F13",
+      "sensor_seed": 3,
+      "tracking_pass": false,
+      "model_domain_valid": false,
+      "passed": false,
+      "failure_reasons": [
+        "incomplete",
+        "simulation_error",
+        "pre_gust_not_settled",
+        "gust_not_recovered",
+        "propulsion_model_domain"
+      ],
+      "rmse_velocity": 5.459934852864092,
+      "rmse_z": 0.6695280149417924,
+      "prop_domain_outside_fraction": 0.5954545454545455,
+      "optimizer_failures": 7,
+      "campaign_timed_out": false,
+      "source": "/Users/leo/.codex/.chatgpt-projects/g-p-697716ea005481918efd3fc013c6d984/review/sensor-timing-checkpoint/results/matching_f13_v7/experiment.json",
+      "trace": "/Users/leo/.codex/.chatgpt-projects/g-p-697716ea005481918efd3fc013c6d984/review/sensor-timing-checkpoint/results/matching_f13_v7/runs/startup_guard/nominal/F13/gust_lateral_p10_VH/seed_3/runs/startup_guard_nominal/F13/arena_20260929T155241945014Z/gust_lateral_p10_VH_F13.npz",
+      "diagnostic_start_s": 0.5,
+      "minimum_rotor_rpm": 4138.608272769987,
+      "assumed_minimum_rpm": 10000,
+      "below_minimum_rpm_samples": 44,
+      "above_maximum_rpm_samples": 0,
+      "above_advance_ratio_limit_samples": 131,
+      "reverse_flow_samples": 0,
+      "below_minimum_rpm_after_settle_samples": 0,
+      "domain_first_s": 0.004,
+      "domain_last_s": 0.264,
+      "command_slew_rms_rad_s2": null,
+      "indi_cutoff_hz": 50.0,
+      "time_align": "S0",
+      "rotor_startup_guard": true,
+      "angular_accel_error_raw_rms_rad_s2": null,
+      "angular_accel_error_filtered_rms_rad_s2": null
+    },
+    "startup": {
+      "first_rotor_ready_s": 0.004,
+      "allocation_before_rotor_ready": 0,
+      "all_zero_commands_before_rotor_ready": 0,
+      "minimum_startup_command_rpm": 0.0,
+      "minimum_startup_actual_rpm": 4138.608272769987,
+      "first_paths": [
+        "fallback_rotor_unavailable",
+        "fallback_rotor_unavailable",
+        "fallback_init",
+        "A0"
+      ],
+      "first_commands_rad_s": [
+        [
+          1333.7407045548312,
+          1348.5291147233613,
+          1349.2884320341138,
+          1358.065694800986
+        ],
+        [
+          1335.7509330892813,
+          1347.4254474111885,
+          1349.561878610635,
+          1356.913257610876
+        ],
+        [
+          1334.523358395228,
+          1348.948900977796,
+          1349.4717364114642,
+          1356.6971089872263
+        ],
+        [
+          2951.7400220295544,
+          2906.9402346127745,
+          3188.950988604926,
+          3181.522824455078
+        ]
+      ],
+      "first_estimated_rotors_rad_s": [
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          2979.3641794290766,
+          2973.840514247722,
+          3145.26433824076,
+          3136.986330340389
+        ],
+        [
+          2964.7325825181056,
+          2960.5144843641124,
+          3129.4111134652603,
+          3121.5449103867713
+        ]
+      ]
+    },
+    "estimation_rms": {
+      "position_m": 0.2047473964532215,
+      "velocity_m_s": 0.19510419079226093,
+      "attitude_deg": 1.3173536696189458,
+      "body_rate_rad_s": 0.10057631015005387,
+      "rotor_rad_s": 823.5853060093133
+    },
+    "run_dir_relative": "results/matching_f13_v7/runs/startup_guard/nominal/F13/gust_lateral_p10_VH/seed_3/runs/startup_guard_nominal/F13/arena_20260929T155241945014Z"
+  },
+  {
+    "profile": "gyro_quiet_nominal",
+    "sensor_seed": 3,
+    "feedback": "sensors",
+    "sweep": null,
+    "sweep_value": null,
+    "returncode": 0,
+    "campaign_timed_out": false,
+    "run_dir": "/Users/leo/.codex/.chatgpt-projects/g-p-697716ea005481918efd3fc013c6d984/review/sensor-timing-checkpoint/results/matching_f13_v7/runs/gyro_quiet/nominal/F13/gust_lateral_p10_VH/seed_3/runs/gyro_quiet_nominal/F13/arena_20260929T155317361649Z",
+    "case_id": "gust_lateral_p10_VH",
+    "factors": {},
+    "extra_params": {},
+    "gust_direction": "lateral",
+    "gust_peak": 10.0,
+    "wind_reference": "absolute",
+    "flow_angle_deg": 6.7098368077569335,
+    "scenario_id": "gust_lateral_p10_VH",
+    "scenario_type": "gust",
+    "controller": "F13",
+    "label": "SMOKE",
+    "rmse_z": 0.17273228193722376,
+    "rmse_vx": 1.1637129789553764,
+    "rmse_velocity": 2.1870040541433875,
+    "max_z_error": 0.6217380581182965,
+    "max_velocity_error": 8.641985418821069,
+    "max_omega": 11.36475968388304,
+    "omega_sustained_seconds": 0.0,
+    "simulated_seconds": 1.12,
+    "phases": [
+      {
+        "name": "순항",
+        "samples": 561,
+        "rmse_z": 0.17273228193722376,
+        "rmse_velocity": 2.1870040541433875
+      },
+      {
+        "name": "돌풍",
+        "samples": 0,
+        "rmse_z": null,
+        "rmse_velocity": null
+      },
+      {
+        "name": "회복",
+        "samples": 0,
+        "rmse_z": null,
+        "rmse_velocity": null
+      }
+    ],
+    "motor_saturation_fraction": 0.13839285714285715,
+    "pre_gust_ready": false,
+    "recovered": false,
+    "recovery_seconds": null,
+    "gust_max_z_error": null,
+    "gust_max_velocity_error": null,
+    "passed": false,
+    "failure_reasons": [
+      "incomplete",
+      "simulation_error",
+      "pre_gust_not_settled",
+      "gust_not_recovered",
+      "propulsion_model_domain"
+    ],
+    "tracking_pass": false,
+    "model_domain_valid": false,
+    "prop_domain_outside_fraction": 0.2714285714285714,
+    "optimizer_calls": 57,
+    "optimizer_failures": 9,
+    "wall_seconds": 33.7219084170647,
+    "stop_reason": "5 consecutive optimizer failures",
+    "truth_parameter_sha256": "13a1dcc6332987eba93ea4653f4d6087741d1ac085701982ed94c22e6658c807",
+    "trajectory_sha256": "5f63bf26984d84793b221097d1525b7bcd981d13168a48f1f9937f8b7bb00539",
+    "sensor_profile": "gyro_quiet_nominal",
+    "sensor_profile_sha256": "25e7aa0d5303594e76d2e8fa3d3786d15d99d0805d0da29de6f47f60ab7845c8",
+    "estimator_diagnostics": {
+      "updates": 138,
+      "replays": 561,
+      "delayed_updates": 138,
+      "rejected_updates": 41,
+      "stale_measurements": 0,
+      "nis": {
+        "gnss": 1.061896918862287,
+        "barometer": 0.15827419971052473,
+        "magnetometer": 24.7202857679098
+      },
+      "barometer_bias_estimate": 0.04710783716525805,
+      "error_state_dimension": 16,
+      "barometer_bias_variance": 0.001550134046000226,
+      "filter_kind": "joint_baro"
+    },
+    "feedback_delay_s": {
+      "state": 0.0,
+      "rotor": 0.0
+    },
+    "nu_decomposition": {
+      "applicable": true,
+      "normalization": "D_nu = diag(m*g, 100, 100, 100)",
+      "scale": [
+        11.5176828132,
+        100.0,
+        100.0,
+        100.0
+      ],
+      "steps": 560,
+      "steps_without_alloc": 90,
+      "allocation_residual": {
+        "components": [
+          "thrust",
+          "alpha_x",
+          "alpha_y",
+          "alpha_z"
+        ],
+        "integral": [
+          0.08852612899808027,
+          0.9943730571573217,
+          0.06186660159428917,
+          0.05850210172615806
+        ],
+        "max": [
+          6.372848981852082,
+          89.4421728674055,
+          2.3574923868983886,
+          2.351799520036234
+        ],
+        "norm_integral": 1.0380224772744833,
+        "norm_max": 89.51492061879385
+      },
+      "realization_error": {
+        "components": [
+          "thrust",
+          "alpha_x",
+          "alpha_y",
+          "alpha_z"
+        ],
+        "integral": [
+          0.16403296123645864,
+          0.11957762889036472,
+          0.7036995123049729,
+          0.13888302116391232
+        ],
+        "max": [
+          5.922080875647004,
+          6.187104815922131,
+          6.077055954582516,
+          2.2086398156969462
+        ],
+        "norm_integral": 0.8192394639434754,
+        "norm_max": 10.731263057605078
+      }
+    },
+    "controller_model_sha256": "2582197db2546d329b62bee631beef5f89459c2c4b11a2131ab024240177956d",
+    "integrators": null,
+    "paper_failed": true,
+    "paper_reasons": [
+      "paper_upper_update_failure"
+    ],
+    "paper_z_error_run_seconds": 0.0,
+    "paper_omega_run_seconds": 0.0,
+    "paper_cruise_velocity_run_seconds": 0.0,
+    "paper_max_consecutive_solver_failures": 5,
+    "window": [
+      0.0,
+      12.0
+    ],
+    "window_complete": false,
+    "window_rmse_velocity": 2.1870040541433875,
+    "window_rmse_z": 0.17273228193722376,
+    "window_max_velocity_error": 8.641985418821069,
+    "window_max_z_error": 0.6217380581182965,
+    "window_p95_velocity_error": 4.824645353483157,
+    "window_p95_z_error": 0.4819149168364021,
+    "window_max_omega": 11.36475968388304,
+    "command_total_variation": 27.26223808580344,
+    "paper_recovery_seconds": null,
+    "trial_id": "gyro_quiet/nominal/F13/gust_lateral_p10_VH/seed_3",
+    "variant": "gyro_quiet",
+    "fault": "nominal",
+    "source": "results/matching_f13_v7/experiment.json",
+    "feedback_diagnostics": {
+      "scenario_id": "gust_lateral_p10_VH",
+      "profile": "gyro_quiet_nominal",
+      "variant": "gyro_quiet",
+      "controller": "F13",
+      "sensor_seed": 3,
+      "tracking_pass": false,
+      "model_domain_valid": false,
+      "passed": false,
+      "failure_reasons": [
+        "incomplete",
+        "simulation_error",
+        "pre_gust_not_settled",
+        "gust_not_recovered",
+        "propulsion_model_domain"
+      ],
+      "rmse_velocity": 2.1870040541433875,
+      "rmse_z": 0.17273228193722376,
+      "prop_domain_outside_fraction": 0.2714285714285714,
+      "optimizer_failures": 9,
+      "campaign_timed_out": false,
+      "source": "/Users/leo/.codex/.chatgpt-projects/g-p-697716ea005481918efd3fc013c6d984/review/sensor-timing-checkpoint/results/matching_f13_v7/experiment.json",
+      "trace": "/Users/leo/.codex/.chatgpt-projects/g-p-697716ea005481918efd3fc013c6d984/review/sensor-timing-checkpoint/results/matching_f13_v7/runs/gyro_quiet/nominal/F13/gust_lateral_p10_VH/seed_3/runs/gyro_quiet_nominal/F13/arena_20260929T155317361649Z/gust_lateral_p10_VH_F13.npz",
+      "diagnostic_start_s": 0.5,
+      "minimum_rotor_rpm": 1655.758146966783,
+      "assumed_minimum_rpm": 10000,
+      "below_minimum_rpm_samples": 74,
+      "above_maximum_rpm_samples": 0,
+      "above_advance_ratio_limit_samples": 152,
+      "reverse_flow_samples": 0,
+      "below_minimum_rpm_after_settle_samples": 74,
+      "domain_first_s": 0.004,
+      "domain_last_s": 1.116,
+      "command_slew_rms_rad_s2": 343185.42897456366,
+      "indi_cutoff_hz": 50.0,
+      "time_align": "S0",
+      "rotor_startup_guard": false,
+      "angular_accel_error_raw_rms_rad_s2": 1.4857402520006162,
+      "angular_accel_error_filtered_rms_rad_s2": 0.7405394590919634
+    },
+    "startup": {
+      "first_rotor_ready_s": 0.004,
+      "allocation_before_rotor_ready": 0,
+      "all_zero_commands_before_rotor_ready": 0,
+      "minimum_startup_command_rpm": 12832.147916133334,
+      "minimum_startup_actual_rpm": 25637.707474118728,
+      "first_paths": [
+        "fallback_init",
+        "fallback_singular",
+        "A0",
+        "A0"
+      ],
+      "first_commands_rad_s": [
+        [
+          1350.8831494340075,
+          1350.8831494340075,
+          1343.779387436735,
+          1343.779387436735
+        ],
+        [
+          1350.8294559323053,
+          1350.7893740846375,
+          1343.8333183319137,
+          1343.8736962363255
+        ],
+        [
+          2960.854782921999,
+          2955.266130550409,
+          3164.677569398934,
+          3156.4784845423533
+        ],
+        [
+          2939.585222841692,
+          2935.1356184802175,
+          3181.8932017745333,
+          3174.2287742746157
+        ]
+      ],
+      "first_estimated_rotors_rad_s": [
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          2979.3641794290766,
+          2973.840514247722,
+          3145.26433824076,
+          3136.986330340389
+        ],
+        [
+          2964.887823075722,
+          2960.535802307014,
+          3129.3612240147613,
+          3121.4155347733667
+        ]
+      ]
+    },
+    "estimation_rms": {
+      "position_m": 0.39757690835993087,
+      "velocity_m_s": 0.1580012173722332,
+      "attitude_deg": 0.9371097947106877,
+      "body_rate_rad_s": 0.018510308205711836,
+      "rotor_rad_s": 643.9306187814232
+    },
+    "run_dir_relative": "results/matching_f13_v7/runs/gyro_quiet/nominal/F13/gust_lateral_p10_VH/seed_3/runs/gyro_quiet_nominal/F13/arena_20260929T155317361649Z"
+  },
+  {
+    "profile": "nominal_joint_baro_candidate_v6",
+    "sensor_seed": 3,
+    "feedback": "sensors",
+    "sweep": null,
+    "sweep_value": null,
+    "returncode": 0,
+    "campaign_timed_out": false,
+    "run_dir": "/Users/leo/.codex/.chatgpt-projects/g-p-697716ea005481918efd3fc013c6d984/review/sensor-timing-checkpoint/results/matching_f13_v7/runs/baseline/nominal/F13/gust_lateral_p10_VH/seed_3/runs/nominal_joint_baro_candidate_v6/F13/arena_20260929T155402605359Z",
+    "case_id": "gust_lateral_p10_VH",
+    "factors": {},
+    "extra_params": {},
+    "gust_direction": "lateral",
+    "gust_peak": 10.0,
+    "wind_reference": "absolute",
+    "flow_angle_deg": 6.7098368077569335,
+    "scenario_id": "gust_lateral_p10_VH",
+    "scenario_type": "gust",
+    "controller": "F13",
+    "label": "SMOKE",
+    "rmse_z": 1.054807119725205,
+    "rmse_vx": 8.106503090836828,
+    "rmse_velocity": 9.890262805762537,
+    "max_z_error": 2.4239000063307117,
+    "max_velocity_error": 21.477279145868675,
+    "max_omega": 12.517268651381197,
+    "omega_sustained_seconds": 0.0,
+    "simulated_seconds": 3.3000000000000003,
+    "phases": [
+      {
+        "name": "순항",
+        "samples": 1500,
+        "rmse_z": 1.0979728626655871,
+        "rmse_velocity": 10.228741163186843
+      },
+      {
+        "name": "돌풍",
+        "samples": 151,
+        "rmse_z": 0.4353259115755216,
+        "rmse_velocity": 5.492704932492707
+      },
+      {
+        "name": "회복",
+        "samples": 0,
+        "rmse_z": null,
+        "rmse_velocity": null
+      }
+    ],
+    "motor_saturation_fraction": 0.3616666666666667,
+    "pre_gust_ready": false,
+    "recovered": false,
+    "recovery_seconds": null,
+    "gust_max_z_error": 0.7108168211911838,
+    "gust_max_velocity_error": 6.69498300097699,
+    "passed": false,
+    "failure_reasons": [
+      "incomplete",
+      "simulation_error",
+      "velocity_error",
+      "pre_gust_not_settled",
+      "gust_not_recovered",
+      "propulsion_model_domain"
+    ],
+    "tracking_pass": false,
+    "model_domain_valid": false,
+    "prop_domain_outside_fraction": 0.14606060606060606,
+    "optimizer_calls": 166,
+    "optimizer_failures": 19,
+    "wall_seconds": 122.75085233303253,
+    "stop_reason": "5 consecutive optimizer failures",
+    "truth_parameter_sha256": "13a1dcc6332987eba93ea4653f4d6087741d1ac085701982ed94c22e6658c807",
+    "trajectory_sha256": "cb5fc9527536eff1eb8664e536f689fd230949523864a15bb645459c3e3394b8",
+    "sensor_profile": "nominal_joint_baro_candidate_v6",
+    "sensor_profile_sha256": "a719bda956879c6c6059770a21e11afa5c82b8090a447ce419996c6bb048918b",
+    "estimator_diagnostics": {
+      "updates": 185,
+      "replays": 1651,
+      "delayed_updates": 185,
+      "rejected_updates": 134,
+      "stale_measurements": 0,
+      "nis": {
+        "gnss": 6.801120445265633,
+        "barometer": 2.1558974893375473,
+        "magnetometer": 51.287755781016756
+      },
+      "barometer_bias_estimate": 0.04293427510420987,
+      "error_state_dimension": 16,
+      "barometer_bias_variance": 0.0028863584811750567,
+      "filter_kind": "joint_baro"
+    },
+    "feedback_delay_s": {
+      "state": 0.0,
+      "rotor": 0.0
+    },
+    "nu_decomposition": {
+      "applicable": true,
+      "normalization": "D_nu = diag(m*g, 100, 100, 100)",
+      "scale": [
+        11.5176828132,
+        100.0,
+        100.0,
+        100.0
+      ],
+      "steps": 1650,
+      "steps_without_alloc": 169,
+      "allocation_residual": {
+        "components": [
+          "thrust",
+          "alpha_x",
+          "alpha_y",
+          "alpha_z"
+        ],
+        "integral": [
+          1.5644875777242742,
+          0.5393754048697379,
+          0.9051228791162567,
+          1.2108192705684553
+        ],
+        "max": [
+          7.3113068580626255,
+          7.4126647059548905,
+          2.5804821743518596,
+          2.574250832295194
+        ],
+        "norm_integral": 2.5465818468408514,
+        "norm_max": 10.585957710376945
+      },
+      "realization_error": {
+        "components": [
+          "thrust",
+          "alpha_x",
+          "alpha_y",
+          "alpha_z"
+        ],
+        "integral": [
+          1.187915449219125,
+          0.648168861011601,
+          1.759631500919304,
+          1.9382325435561858
+        ],
+        "max": [
+          7.627063316203986,
+          7.085426547141687,
+          3.01592114453552,
+          3.19276145446491
+        ],
+        "norm_integral": 3.5827605030144016,
+        "norm_max": 10.641737017819654
+      }
+    },
+    "controller_model_sha256": "2582197db2546d329b62bee631beef5f89459c2c4b11a2131ab024240177956d",
+    "integrators": null,
+    "paper_failed": true,
+    "paper_reasons": [
+      "paper_upper_update_failure"
+    ],
+    "paper_z_error_run_seconds": 0.0,
+    "paper_omega_run_seconds": 0.0,
+    "paper_cruise_velocity_run_seconds": 0.07600000000000007,
+    "paper_max_consecutive_solver_failures": 5,
+    "window": [
+      0.0,
+      12.0
+    ],
+    "window_complete": false,
+    "window_rmse_velocity": 9.890262805762537,
+    "window_rmse_z": 1.054807119725205,
+    "window_max_velocity_error": 21.477279145868675,
+    "window_max_z_error": 2.4239000063307117,
+    "window_p95_velocity_error": 20.481868817589323,
+    "window_p95_z_error": 2.2690356158695693,
+    "window_max_omega": 12.517268651381197,
+    "command_total_variation": 89.93441040137256,
+    "paper_recovery_seconds": null,
+    "trial_id": "baseline/nominal/F13/gust_lateral_p10_VH/seed_3",
+    "variant": "baseline",
+    "fault": "nominal",
+    "source": "results/matching_f13_v7/experiment.json",
+    "feedback_diagnostics": {
+      "scenario_id": "gust_lateral_p10_VH",
+      "profile": "nominal_joint_baro_candidate_v6",
+      "variant": "baseline",
+      "controller": "F13",
+      "sensor_seed": 3,
+      "tracking_pass": false,
+      "model_domain_valid": false,
+      "passed": false,
+      "failure_reasons": [
+        "incomplete",
+        "simulation_error",
+        "velocity_error",
+        "pre_gust_not_settled",
+        "gust_not_recovered",
+        "propulsion_model_domain"
+      ],
+      "rmse_velocity": 9.890262805762537,
+      "rmse_z": 1.054807119725205,
+      "prop_domain_outside_fraction": 0.14606060606060606,
+      "optimizer_failures": 19,
+      "campaign_timed_out": false,
+      "source": "/Users/leo/.codex/.chatgpt-projects/g-p-697716ea005481918efd3fc013c6d984/review/sensor-timing-checkpoint/results/matching_f13_v7/experiment.json",
+      "trace": "/Users/leo/.codex/.chatgpt-projects/g-p-697716ea005481918efd3fc013c6d984/review/sensor-timing-checkpoint/results/matching_f13_v7/runs/baseline/nominal/F13/gust_lateral_p10_VH/seed_3/runs/nominal_joint_baro_candidate_v6/F13/arena_20260929T155402605359Z/gust_lateral_p10_VH_F13.npz",
+      "diagnostic_start_s": 0.5,
+      "minimum_rotor_rpm": 4680.670231427124,
+      "assumed_minimum_rpm": 10000,
+      "below_minimum_rpm_samples": 52,
+      "above_maximum_rpm_samples": 0,
+      "above_advance_ratio_limit_samples": 241,
+      "reverse_flow_samples": 0,
+      "below_minimum_rpm_after_settle_samples": 52,
+      "domain_first_s": 0.004,
+      "domain_last_s": 2.0060000000000002,
+      "command_slew_rms_rad_s2": 184673.33119740314,
+      "indi_cutoff_hz": 50.0,
+      "time_align": "S0",
+      "rotor_startup_guard": false,
+      "angular_accel_error_raw_rms_rad_s2": 54.614151122171016,
+      "angular_accel_error_filtered_rms_rad_s2": 16.64734295156016
+    },
+    "startup": {
+      "first_rotor_ready_s": 0.004,
+      "allocation_before_rotor_ready": 0,
+      "all_zero_commands_before_rotor_ready": 0,
+      "minimum_startup_command_rpm": 12736.285555966113,
+      "minimum_startup_actual_rpm": 25609.945991869416,
+      "first_paths": [
+        "fallback_init",
+        "fallback_singular",
+        "A0",
+        "A0"
+      ],
+      "first_commands_rad_s": [
+        [
+          1333.7407045548312,
+          1348.5291147233613,
+          1349.2884320341138,
+          1358.065694800986
+        ],
+        [
+          1335.7509330892813,
+          1347.4254474111885,
+          1349.561878610635,
+          1356.913257610876
+        ],
+        [
+          2973.788793181074,
+          2990.0008895522296,
+          3153.8666586250715,
+          3124.0276037872586
+        ],
+        [
+          2954.098184119936,
+          2920.7195778223036,
+          3188.5588129028015,
+          3167.344283663375
+        ]
+      ],
+      "first_estimated_rotors_rad_s": [
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          2979.3641794290766,
+          2973.840514247722,
+          3145.26433824076,
+          3136.986330340389
+        ],
+        [
+          2964.7325825181056,
+          2960.5144843641124,
+          3129.4111134652603,
+          3121.5449103867713
+        ]
+      ]
+    },
+    "estimation_rms": {
+      "position_m": 0.3574174840928068,
+      "velocity_m_s": 0.14188081101227235,
+      "attitude_deg": 0.6349021968003178,
+      "body_rate_rad_s": 0.07828358676950489,
+      "rotor_rad_s": 442.28191628276136
+    },
+    "run_dir_relative": "results/matching_f13_v7/runs/baseline/nominal/F13/gust_lateral_p10_VH/seed_3/runs/nominal_joint_baro_candidate_v6/F13/arena_20260929T155402605359Z"
+  },
+  {
+    "profile": "aligned50_nominal",
+    "sensor_seed": 3,
+    "feedback": "sensors",
+    "sweep": null,
+    "sweep_value": null,
+    "returncode": 0,
+    "campaign_timed_out": false,
+    "run_dir": "/Users/leo/.codex/.chatgpt-projects/g-p-697716ea005481918efd3fc013c6d984/review/sensor-timing-checkpoint/results/matching_f13_alignment_v7/runs/aligned50/nominal/F13/gust_lateral_p10_VH/seed_3/runs/aligned50_nominal/F13/arena_20260929T155650106213Z",
+    "case_id": "gust_lateral_p10_VH",
+    "factors": {},
+    "extra_params": {},
+    "gust_direction": "lateral",
+    "gust_peak": 10.0,
+    "wind_reference": "absolute",
+    "flow_angle_deg": 6.7098368077569335,
+    "scenario_id": "gust_lateral_p10_VH",
+    "scenario_type": "gust",
+    "controller": "F13",
+    "label": "SMOKE",
+    "rmse_z": 0.9855489872896579,
+    "rmse_vx": 7.493606133391931,
+    "rmse_velocity": 9.058527713037485,
+    "max_z_error": 2.4278529186524445,
+    "max_velocity_error": 21.450882197371012,
+    "max_omega": 24.108124756994588,
+    "omega_sustained_seconds": 0.0,
+    "simulated_seconds": 6.16,
+    "phases": [
+      {
+        "name": "순항",
+        "samples": 1500,
+        "rmse_z": 0.8691318511442886,
+        "rmse_velocity": 7.882552336944659
+      },
+      {
+        "name": "돌풍",
+        "samples": 1000,
+        "rmse_z": 1.256325890462767,
+        "rmse_velocity": 11.264057039178972
+      },
+      {
+        "name": "회복",
+        "samples": 581,
+        "rmse_z": 0.6956420347041032,
+        "rmse_velocity": 7.506331906049784
+      }
+    ],
+    "motor_saturation_fraction": 0.4496753246753247,
+    "pre_gust_ready": false,
+    "recovered": false,
+    "recovery_seconds": null,
+    "gust_max_z_error": 2.4278529186524445,
+    "gust_max_velocity_error": 21.322324611414402,
+    "passed": false,
+    "failure_reasons": [
+      "incomplete",
+      "simulation_error",
+      "velocity_error",
+      "pre_gust_not_settled",
+      "gust_not_recovered",
+      "propulsion_model_domain"
+    ],
+    "tracking_pass": false,
+    "model_domain_valid": false,
+    "prop_domain_outside_fraction": 0.07532467532467532,
+    "optimizer_calls": 309,
+    "optimizer_failures": 25,
+    "wall_seconds": 294.1714749169769,
+    "stop_reason": "5 consecutive optimizer failures",
+    "truth_parameter_sha256": "13a1dcc6332987eba93ea4653f4d6087741d1ac085701982ed94c22e6658c807",
+    "trajectory_sha256": "8c3099704dd4ad53831324725d7c53830dee15ad3672cf0e0863f1f6386d300d",
+    "sensor_profile": "aligned50_nominal",
+    "sensor_profile_sha256": "53c87423bbb8c8150bdfcd18a352bda19e7d45f651d9240fae4f3543723659db",
+    "estimator_diagnostics": {
+      "updates": 201,
+      "replays": 3081,
+      "delayed_updates": 201,
+      "rejected_updates": 118,
+      "stale_measurements": 0,
+      "nis": {
+        "barometer": 1.4894042474798774,
+        "magnetometer": 12.568003024274732,
+        "gnss": 10.27643307778265
+      },
+      "barometer_bias_estimate": 0.012177590838795532,
+      "error_state_dimension": 16,
+      "barometer_bias_variance": 0.004211051855803368,
+      "filter_kind": "joint_baro"
+    },
+    "feedback_delay_s": {
+      "state": 0.0,
+      "rotor": 0.0
+    },
+    "nu_decomposition": {
+      "applicable": true,
+      "normalization": "D_nu = diag(m*g, 100, 100, 100)",
+      "scale": [
+        11.5176828132,
+        100.0,
+        100.0,
+        100.0
+      ],
+      "steps": 3080,
+      "steps_without_alloc": 153,
+      "allocation_residual": {
+        "components": [
+          "thrust",
+          "alpha_x",
+          "alpha_y",
+          "alpha_z"
+        ],
+        "integral": [
+          3.4042371312750874,
+          0.7247420547555191,
+          2.7239517155506348,
+          2.4786181496979856
+        ],
+        "max": [
+          4.626545121923533,
+          2.5733075388945084,
+          2.5565466149413982,
+          2.4108230003992888
+        ],
+        "norm_integral": 5.662592476500294,
+        "norm_max": 4.774537889945324
+      },
+      "realization_error": {
+        "components": [
+          "thrust",
+          "alpha_x",
+          "alpha_y",
+          "alpha_z"
+        ],
+        "integral": [
+          2.6418253097210456,
+          1.262639394393022,
+          4.43236709486642,
+          3.950110712606006
+        ],
+        "max": [
+          2.5919795036330364,
+          1.8355013015220023,
+          3.156185875598121,
+          3.1112215962167693
+        ],
+        "norm_integral": 7.7585481416561155,
+        "norm_max": 3.563203603251169
+      }
+    },
+    "controller_model_sha256": "2582197db2546d329b62bee631beef5f89459c2c4b11a2131ab024240177956d",
+    "integrators": null,
+    "paper_failed": true,
+    "paper_reasons": [
+      "paper_state_limit",
+      "paper_upper_update_failure"
+    ],
+    "paper_z_error_run_seconds": 0.0,
+    "paper_omega_run_seconds": 0.14200000000000035,
+    "paper_cruise_velocity_run_seconds": 0.050000000000000266,
+    "paper_max_consecutive_solver_failures": 5,
+    "window": [
+      0.0,
+      12.0
+    ],
+    "window_complete": false,
+    "window_rmse_velocity": 9.058527713037485,
+    "window_rmse_z": 0.9855489872896579,
+    "window_max_velocity_error": 21.450882197371012,
+    "window_max_z_error": 2.4278529186524445,
+    "window_p95_velocity_error": 16.83549996709645,
+    "window_p95_z_error": 1.8339944507419936,
+    "window_max_omega": 24.108124756994588,
+    "command_total_variation": 173.99477208666383,
+    "paper_recovery_seconds": null,
+    "trial_id": "aligned50/nominal/F13/gust_lateral_p10_VH/seed_3",
+    "variant": "aligned50",
+    "fault": "nominal",
+    "source": "results/matching_f13_alignment_v7/experiment.json",
+    "feedback_diagnostics": {
+      "scenario_id": "gust_lateral_p10_VH",
+      "profile": "aligned50_nominal",
+      "variant": "aligned50",
+      "controller": "F13",
+      "sensor_seed": 3,
+      "tracking_pass": false,
+      "model_domain_valid": false,
+      "passed": false,
+      "failure_reasons": [
+        "incomplete",
+        "simulation_error",
+        "velocity_error",
+        "pre_gust_not_settled",
+        "gust_not_recovered",
+        "propulsion_model_domain"
+      ],
+      "rmse_velocity": 9.058527713037485,
+      "rmse_z": 0.9855489872896579,
+      "prop_domain_outside_fraction": 0.07532467532467532,
+      "optimizer_failures": 25,
+      "campaign_timed_out": false,
+      "source": "/Users/leo/.codex/.chatgpt-projects/g-p-697716ea005481918efd3fc013c6d984/review/sensor-timing-checkpoint/results/matching_f13_alignment_v7/experiment.json",
+      "trace": "/Users/leo/.codex/.chatgpt-projects/g-p-697716ea005481918efd3fc013c6d984/review/sensor-timing-checkpoint/results/matching_f13_alignment_v7/runs/aligned50/nominal/F13/gust_lateral_p10_VH/seed_3/runs/aligned50_nominal/F13/arena_20260929T155650106213Z/gust_lateral_p10_VH_F13.npz",
+      "diagnostic_start_s": 0.5,
+      "minimum_rotor_rpm": 529.7847491824807,
+      "assumed_minimum_rpm": 10000,
+      "below_minimum_rpm_samples": 113,
+      "above_maximum_rpm_samples": 0,
+      "above_advance_ratio_limit_samples": 231,
+      "reverse_flow_samples": 0,
+      "below_minimum_rpm_after_settle_samples": 113,
+      "domain_first_s": 0.004,
+      "domain_last_s": 2.866,
+      "command_slew_rms_rad_s2": 139734.10660849157,
+      "indi_cutoff_hz": 50.0,
+      "time_align": "S1",
+      "rotor_startup_guard": false,
+      "angular_accel_error_raw_rms_rad_s2": 54.874215352223565,
+      "angular_accel_error_filtered_rms_rad_s2": 20.773146727433947
+    },
+    "startup": {
+      "first_rotor_ready_s": 0.004,
+      "allocation_before_rotor_ready": 0,
+      "all_zero_commands_before_rotor_ready": 0,
+      "minimum_startup_command_rpm": 12736.285555966113,
+      "minimum_startup_actual_rpm": 25609.945991869416,
+      "first_paths": [
+        "fallback_init",
+        "fallback_singular",
+        "A0",
+        "A0"
+      ],
+      "first_commands_rad_s": [
+        [
+          1333.7407045548312,
+          1348.5291147233613,
+          1349.2884320341138,
+          1358.065694800986
+        ],
+        [
+          1335.7509330892813,
+          1347.4254474111885,
+          1349.561878610635,
+          1356.913257610876
+        ],
+        [
+          3152.654429799703,
+          3183.1587995363348,
+          3320.481358118904,
+          3291.184449808008
+        ],
+        [
+          3036.623012611044,
+          3000.247943070913,
+          3274.0926097118863,
+          3254.675559320239
+        ]
+      ],
+      "first_estimated_rotors_rad_s": [
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          2979.3641794290766,
+          2973.840514247722,
+          3145.26433824076,
+          3136.986330340389
+        ],
+        [
+          2964.7325825181056,
+          2960.5144843641124,
+          3129.4111134652603,
+          3121.5449103867713
+        ]
+      ]
+    },
+    "estimation_rms": {
+      "position_m": 0.2814131622247694,
+      "velocity_m_s": 0.12751442947474612,
+      "attitude_deg": 0.6883538455599364,
+      "body_rate_rad_s": 0.07891101329327581,
+      "rotor_rad_s": 367.0467831811684
+    },
+    "run_dir_relative": "results/matching_f13_alignment_v7/runs/aligned50/nominal/F13/gust_lateral_p10_VH/seed_3/runs/aligned50_nominal/F13/arena_20260929T155650106213Z"
+  },
+  {
+    "profile": "cutoff25_nominal",
+    "sensor_seed": 3,
+    "feedback": "sensors",
+    "sweep": null,
+    "sweep_value": null,
+    "returncode": 0,
+    "campaign_timed_out": false,
+    "run_dir": "/Users/leo/.codex/.chatgpt-projects/g-p-697716ea005481918efd3fc013c6d984/review/sensor-timing-checkpoint/results/matching_f13_alignment_v7/runs/cutoff25/nominal/F13/gust_lateral_p10_VH/seed_3/runs/cutoff25_nominal/F13/arena_20260929T160158815963Z",
+    "case_id": "gust_lateral_p10_VH",
+    "factors": {},
+    "extra_params": {},
+    "gust_direction": "lateral",
+    "gust_peak": 10.0,
+    "wind_reference": "absolute",
+    "flow_angle_deg": 6.7098368077569335,
+    "scenario_id": "gust_lateral_p10_VH",
+    "scenario_type": "gust",
+    "controller": "F13",
+    "label": "SMOKE",
+    "rmse_z": 0.48682008237830304,
+    "rmse_vx": 4.634113019761856,
+    "rmse_velocity": 6.175328475328956,
+    "max_z_error": 1.4382342064522007,
+    "max_velocity_error": 12.807295504876661,
+    "max_omega": 12.264209292982905,
+    "omega_sustained_seconds": 0.0,
+    "simulated_seconds": 2.46,
+    "phases": [
+      {
+        "name": "순항",
+        "samples": 1231,
+        "rmse_z": 0.48682008237830304,
+        "rmse_velocity": 6.175328475328956
+      },
+      {
+        "name": "돌풍",
+        "samples": 0,
+        "rmse_z": null,
+        "rmse_velocity": null
+      },
+      {
+        "name": "회복",
+        "samples": 0,
+        "rmse_z": null,
+        "rmse_velocity": null
+      }
+    ],
+    "motor_saturation_fraction": 0.2989837398373984,
+    "pre_gust_ready": false,
+    "recovered": false,
+    "recovery_seconds": null,
+    "gust_max_z_error": null,
+    "gust_max_velocity_error": null,
+    "passed": false,
+    "failure_reasons": [
+      "incomplete",
+      "simulation_error",
+      "pre_gust_not_settled",
+      "gust_not_recovered",
+      "propulsion_model_domain"
+    ],
+    "tracking_pass": false,
+    "model_domain_valid": false,
+    "prop_domain_outside_fraction": 0.11788617886178862,
+    "optimizer_calls": 124,
+    "optimizer_failures": 8,
+    "wall_seconds": 102.20821887499187,
+    "stop_reason": "5 consecutive optimizer failures",
+    "truth_parameter_sha256": "13a1dcc6332987eba93ea4653f4d6087741d1ac085701982ed94c22e6658c807",
+    "trajectory_sha256": "3e810f61b79e6c3ad2233dc036410ff9b14dae216977535aa0f508a66e1cb144",
+    "sensor_profile": "cutoff25_nominal",
+    "sensor_profile_sha256": "7c1c868821f21092ecb6d4a75ef2a74aa7de8a5fe438b225ec52852d7fc4711d",
+    "estimator_diagnostics": {
+      "updates": 220,
+      "replays": 1231,
+      "delayed_updates": 220,
+      "rejected_updates": 99,
+      "stale_measurements": 0,
+      "nis": {
+        "barometer": 1.2188816781536773,
+        "magnetometer": 62.36118878814426,
+        "gnss": 6.997189294004468
+      },
+      "barometer_bias_estimate": 0.051332836127595566,
+      "error_state_dimension": 16,
+      "barometer_bias_variance": 0.0024110249498516937,
+      "filter_kind": "joint_baro"
+    },
+    "feedback_delay_s": {
+      "state": 0.0,
+      "rotor": 0.0
+    },
+    "nu_decomposition": {
+      "applicable": true,
+      "normalization": "D_nu = diag(m*g, 100, 100, 100)",
+      "scale": [
+        11.5176828132,
+        100.0,
+        100.0,
+        100.0
+      ],
+      "steps": 1230,
+      "steps_without_alloc": 123,
+      "allocation_residual": {
+        "components": [
+          "thrust",
+          "alpha_x",
+          "alpha_y",
+          "alpha_z"
+        ],
+        "integral": [
+          0.8249810121588572,
+          0.14201781974050226,
+          0.8406167074976523,
+          0.39976328187192367
+        ],
+        "max": [
+          3.2719080664562057,
+          1.3805984326519771,
+          2.471375963610046,
+          1.9464622691509095
+        ],
+        "norm_integral": 1.3604744434574072,
+        "norm_max": 4.113788697992295
+      },
+      "realization_error": {
+        "components": [
+          "thrust",
+          "alpha_x",
+          "alpha_y",
+          "alpha_z"
+        ],
+        "integral": [
+          0.6910391154499106,
+          0.27975097691573886,
+          1.6811161681560676,
+          0.7892385214301879
+        ],
+        "max": [
+          2.030720094315718,
+          1.7334001379723716,
+          2.864301888154626,
+          2.4213335585911993
+        ],
+        "norm_integral": 2.365881274618436,
+        "norm_max": 3.157190901016663
+      }
+    },
+    "controller_model_sha256": "2582197db2546d329b62bee631beef5f89459c2c4b11a2131ab024240177956d",
+    "integrators": null,
+    "paper_failed": true,
+    "paper_reasons": [
+      "paper_upper_update_failure"
+    ],
+    "paper_z_error_run_seconds": 0.0,
+    "paper_omega_run_seconds": 0.0,
+    "paper_cruise_velocity_run_seconds": 0.0,
+    "paper_max_consecutive_solver_failures": 5,
+    "window": [
+      0.0,
+      12.0
+    ],
+    "window_complete": false,
+    "window_rmse_velocity": 6.175328475328956,
+    "window_rmse_z": 0.48682008237830304,
+    "window_max_velocity_error": 12.807295504876661,
+    "window_max_z_error": 1.4382342064522007,
+    "window_p95_velocity_error": 12.099591948900091,
+    "window_p95_z_error": 1.281579702516927,
+    "window_max_omega": 12.264209292982905,
+    "command_total_variation": 43.31436676211393,
+    "paper_recovery_seconds": null,
+    "trial_id": "cutoff25/nominal/F13/gust_lateral_p10_VH/seed_3",
+    "variant": "cutoff25",
+    "fault": "nominal",
+    "source": "results/matching_f13_alignment_v7/experiment.json",
+    "feedback_diagnostics": {
+      "scenario_id": "gust_lateral_p10_VH",
+      "profile": "cutoff25_nominal",
+      "variant": "cutoff25",
+      "controller": "F13",
+      "sensor_seed": 3,
+      "tracking_pass": false,
+      "model_domain_valid": false,
+      "passed": false,
+      "failure_reasons": [
+        "incomplete",
+        "simulation_error",
+        "pre_gust_not_settled",
+        "gust_not_recovered",
+        "propulsion_model_domain"
+      ],
+      "rmse_velocity": 6.175328475328956,
+      "rmse_z": 0.48682008237830304,
+      "prop_domain_outside_fraction": 0.11788617886178862,
+      "optimizer_failures": 8,
+      "campaign_timed_out": false,
+      "source": "/Users/leo/.codex/.chatgpt-projects/g-p-697716ea005481918efd3fc013c6d984/review/sensor-timing-checkpoint/results/matching_f13_alignment_v7/experiment.json",
+      "trace": "/Users/leo/.codex/.chatgpt-projects/g-p-697716ea005481918efd3fc013c6d984/review/sensor-timing-checkpoint/results/matching_f13_alignment_v7/runs/cutoff25/nominal/F13/gust_lateral_p10_VH/seed_3/runs/cutoff25_nominal/F13/arena_20260929T160158815963Z/gust_lateral_p10_VH_F13.npz",
+      "diagnostic_start_s": 0.5,
+      "minimum_rotor_rpm": 4414.0497992234705,
+      "assumed_minimum_rpm": 10000,
+      "below_minimum_rpm_samples": 38,
+      "above_maximum_rpm_samples": 0,
+      "above_advance_ratio_limit_samples": 145,
+      "reverse_flow_samples": 0,
+      "below_minimum_rpm_after_settle_samples": 38,
+      "domain_first_s": 0.004,
+      "domain_last_s": 1.154,
+      "command_slew_rms_rad_s2": 112115.47138310569,
+      "indi_cutoff_hz": 25.0,
+      "time_align": "S0",
+      "rotor_startup_guard": false,
+      "angular_accel_error_raw_rms_rad_s2": 54.20782445451593,
+      "angular_accel_error_filtered_rms_rad_s2": 9.866923443638388
+    },
+    "startup": {
+      "first_rotor_ready_s": 0.004,
+      "allocation_before_rotor_ready": 0,
+      "all_zero_commands_before_rotor_ready": 0,
+      "minimum_startup_command_rpm": 12736.285555966113,
+      "minimum_startup_actual_rpm": 25609.945991869416,
+      "first_paths": [
+        "fallback_init",
+        "fallback_singular",
+        "A0",
+        "A0"
+      ],
+      "first_commands_rad_s": [
+        [
+          1333.7407045548312,
+          1348.5291147233613,
+          1349.2884320341138,
+          1358.065694800986
+        ],
+        [
+          1335.7509330892813,
+          1347.4254474111885,
+          1349.561878610635,
+          1356.913257610876
+        ],
+        [
+          2980.215938466841,
+          2980.164482343326,
+          3153.237643968818,
+          3127.7185584969397
+        ],
+        [
+          2966.5862565921148,
+          2940.0254747367235,
+          3174.137783621326,
+          3153.087602933763
+        ]
+      ],
+      "first_estimated_rotors_rad_s": [
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          2979.3641794290766,
+          2973.840514247722,
+          3145.26433824076,
+          3136.986330340389
+        ],
+        [
+          2964.7325825181056,
+          2960.5144843641124,
+          3129.4111134652603,
+          3121.5449103867713
+        ]
+      ]
+    },
+    "estimation_rms": {
+      "position_m": 0.39866752730928384,
+      "velocity_m_s": 0.13878641732115085,
+      "attitude_deg": 0.9314969908017062,
+      "body_rate_rad_s": 0.07936990642232727,
+      "rotor_rad_s": 408.32737291979913
+    },
+    "run_dir_relative": "results/matching_f13_alignment_v7/runs/cutoff25/nominal/F13/gust_lateral_p10_VH/seed_3/runs/cutoff25_nominal/F13/arena_20260929T160158815963Z"
+  },
+  {
+    "profile": "cutoff25_nominal",
+    "sensor_seed": 3,
+    "feedback": "sensors",
+    "sweep": null,
+    "sweep_value": null,
+    "returncode": 0,
+    "campaign_timed_out": false,
+    "run_dir": "/Users/leo/.codex/.chatgpt-projects/g-p-697716ea005481918efd3fc013c6d984/review/sensor-timing-checkpoint/results/matching_v13_cutoff_v7/runs/cutoff25/nominal/V13/gust_lateral_p10_VH/seed_3/runs/cutoff25_nominal/V13/arena_20260929T160209674925Z",
+    "case_id": "gust_lateral_p10_VH",
+    "factors": {},
+    "extra_params": {},
+    "gust_direction": "lateral",
+    "gust_peak": 10.0,
+    "wind_reference": "absolute",
+    "flow_angle_deg": 6.7098368077569335,
+    "scenario_id": "gust_lateral_p10_VH",
+    "scenario_type": "gust",
+    "controller": "V13",
+    "label": "SMOKE",
+    "rmse_z": 4.7288252664704995,
+    "rmse_vx": 21.15341775918413,
+    "rmse_velocity": 29.894610357196004,
+    "max_z_error": 10.956467836236286,
+    "max_velocity_error": 45.19341969501556,
+    "max_omega": 15.08354766372744,
+    "omega_sustained_seconds": 0.0,
+    "simulated_seconds": 12.0,
+    "phases": [
+      {
+        "name": "순항",
+        "samples": 1500,
+        "rmse_z": 3.693417244752112,
+        "rmse_velocity": 22.895619372926706
+      },
+      {
+        "name": "돌풍",
+        "samples": 1000,
+        "rmse_z": 4.2745246637511025,
+        "rmse_velocity": 32.950665628202664
+      },
+      {
+        "name": "회복",
+        "samples": 3501,
+        "rmse_z": 5.221720250593919,
+        "rmse_velocity": 31.57739915552571
+      }
+    ],
+    "motor_saturation_fraction": 0.8213333333333334,
+    "pre_gust_ready": false,
+    "recovered": false,
+    "recovery_seconds": null,
+    "gust_max_z_error": 10.956467836236286,
+    "gust_max_velocity_error": 45.19341969501556,
+    "passed": false,
+    "failure_reasons": [
+      "altitude_error",
+      "velocity_error",
+      "pre_gust_not_settled",
+      "gust_not_recovered",
+      "propulsion_model_domain"
+    ],
+    "tracking_pass": false,
+    "model_domain_valid": false,
+    "prop_domain_outside_fraction": 0.06566666666666666,
+    "optimizer_calls": 600,
+    "optimizer_failures": 4,
+    "wall_seconds": 200.87720612506382,
+    "stop_reason": null,
+    "truth_parameter_sha256": "13a1dcc6332987eba93ea4653f4d6087741d1ac085701982ed94c22e6658c807",
+    "trajectory_sha256": "19e254b13ee1320f710c670c7c09ca7cd961ee6b0d7273965441f18d01bbe185",
+    "sensor_profile": "cutoff25_nominal",
+    "sensor_profile_sha256": "7c1c868821f21092ecb6d4a75ef2a74aa7de8a5fe438b225ec52852d7fc4711d",
+    "estimator_diagnostics": {
+      "updates": 287,
+      "replays": 6001,
+      "delayed_updates": 287,
+      "rejected_updates": 32,
+      "stale_measurements": 0,
+      "nis": {
+        "gnss": 1.9243452865621578,
+        "barometer": 2.633032147138438,
+        "magnetometer": 5.616008323997393
+      },
+      "barometer_bias_estimate": -0.023889734641550593,
+      "error_state_dimension": 16,
+      "barometer_bias_variance": 0.005829603158262783,
+      "filter_kind": "joint_baro"
+    },
+    "feedback_delay_s": {
+      "state": 0.0,
+      "rotor": 0.0
+    },
+    "nu_decomposition": {
+      "applicable": true,
+      "normalization": "D_nu = diag(m*g, 100, 100, 100)",
+      "scale": [
+        11.5176828132,
+        100.0,
+        100.0,
+        100.0
+      ],
+      "steps": 6000,
+      "steps_without_alloc": 1,
+      "allocation_residual": {
+        "components": [
+          "thrust",
+          "alpha_x",
+          "alpha_y",
+          "alpha_z"
+        ],
+        "integral": [
+          2.7878734914944014,
+          7.704780467779219,
+          10.301873646604577,
+          10.2834419856089
+        ],
+        "max": [
+          4.573232500814292,
+          2.1923655493087004,
+          5.7583124646856705,
+          5.755683649724152
+        ],
+        "norm_integral": 18.002993273882623,
+        "norm_max": 8.167652565954207
+      },
+      "realization_error": {
+        "components": [
+          "thrust",
+          "alpha_x",
+          "alpha_y",
+          "alpha_z"
+        ],
+        "integral": [
+          3.9853123513193425,
+          1.4411389305869136,
+          3.7435358510440127,
+          3.5473411053191946
+        ],
+        "max": [
+          6.8849455069992915,
+          1.6740680393869507,
+          5.1478980491734045,
+          5.144328523483839
+        ],
+        "norm_integral": 8.418208576577344,
+        "norm_max": 7.310238971263124
+      }
+    },
+    "controller_model_sha256": "2582197db2546d329b62bee631beef5f89459c2c4b11a2131ab024240177956d",
+    "integrators": null,
+    "paper_failed": true,
+    "paper_reasons": [
+      "paper_state_limit",
+      "paper_tracking_failure"
+    ],
+    "paper_z_error_run_seconds": 0.9879999999999995,
+    "paper_omega_run_seconds": 0.0,
+    "paper_cruise_velocity_run_seconds": 3.805999999999999,
+    "paper_max_consecutive_solver_failures": 1,
+    "window": [
+      0.0,
+      12.0
+    ],
+    "window_complete": true,
+    "window_rmse_velocity": 29.894610357196004,
+    "window_rmse_z": 4.7288252664704995,
+    "window_max_velocity_error": 45.19341969501556,
+    "window_max_z_error": 10.956467836236286,
+    "window_p95_velocity_error": 40.121425802040136,
+    "window_p95_z_error": 8.49422245893775,
+    "window_max_omega": 15.08354766372744,
+    "command_total_variation": 250.19323462421647,
+    "paper_recovery_seconds": null,
+    "trial_id": "cutoff25/nominal/V13/gust_lateral_p10_VH/seed_3",
+    "variant": "cutoff25",
+    "fault": "nominal",
+    "source": "results/matching_v13_cutoff_v7/experiment.json",
+    "feedback_diagnostics": {
+      "scenario_id": "gust_lateral_p10_VH",
+      "profile": "cutoff25_nominal",
+      "variant": "cutoff25",
+      "controller": "V13",
+      "sensor_seed": 3,
+      "tracking_pass": false,
+      "model_domain_valid": false,
+      "passed": false,
+      "failure_reasons": [
+        "altitude_error",
+        "velocity_error",
+        "pre_gust_not_settled",
+        "gust_not_recovered",
+        "propulsion_model_domain"
+      ],
+      "rmse_velocity": 29.894610357196004,
+      "rmse_z": 4.7288252664704995,
+      "prop_domain_outside_fraction": 0.06566666666666666,
+      "optimizer_failures": 4,
+      "campaign_timed_out": false,
+      "source": "/Users/leo/.codex/.chatgpt-projects/g-p-697716ea005481918efd3fc013c6d984/review/sensor-timing-checkpoint/results/matching_v13_cutoff_v7/experiment.json",
+      "trace": "/Users/leo/.codex/.chatgpt-projects/g-p-697716ea005481918efd3fc013c6d984/review/sensor-timing-checkpoint/results/matching_v13_cutoff_v7/runs/cutoff25/nominal/V13/gust_lateral_p10_VH/seed_3/runs/cutoff25_nominal/V13/arena_20260929T160209674925Z/gust_lateral_p10_VH_V13.npz",
+      "diagnostic_start_s": 0.5,
+      "minimum_rotor_rpm": 182.38546634590193,
+      "assumed_minimum_rpm": 10000,
+      "below_minimum_rpm_samples": 198,
+      "above_maximum_rpm_samples": 0,
+      "above_advance_ratio_limit_samples": 394,
+      "reverse_flow_samples": 0,
+      "below_minimum_rpm_after_settle_samples": 198,
+      "domain_first_s": 0.004,
+      "domain_last_s": 11.438,
+      "command_slew_rms_rad_s2": 274045.61587972275,
+      "indi_cutoff_hz": 25.0,
+      "time_align": "S1",
+      "rotor_startup_guard": false,
+      "angular_accel_error_raw_rms_rad_s2": 54.5089743667676,
+      "angular_accel_error_filtered_rms_rad_s2": 11.220981119739173
+    },
+    "startup": {
+      "first_rotor_ready_s": 0.004,
+      "allocation_before_rotor_ready": 1,
+      "all_zero_commands_before_rotor_ready": 1,
+      "minimum_startup_command_rpm": 0.0,
+      "minimum_startup_actual_rpm": 12951.358356456007,
+      "first_paths": [
+        "fallback_init",
+        "A1",
+        "A1",
+        "A1"
+      ],
+      "first_commands_rad_s": [
+        [
+          1339.2871509424112,
+          1354.9426244028955,
+          1350.3262835009602,
+          1361.4452467100518
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          3185.361051273046,
+          3188.3489259299577,
+          3346.8574712572204,
+          3321.8906337061185
+        ],
+        [
+          3100.9154947038014,
+          3073.4167083639586,
+          3310.826585231845,
+          3290.596212699242
+        ]
+      ],
+      "first_estimated_rotors_rad_s": [
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          2979.3641794290766,
+          2973.840514247722,
+          3145.26433824076,
+          3136.986330340389
+        ],
+        [
+          2964.7828106761112,
+          2960.572564575304,
+          3129.420512161979,
+          3121.5755153282807
+        ]
+      ]
+    },
+    "estimation_rms": {
+      "position_m": 0.2256060108408262,
+      "velocity_m_s": 0.15214065470557206,
+      "attitude_deg": 0.4142191569092835,
+      "body_rate_rad_s": 0.07809638242899979,
+      "rotor_rad_s": 415.07094084576715
+    },
+    "run_dir_relative": "results/matching_v13_cutoff_v7/runs/cutoff25/nominal/V13/gust_lateral_p10_VH/seed_3/runs/cutoff25_nominal/V13/arena_20260929T160209674925Z"
+  },
+  {
+    "profile": "nominal_joint_baro_candidate_v6",
+    "sensor_seed": 4,
+    "feedback": "sensors",
+    "sweep": null,
+    "sweep_value": null,
+    "returncode": 0,
+    "campaign_timed_out": false,
+    "run_dir": "/Users/leo/.codex/.chatgpt-projects/g-p-697716ea005481918efd3fc013c6d984/review/sensor-timing-checkpoint/results/matching_faults_v7/runs/baseline/nominal/V13/gust_lateral_p10_VL/seed_4/runs/nominal_joint_baro_candidate_v6/V13/arena_20260929T155618303185Z",
+    "case_id": "gust_lateral_p10_VL",
+    "factors": {},
+    "extra_params": {},
+    "gust_direction": "lateral",
+    "gust_peak": 10.0,
+    "wind_reference": "absolute",
+    "flow_angle_deg": 26.56505117707799,
+    "scenario_id": "gust_lateral_p10_VL",
+    "scenario_type": "gust",
+    "controller": "V13",
+    "label": "SMOKE",
+    "rmse_z": 0.045154074768978696,
+    "rmse_vx": 0.05799629384885871,
+    "rmse_velocity": 0.28258807043992784,
+    "max_z_error": 0.09426248460543718,
+    "max_velocity_error": 1.0944227956320507,
+    "max_omega": 0.41537344044868524,
+    "omega_sustained_seconds": 0.0,
+    "simulated_seconds": 12.0,
+    "phases": [
+      {
+        "name": "순항",
+        "samples": 1500,
+        "rmse_z": 0.04539387854396359,
+        "rmse_velocity": 0.12021733610132797
+      },
+      {
+        "name": "돌풍",
+        "samples": 1000,
+        "rmse_z": 0.05947122226974262,
+        "rmse_velocity": 0.6641187789076878
+      },
+      {
+        "name": "회복",
+        "samples": 3501,
+        "rmse_z": 0.04002159195786767,
+        "rmse_velocity": 0.06861734195817792
+      }
+    ],
+    "motor_saturation_fraction": 0.0,
+    "pre_gust_ready": true,
+    "recovered": true,
+    "recovery_seconds": 0.0,
+    "gust_max_z_error": 0.09426248460543718,
+    "gust_max_velocity_error": 1.0944227956320507,
+    "passed": false,
+    "failure_reasons": [
+      "propulsion_model_domain"
+    ],
+    "tracking_pass": true,
+    "model_domain_valid": false,
+    "prop_domain_outside_fraction": 0.014166666666666666,
+    "optimizer_calls": 600,
+    "optimizer_failures": 0,
+    "wall_seconds": 68.94945616705809,
+    "stop_reason": null,
+    "truth_parameter_sha256": "13a1dcc6332987eba93ea4653f4d6087741d1ac085701982ed94c22e6658c807",
+    "trajectory_sha256": "ea5c566b2d028745ce0165b0b25dfb955d8fa65d578f6397023ef6c47646b4c6",
+    "sensor_profile": "nominal_joint_baro_candidate_v6",
+    "sensor_profile_sha256": "a719bda956879c6c6059770a21e11afa5c82b8090a447ce419996c6bb048918b",
+    "estimator_diagnostics": {
+      "updates": 319,
+      "replays": 6001,
+      "delayed_updates": 319,
+      "rejected_updates": 0,
+      "stale_measurements": 0,
+      "nis": {
+        "gnss": 2.6057868375782354,
+        "barometer": 0.3663890005469326,
+        "magnetometer": 4.525476170679159
+      },
+      "barometer_bias_estimate": 0.044224756064154755,
+      "error_state_dimension": 16,
+      "barometer_bias_variance": 0.0058312991469327835,
+      "filter_kind": "joint_baro"
+    },
+    "feedback_delay_s": {
+      "state": 0.0,
+      "rotor": 0.0
+    },
+    "nu_decomposition": {
+      "applicable": true,
+      "normalization": "D_nu = diag(m*g, 100, 100, 100)",
+      "scale": [
+        11.5176828132,
+        100.0,
+        100.0,
+        100.0
+      ],
+      "steps": 6000,
+      "steps_without_alloc": 1,
+      "allocation_residual": {
+        "components": [
+          "thrust",
+          "alpha_x",
+          "alpha_y",
+          "alpha_z"
+        ],
+        "integral": [
+          0.0017380305127873321,
+          0.0004387213178868941,
+          0.00021644826781920957,
+          4.9378251583584566e-05
+        ],
+        "max": [
+          0.8690152563936481,
+          0.21798680322582922,
+          0.10782443876526811,
+          0.024290403767001322
+        ],
+        "norm_integral": 0.0018084311569182205,
+        "norm_max": 0.9027302451650456
+      },
+      "realization_error": {
+        "components": [
+          "thrust",
+          "alpha_x",
+          "alpha_y",
+          "alpha_z"
+        ],
+        "integral": [
+          0.28747048133544484,
+          0.1270409292189731,
+          0.45263286318507606,
+          0.1522984009508798
+        ],
+        "max": [
+          0.8617119861988793,
+          0.22542485055746458,
+          0.13780437208969856,
+          0.09067377158726204
+        ],
+        "norm_integral": 0.6475414479375252,
+        "norm_max": 0.88752944870261
+      }
+    },
+    "controller_model_sha256": "2582197db2546d329b62bee631beef5f89459c2c4b11a2131ab024240177956d",
+    "integrators": null,
+    "paper_failed": false,
+    "paper_reasons": [],
+    "paper_z_error_run_seconds": 0.0,
+    "paper_omega_run_seconds": 0.0,
+    "paper_cruise_velocity_run_seconds": 0.0,
+    "paper_max_consecutive_solver_failures": 0,
+    "window": [
+      0.0,
+      12.0
+    ],
+    "window_complete": true,
+    "window_rmse_velocity": 0.28258807043992784,
+    "window_rmse_z": 0.045154074768978696,
+    "window_max_velocity_error": 1.0944227956320507,
+    "window_max_z_error": 0.09426248460543718,
+    "window_p95_velocity_error": 0.8487465620473016,
+    "window_p95_z_error": 0.08108870371868449,
+    "window_max_omega": 0.41537344044868524,
+    "command_total_variation": 1682.7740383913556,
+    "paper_recovery_seconds": 0.0,
+    "trial_id": "baseline/nominal/V13/gust_lateral_p10_VL/seed_4",
+    "variant": "baseline",
+    "fault": "nominal",
+    "source": "results/matching_faults_v7/experiment.json",
+    "feedback_diagnostics": {
+      "scenario_id": "gust_lateral_p10_VL",
+      "profile": "nominal_joint_baro_candidate_v6",
+      "variant": "baseline",
+      "controller": "V13",
+      "sensor_seed": 4,
+      "tracking_pass": true,
+      "model_domain_valid": false,
+      "passed": false,
+      "failure_reasons": [
+        "propulsion_model_domain"
+      ],
+      "rmse_velocity": 0.28258807043992784,
+      "rmse_z": 0.045154074768978696,
+      "prop_domain_outside_fraction": 0.014166666666666666,
+      "optimizer_failures": 0,
+      "campaign_timed_out": false,
+      "source": "/Users/leo/.codex/.chatgpt-projects/g-p-697716ea005481918efd3fc013c6d984/review/sensor-timing-checkpoint/results/matching_faults_v7/experiment.json",
+      "trace": "/Users/leo/.codex/.chatgpt-projects/g-p-697716ea005481918efd3fc013c6d984/review/sensor-timing-checkpoint/results/matching_faults_v7/runs/baseline/nominal/V13/gust_lateral_p10_VL/seed_4/runs/nominal_joint_baro_candidate_v6/V13/arena_20260929T155618303185Z/gust_lateral_p10_VL_V13.npz",
+      "diagnostic_start_s": 0.5,
+      "minimum_rotor_rpm": 6343.181952706486,
+      "assumed_minimum_rpm": 10000,
+      "below_minimum_rpm_samples": 85,
+      "above_maximum_rpm_samples": 0,
+      "above_advance_ratio_limit_samples": 0,
+      "reverse_flow_samples": 0,
+      "below_minimum_rpm_after_settle_samples": 6,
+      "domain_first_s": 0.026000000000000002,
+      "domain_last_s": 5.534,
+      "command_slew_rms_rad_s2": 302046.1528878849,
+      "indi_cutoff_hz": 50.0,
+      "time_align": "S1",
+      "rotor_startup_guard": false,
+      "angular_accel_error_raw_rms_rad_s2": 55.33818131263739,
+      "angular_accel_error_filtered_rms_rad_s2": 20.82909841630706
+    },
+    "startup": {
+      "first_rotor_ready_s": 0.004,
+      "allocation_before_rotor_ready": 1,
+      "all_zero_commands_before_rotor_ready": 1,
+      "minimum_startup_command_rpm": 0.0,
+      "minimum_startup_actual_rpm": 6343.181952706486,
+      "first_paths": [
+        "fallback_init",
+        "A1",
+        "A1",
+        "A1"
+      ],
+      "first_commands_rad_s": [
+        [
+          1210.3955482756428,
+          1233.4947405512266,
+          1192.019888697795,
+          1219.027677469411
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          1523.3120688031831,
+          1974.723787838661,
+          1487.418470937064,
+          1709.395634801146
+        ],
+        [
+          1388.6969073054545,
+          1534.9477727545354,
+          1271.3387609796582,
+          1646.743332481056
+        ]
+      ],
+      "first_estimated_rotors_rad_s": [
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          1213.359068094904,
+          1217.5569413128808,
+          1173.4647980664815,
+          1203.5280522378007
+        ],
+        [
+          1213.388882737003,
+          1218.8124639669397,
+          1175.0271017300893,
+          1202.8341899253874
+        ]
+      ]
+    },
+    "estimation_rms": {
+      "position_m": 0.22643098469932585,
+      "velocity_m_s": 0.0765912062239722,
+      "attitude_deg": 0.7160371219128832,
+      "body_rate_rad_s": 0.07816140502084902,
+      "rotor_rad_s": 81.86428965301472
+    },
+    "run_dir_relative": "results/matching_faults_v7/runs/baseline/nominal/V13/gust_lateral_p10_VL/seed_4/runs/nominal_joint_baro_candidate_v6/V13/arena_20260929T155618303185Z"
+  },
+  {
+    "profile": "baseline_baro_drift",
+    "sensor_seed": 4,
+    "feedback": "sensors",
+    "sweep": null,
+    "sweep_value": null,
+    "returncode": 0,
+    "campaign_timed_out": false,
+    "run_dir": "/Users/leo/.codex/.chatgpt-projects/g-p-697716ea005481918efd3fc013c6d984/review/sensor-timing-checkpoint/results/matching_faults_v7/runs/baseline/baro_drift/V13/gust_lateral_p10_VL/seed_4/runs/baseline_baro_drift/V13/arena_20260929T155735048768Z",
+    "case_id": "gust_lateral_p10_VL",
+    "factors": {},
+    "extra_params": {},
+    "gust_direction": "lateral",
+    "gust_peak": 10.0,
+    "wind_reference": "absolute",
+    "flow_angle_deg": 26.56505117707799,
+    "scenario_id": "gust_lateral_p10_VL",
+    "scenario_type": "gust",
+    "controller": "V13",
+    "label": "SMOKE",
+    "rmse_z": 0.17284291164416302,
+    "rmse_vx": 0.05924041750250641,
+    "rmse_velocity": 0.2832760017634724,
+    "max_z_error": 0.27676282580225475,
+    "max_velocity_error": 1.0907893811306462,
+    "max_omega": 0.4153638816237216,
+    "omega_sustained_seconds": 0.0,
+    "simulated_seconds": 12.0,
+    "phases": [
+      {
+        "name": "순항",
+        "samples": 1500,
+        "rmse_z": 0.0791575413413738,
+        "rmse_velocity": 0.12454776479687941
+      },
+      {
+        "name": "돌풍",
+        "samples": 1000,
+        "rmse_z": 0.09458022561584545,
+        "rmse_velocity": 0.6620651657599481
+      },
+      {
+        "name": "회복",
+        "samples": 3501,
+        "rmse_z": 0.21440125652799127,
+        "rmse_velocity": 0.07549418650272054
+      }
+    ],
+    "motor_saturation_fraction": 0.0,
+    "pre_gust_ready": true,
+    "recovered": true,
+    "recovery_seconds": 0.0,
+    "gust_max_z_error": 0.27676282580225475,
+    "gust_max_velocity_error": 1.0907893811306462,
+    "passed": false,
+    "failure_reasons": [
+      "propulsion_model_domain"
+    ],
+    "tracking_pass": true,
+    "model_domain_valid": false,
+    "prop_domain_outside_fraction": 0.014666666666666666,
+    "optimizer_calls": 600,
+    "optimizer_failures": 0,
+    "wall_seconds": 69.94409512507264,
+    "stop_reason": null,
+    "truth_parameter_sha256": "13a1dcc6332987eba93ea4653f4d6087741d1ac085701982ed94c22e6658c807",
+    "trajectory_sha256": "787860cc27994e3c56c4af5b24fa2a76068b899e12e50dd0a922f5e1d47a05bd",
+    "sensor_profile": "baseline_baro_drift",
+    "sensor_profile_sha256": "a03bfbabe410b108465e375023f3d37b390a9a9165e824e4969dd9b2bc62d1e6",
+    "estimator_diagnostics": {
+      "updates": 319,
+      "replays": 6001,
+      "delayed_updates": 319,
+      "rejected_updates": 0,
+      "stale_measurements": 0,
+      "nis": {
+        "gnss": 2.571311405877181,
+        "barometer": 0.5151959020158727,
+        "magnetometer": 4.5265204829752435
+      },
+      "barometer_bias_estimate": 0.3375928117214101,
+      "error_state_dimension": 16,
+      "barometer_bias_variance": 0.005831312893439275,
+      "filter_kind": "joint_baro"
+    },
+    "feedback_delay_s": {
+      "state": 0.0,
+      "rotor": 0.0
+    },
+    "nu_decomposition": {
+      "applicable": true,
+      "normalization": "D_nu = diag(m*g, 100, 100, 100)",
+      "scale": [
+        11.5176828132,
+        100.0,
+        100.0,
+        100.0
+      ],
+      "steps": 6000,
+      "steps_without_alloc": 1,
+      "allocation_residual": {
+        "components": [
+          "thrust",
+          "alpha_x",
+          "alpha_y",
+          "alpha_z"
+        ],
+        "integral": [
+          0.0017380305127873308,
+          0.0004387213178869093,
+          0.00021644826781921144,
+          4.937825158358599e-05
+        ],
+        "max": [
+          0.8690152563936481,
+          0.21798680322582922,
+          0.10782443876526811,
+          0.024290403767001322
+        ],
+        "norm_integral": 0.0018084311569182355,
+        "norm_max": 0.9027302451650456
+      },
+      "realization_error": {
+        "components": [
+          "thrust",
+          "alpha_x",
+          "alpha_y",
+          "alpha_z"
+        ],
+        "integral": [
+          0.2900094790719522,
+          0.12699566955971534,
+          0.4558235232914241,
+          0.1523087838889068
+        ],
+        "max": [
+          0.8617119861988793,
+          0.22542485055746458,
+          0.13780437208969856,
+          0.09064097887299416
+        ],
+        "norm_integral": 0.6514264318244362,
+        "norm_max": 0.88752944870261
+      }
+    },
+    "controller_model_sha256": "2582197db2546d329b62bee631beef5f89459c2c4b11a2131ab024240177956d",
+    "integrators": null,
+    "paper_failed": false,
+    "paper_reasons": [],
+    "paper_z_error_run_seconds": 0.0,
+    "paper_omega_run_seconds": 0.0,
+    "paper_cruise_velocity_run_seconds": 0.0,
+    "paper_max_consecutive_solver_failures": 0,
+    "window": [
+      0.0,
+      12.0
+    ],
+    "window_complete": true,
+    "window_rmse_velocity": 0.2832760017634724,
+    "window_rmse_z": 0.17284291164416302,
+    "window_max_velocity_error": 1.0907893811306462,
+    "window_max_z_error": 0.27676282580225475,
+    "window_p95_velocity_error": 0.8472690465994658,
+    "window_p95_z_error": 0.2732123632881738,
+    "window_max_omega": 0.4153638816237216,
+    "command_total_variation": 1682.868578632451,
+    "paper_recovery_seconds": 0.0,
+    "trial_id": "baseline/baro_drift/V13/gust_lateral_p10_VL/seed_4",
+    "variant": "baseline",
+    "fault": "baro_drift",
+    "source": "results/matching_faults_v7/experiment.json",
+    "feedback_diagnostics": {
+      "scenario_id": "gust_lateral_p10_VL",
+      "profile": "baseline_baro_drift",
+      "variant": "baseline",
+      "controller": "V13",
+      "sensor_seed": 4,
+      "tracking_pass": true,
+      "model_domain_valid": false,
+      "passed": false,
+      "failure_reasons": [
+        "propulsion_model_domain"
+      ],
+      "rmse_velocity": 0.2832760017634724,
+      "rmse_z": 0.17284291164416302,
+      "prop_domain_outside_fraction": 0.014666666666666666,
+      "optimizer_failures": 0,
+      "campaign_timed_out": false,
+      "source": "/Users/leo/.codex/.chatgpt-projects/g-p-697716ea005481918efd3fc013c6d984/review/sensor-timing-checkpoint/results/matching_faults_v7/experiment.json",
+      "trace": "/Users/leo/.codex/.chatgpt-projects/g-p-697716ea005481918efd3fc013c6d984/review/sensor-timing-checkpoint/results/matching_faults_v7/runs/baseline/baro_drift/V13/gust_lateral_p10_VL/seed_4/runs/baseline_baro_drift/V13/arena_20260929T155735048768Z/gust_lateral_p10_VL_V13.npz",
+      "diagnostic_start_s": 0.5,
+      "minimum_rotor_rpm": 6332.191374298392,
+      "assumed_minimum_rpm": 10000,
+      "below_minimum_rpm_samples": 88,
+      "above_maximum_rpm_samples": 0,
+      "above_advance_ratio_limit_samples": 0,
+      "reverse_flow_samples": 0,
+      "below_minimum_rpm_after_settle_samples": 9,
+      "domain_first_s": 0.026000000000000002,
+      "domain_last_s": 5.534,
+      "command_slew_rms_rad_s2": 302046.9310533686,
+      "indi_cutoff_hz": 50.0,
+      "time_align": "S1",
+      "rotor_startup_guard": false,
+      "angular_accel_error_raw_rms_rad_s2": 55.33816531099559,
+      "angular_accel_error_filtered_rms_rad_s2": 20.829091187083563
+    },
+    "startup": {
+      "first_rotor_ready_s": 0.004,
+      "allocation_before_rotor_ready": 1,
+      "all_zero_commands_before_rotor_ready": 1,
+      "minimum_startup_command_rpm": 0.0,
+      "minimum_startup_actual_rpm": 6332.191374298392,
+      "first_paths": [
+        "fallback_init",
+        "A1",
+        "A1",
+        "A1"
+      ],
+      "first_commands_rad_s": [
+        [
+          1210.3955482756428,
+          1233.4947405512266,
+          1192.019888697795,
+          1219.027677469411
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          1523.3120688031831,
+          1974.723787838661,
+          1487.418470937064,
+          1709.395634801146
+        ],
+        [
+          1388.6969073054545,
+          1534.9477727545354,
+          1271.3387609796582,
+          1646.743332481056
+        ]
+      ],
+      "first_estimated_rotors_rad_s": [
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          1213.359068094904,
+          1217.5569413128808,
+          1173.4647980664815,
+          1203.5280522378007
+        ],
+        [
+          1213.388882737003,
+          1218.8124639669397,
+          1175.0271017300893,
+          1202.8341899253874
+        ]
+      ]
+    },
+    "estimation_rms": {
+      "position_m": 0.28551357378746856,
+      "velocity_m_s": 0.08098172856994575,
+      "attitude_deg": 0.7160673911085306,
+      "body_rate_rad_s": 0.07815824653849948,
+      "rotor_rad_s": 81.97017426804483
+    },
+    "run_dir_relative": "results/matching_faults_v7/runs/baseline/baro_drift/V13/gust_lateral_p10_VL/seed_4/runs/baseline_baro_drift/V13/arena_20260929T155735048768Z"
+  },
+  {
+    "profile": "baseline_gnss_outlier",
+    "sensor_seed": 4,
+    "feedback": "sensors",
+    "sweep": null,
+    "sweep_value": null,
+    "returncode": 0,
+    "campaign_timed_out": false,
+    "run_dir": "/Users/leo/.codex/.chatgpt-projects/g-p-697716ea005481918efd3fc013c6d984/review/sensor-timing-checkpoint/results/matching_faults_v7/runs/baseline/gnss_outlier/V13/gust_lateral_p10_VL/seed_4/runs/baseline_gnss_outlier/V13/arena_20260929T155852686657Z",
+    "case_id": "gust_lateral_p10_VL",
+    "factors": {},
+    "extra_params": {},
+    "gust_direction": "lateral",
+    "gust_peak": 10.0,
+    "wind_reference": "absolute",
+    "flow_angle_deg": 26.56505117707799,
+    "scenario_id": "gust_lateral_p10_VL",
+    "scenario_type": "gust",
+    "controller": "V13",
+    "label": "SMOKE",
+    "rmse_z": 0.04167278454311214,
+    "rmse_vx": 0.0569591266972317,
+    "rmse_velocity": 0.28241605871794373,
+    "max_z_error": 0.09426248460543718,
+    "max_velocity_error": 1.0944227956320507,
+    "max_omega": 0.41537344044868524,
+    "omega_sustained_seconds": 0.0,
+    "simulated_seconds": 12.0,
+    "phases": [
+      {
+        "name": "순항",
+        "samples": 1500,
+        "rmse_z": 0.04539387854396359,
+        "rmse_velocity": 0.12021733610132797
+      },
+      {
+        "name": "돌풍",
+        "samples": 1000,
+        "rmse_z": 0.05947122226974262,
+        "rmse_velocity": 0.6641187789076878
+      },
+      {
+        "name": "회복",
+        "samples": 3501,
+        "rmse_z": 0.032918280831109516,
+        "rmse_velocity": 0.06739252621027082
+      }
+    ],
+    "motor_saturation_fraction": 0.0,
+    "pre_gust_ready": true,
+    "recovered": true,
+    "recovery_seconds": 0.0,
+    "gust_max_z_error": 0.09426248460543718,
+    "gust_max_velocity_error": 1.0944227956320507,
+    "passed": false,
+    "failure_reasons": [
+      "propulsion_model_domain"
+    ],
+    "tracking_pass": true,
+    "model_domain_valid": false,
+    "prop_domain_outside_fraction": 0.014166666666666666,
+    "optimizer_calls": 600,
+    "optimizer_failures": 0,
+    "wall_seconds": 69.34795233304612,
+    "stop_reason": null,
+    "truth_parameter_sha256": "13a1dcc6332987eba93ea4653f4d6087741d1ac085701982ed94c22e6658c807",
+    "trajectory_sha256": "ee9e924196e4320966de9560a553a08e7196de9499707c447f4a4fa983ffe9f0",
+    "sensor_profile": "baseline_gnss_outlier",
+    "sensor_profile_sha256": "c7633d10bbac48a71b719700ae401d5951129e3c9ec5f4001cf9f81a8697d801",
+    "estimator_diagnostics": {
+      "updates": 319,
+      "replays": 6001,
+      "delayed_updates": 319,
+      "rejected_updates": 0,
+      "stale_measurements": 0,
+      "nis": {
+        "gnss": 2.594557155432043,
+        "barometer": 0.36774213445115383,
+        "magnetometer": 4.525222829099971
+      },
+      "barometer_bias_estimate": 0.03217796635941042,
+      "error_state_dimension": 16,
+      "barometer_bias_variance": 0.005860043427413418,
+      "filter_kind": "joint_baro"
+    },
+    "feedback_delay_s": {
+      "state": 0.0,
+      "rotor": 0.0
+    },
+    "nu_decomposition": {
+      "applicable": true,
+      "normalization": "D_nu = diag(m*g, 100, 100, 100)",
+      "scale": [
+        11.5176828132,
+        100.0,
+        100.0,
+        100.0
+      ],
+      "steps": 6000,
+      "steps_without_alloc": 1,
+      "allocation_residual": {
+        "components": [
+          "thrust",
+          "alpha_x",
+          "alpha_y",
+          "alpha_z"
+        ],
+        "integral": [
+          0.0017380305127873362,
+          0.0004387213178868968,
+          0.00021644826781921028,
+          4.937825158358277e-05
+        ],
+        "max": [
+          0.8690152563936481,
+          0.21798680322582922,
+          0.10782443876526811,
+          0.024290403767001322
+        ],
+        "norm_integral": 0.0018084311569182279,
+        "norm_max": 0.9027302451650456
+      },
+      "realization_error": {
+        "components": [
+          "thrust",
+          "alpha_x",
+          "alpha_y",
+          "alpha_z"
+        ],
+        "integral": [
+          0.2889254998250764,
+          0.12704062472163707,
+          0.4525992338748062,
+          0.15238074996706258
+        ],
+        "max": [
+          0.8617119861988793,
+          0.22542485055746458,
+          0.13780437208969856,
+          0.09067377158726204
+        ],
+        "norm_integral": 0.6484294988765767,
+        "norm_max": 0.88752944870261
+      }
+    },
+    "controller_model_sha256": "2582197db2546d329b62bee631beef5f89459c2c4b11a2131ab024240177956d",
+    "integrators": null,
+    "paper_failed": false,
+    "paper_reasons": [],
+    "paper_z_error_run_seconds": 0.0,
+    "paper_omega_run_seconds": 0.0,
+    "paper_cruise_velocity_run_seconds": 0.0,
+    "paper_max_consecutive_solver_failures": 0,
+    "window": [
+      0.0,
+      12.0
+    ],
+    "window_complete": true,
+    "window_rmse_velocity": 0.28241605871794373,
+    "window_rmse_z": 0.04167278454311214,
+    "window_max_velocity_error": 1.0944227956320507,
+    "window_max_z_error": 0.09426248460543718,
+    "window_p95_velocity_error": 0.8487465620473016,
+    "window_p95_z_error": 0.08108870371868449,
+    "window_max_omega": 0.41537344044868524,
+    "command_total_variation": 1682.7652769837864,
+    "paper_recovery_seconds": 0.0,
+    "trial_id": "baseline/gnss_outlier/V13/gust_lateral_p10_VL/seed_4",
+    "variant": "baseline",
+    "fault": "gnss_outlier",
+    "source": "results/matching_faults_v7/experiment.json",
+    "feedback_diagnostics": {
+      "scenario_id": "gust_lateral_p10_VL",
+      "profile": "baseline_gnss_outlier",
+      "variant": "baseline",
+      "controller": "V13",
+      "sensor_seed": 4,
+      "tracking_pass": true,
+      "model_domain_valid": false,
+      "passed": false,
+      "failure_reasons": [
+        "propulsion_model_domain"
+      ],
+      "rmse_velocity": 0.28241605871794373,
+      "rmse_z": 0.04167278454311214,
+      "prop_domain_outside_fraction": 0.014166666666666666,
+      "optimizer_failures": 0,
+      "campaign_timed_out": false,
+      "source": "/Users/leo/.codex/.chatgpt-projects/g-p-697716ea005481918efd3fc013c6d984/review/sensor-timing-checkpoint/results/matching_faults_v7/experiment.json",
+      "trace": "/Users/leo/.codex/.chatgpt-projects/g-p-697716ea005481918efd3fc013c6d984/review/sensor-timing-checkpoint/results/matching_faults_v7/runs/baseline/gnss_outlier/V13/gust_lateral_p10_VL/seed_4/runs/baseline_gnss_outlier/V13/arena_20260929T155852686657Z/gust_lateral_p10_VL_V13.npz",
+      "diagnostic_start_s": 0.5,
+      "minimum_rotor_rpm": 6343.181952706486,
+      "assumed_minimum_rpm": 10000,
+      "below_minimum_rpm_samples": 85,
+      "above_maximum_rpm_samples": 0,
+      "above_advance_ratio_limit_samples": 0,
+      "reverse_flow_samples": 0,
+      "below_minimum_rpm_after_settle_samples": 6,
+      "domain_first_s": 0.026000000000000002,
+      "domain_last_s": 5.534,
+      "command_slew_rms_rad_s2": 302050.8806715454,
+      "indi_cutoff_hz": 50.0,
+      "time_align": "S1",
+      "rotor_startup_guard": false,
+      "angular_accel_error_raw_rms_rad_s2": 55.33816300862796,
+      "angular_accel_error_filtered_rms_rad_s2": 20.82909142103003
+    },
+    "startup": {
+      "first_rotor_ready_s": 0.004,
+      "allocation_before_rotor_ready": 1,
+      "all_zero_commands_before_rotor_ready": 1,
+      "minimum_startup_command_rpm": 0.0,
+      "minimum_startup_actual_rpm": 6343.181952706486,
+      "first_paths": [
+        "fallback_init",
+        "A1",
+        "A1",
+        "A1"
+      ],
+      "first_commands_rad_s": [
+        [
+          1210.3955482756428,
+          1233.4947405512266,
+          1192.019888697795,
+          1219.027677469411
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          1523.3120688031831,
+          1974.723787838661,
+          1487.418470937064,
+          1709.395634801146
+        ],
+        [
+          1388.6969073054545,
+          1534.9477727545354,
+          1271.3387609796582,
+          1646.743332481056
+        ]
+      ],
+      "first_estimated_rotors_rad_s": [
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          1213.359068094904,
+          1217.5569413128808,
+          1173.4647980664815,
+          1203.5280522378007
+        ],
+        [
+          1213.388882737003,
+          1218.8124639669397,
+          1175.0271017300893,
+          1202.8341899253874
+        ]
+      ]
+    },
+    "estimation_rms": {
+      "position_m": 0.22068609020471852,
+      "velocity_m_s": 0.07604260997386497,
+      "attitude_deg": 0.7024925303295174,
+      "body_rate_rad_s": 0.0781603515835344,
+      "rotor_rad_s": 82.0172744180669
+    },
+    "run_dir_relative": "results/matching_faults_v7/runs/baseline/gnss_outlier/V13/gust_lateral_p10_VL/seed_4/runs/baseline_gnss_outlier/V13/arena_20260929T155852686657Z"
+  },
+  {
+    "profile": "baseline_gnss_outage",
+    "sensor_seed": 4,
+    "feedback": "sensors",
+    "sweep": null,
+    "sweep_value": null,
+    "returncode": 0,
+    "campaign_timed_out": false,
+    "run_dir": "/Users/leo/.codex/.chatgpt-projects/g-p-697716ea005481918efd3fc013c6d984/review/sensor-timing-checkpoint/results/matching_faults_v7/runs/baseline/gnss_outage/V13/gust_lateral_p10_VL/seed_4/runs/baseline_gnss_outage/V13/arena_20260929T160010431270Z",
+    "case_id": "gust_lateral_p10_VL",
+    "factors": {},
+    "extra_params": {},
+    "gust_direction": "lateral",
+    "gust_peak": 10.0,
+    "wind_reference": "absolute",
+    "flow_angle_deg": 26.56505117707799,
+    "scenario_id": "gust_lateral_p10_VL",
+    "scenario_type": "gust",
+    "controller": "V13",
+    "label": "SMOKE",
+    "rmse_z": 0.04097382328412056,
+    "rmse_vx": 0.05573195314140488,
+    "rmse_velocity": 0.2821859514738093,
+    "max_z_error": 0.09426248460543718,
+    "max_velocity_error": 1.0944227956320507,
+    "max_omega": 0.41537344044868524,
+    "omega_sustained_seconds": 0.0,
+    "simulated_seconds": 12.0,
+    "phases": [
+      {
+        "name": "순항",
+        "samples": 1500,
+        "rmse_z": 0.04539387854396359,
+        "rmse_velocity": 0.12021733610132797
+      },
+      {
+        "name": "돌풍",
+        "samples": 1000,
+        "rmse_z": 0.05947122226974262,
+        "rmse_velocity": 0.6641187789076878
+      },
+      {
+        "name": "회복",
+        "samples": 3501,
+        "rmse_z": 0.03137827652971433,
+        "rmse_velocity": 0.06571956168601668
+      }
+    ],
+    "motor_saturation_fraction": 0.0,
+    "pre_gust_ready": true,
+    "recovered": true,
+    "recovery_seconds": 0.0,
+    "gust_max_z_error": 0.09426248460543718,
+    "gust_max_velocity_error": 1.0944227956320507,
+    "passed": false,
+    "failure_reasons": [
+      "propulsion_model_domain"
+    ],
+    "tracking_pass": true,
+    "model_domain_valid": false,
+    "prop_domain_outside_fraction": 0.014166666666666666,
+    "optimizer_calls": 600,
+    "optimizer_failures": 0,
+    "wall_seconds": 72.63548783294391,
+    "stop_reason": null,
+    "truth_parameter_sha256": "13a1dcc6332987eba93ea4653f4d6087741d1ac085701982ed94c22e6658c807",
+    "trajectory_sha256": "2249419435692fd7ecb05f9471d6906bb09aadcc84b346b6552662e56418b1d6",
+    "sensor_profile": "baseline_gnss_outage",
+    "sensor_profile_sha256": "3b624b67916f6912cf3711636d968bb6ec28e149339d55a68df5e6e0e5a95e6a",
+    "estimator_diagnostics": {
+      "updates": 319,
+      "replays": 6001,
+      "delayed_updates": 319,
+      "rejected_updates": 0,
+      "stale_measurements": 0,
+      "nis": {
+        "gnss": 2.594125621984319,
+        "barometer": 0.36734421347924395,
+        "magnetometer": 4.525098417124706
+      },
+      "barometer_bias_estimate": 0.03562978961066027,
+      "error_state_dimension": 16,
+      "barometer_bias_variance": 0.006003066544895784,
+      "filter_kind": "joint_baro"
+    },
+    "feedback_delay_s": {
+      "state": 0.0,
+      "rotor": 0.0
+    },
+    "nu_decomposition": {
+      "applicable": true,
+      "normalization": "D_nu = diag(m*g, 100, 100, 100)",
+      "scale": [
+        11.5176828132,
+        100.0,
+        100.0,
+        100.0
+      ],
+      "steps": 6000,
+      "steps_without_alloc": 1,
+      "allocation_residual": {
+        "components": [
+          "thrust",
+          "alpha_x",
+          "alpha_y",
+          "alpha_z"
+        ],
+        "integral": [
+          0.0017380305127873352,
+          0.0004387213178868877,
+          0.00021644826781921236,
+          4.9378251583582736e-05
+        ],
+        "max": [
+          0.8690152563936481,
+          0.21798680322582922,
+          0.10782443876526811,
+          0.024290403767001322
+        ],
+        "norm_integral": 0.0018084311569182192,
+        "norm_max": 0.9027302451650456
+      },
+      "realization_error": {
+        "components": [
+          "thrust",
+          "alpha_x",
+          "alpha_y",
+          "alpha_z"
+        ],
+        "integral": [
+          0.2917816517752212,
+          0.12705104840461795,
+          0.4523598404471559,
+          0.15228935825707962
+        ],
+        "max": [
+          0.8617119861988793,
+          0.22542485055746458,
+          0.13780437208969856,
+          0.09067377158726204
+        ],
+        "norm_integral": 0.6499694938636406,
+        "norm_max": 0.88752944870261
+      }
+    },
+    "controller_model_sha256": "2582197db2546d329b62bee631beef5f89459c2c4b11a2131ab024240177956d",
+    "integrators": null,
+    "paper_failed": false,
+    "paper_reasons": [],
+    "paper_z_error_run_seconds": 0.0,
+    "paper_omega_run_seconds": 0.0,
+    "paper_cruise_velocity_run_seconds": 0.0,
+    "paper_max_consecutive_solver_failures": 0,
+    "window": [
+      0.0,
+      12.0
+    ],
+    "window_complete": true,
+    "window_rmse_velocity": 0.2821859514738093,
+    "window_rmse_z": 0.04097382328412056,
+    "window_max_velocity_error": 1.0944227956320507,
+    "window_max_z_error": 0.09426248460543718,
+    "window_p95_velocity_error": 0.8487465620473016,
+    "window_p95_z_error": 0.08108870371868449,
+    "window_max_omega": 0.41537344044868524,
+    "command_total_variation": 1682.7551204093518,
+    "paper_recovery_seconds": 0.0,
+    "trial_id": "baseline/gnss_outage/V13/gust_lateral_p10_VL/seed_4",
+    "variant": "baseline",
+    "fault": "gnss_outage",
+    "source": "results/matching_faults_v7/experiment.json",
+    "feedback_diagnostics": {
+      "scenario_id": "gust_lateral_p10_VL",
+      "profile": "baseline_gnss_outage",
+      "variant": "baseline",
+      "controller": "V13",
+      "sensor_seed": 4,
+      "tracking_pass": true,
+      "model_domain_valid": false,
+      "passed": false,
+      "failure_reasons": [
+        "propulsion_model_domain"
+      ],
+      "rmse_velocity": 0.2821859514738093,
+      "rmse_z": 0.04097382328412056,
+      "prop_domain_outside_fraction": 0.014166666666666666,
+      "optimizer_failures": 0,
+      "campaign_timed_out": false,
+      "source": "/Users/leo/.codex/.chatgpt-projects/g-p-697716ea005481918efd3fc013c6d984/review/sensor-timing-checkpoint/results/matching_faults_v7/experiment.json",
+      "trace": "/Users/leo/.codex/.chatgpt-projects/g-p-697716ea005481918efd3fc013c6d984/review/sensor-timing-checkpoint/results/matching_faults_v7/runs/baseline/gnss_outage/V13/gust_lateral_p10_VL/seed_4/runs/baseline_gnss_outage/V13/arena_20260929T160010431270Z/gust_lateral_p10_VL_V13.npz",
+      "diagnostic_start_s": 0.5,
+      "minimum_rotor_rpm": 6343.181952706486,
+      "assumed_minimum_rpm": 10000,
+      "below_minimum_rpm_samples": 85,
+      "above_maximum_rpm_samples": 0,
+      "above_advance_ratio_limit_samples": 0,
+      "reverse_flow_samples": 0,
+      "below_minimum_rpm_after_settle_samples": 6,
+      "domain_first_s": 0.026000000000000002,
+      "domain_last_s": 5.534,
+      "command_slew_rms_rad_s2": 302052.1296529435,
+      "indi_cutoff_hz": 50.0,
+      "time_align": "S1",
+      "rotor_startup_guard": false,
+      "angular_accel_error_raw_rms_rad_s2": 55.33797119885679,
+      "angular_accel_error_filtered_rms_rad_s2": 20.828999637570735
+    },
+    "startup": {
+      "first_rotor_ready_s": 0.004,
+      "allocation_before_rotor_ready": 1,
+      "all_zero_commands_before_rotor_ready": 1,
+      "minimum_startup_command_rpm": 0.0,
+      "minimum_startup_actual_rpm": 6343.181952706486,
+      "first_paths": [
+        "fallback_init",
+        "A1",
+        "A1",
+        "A1"
+      ],
+      "first_commands_rad_s": [
+        [
+          1210.3955482756428,
+          1233.4947405512266,
+          1192.019888697795,
+          1219.027677469411
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          1523.3120688031831,
+          1974.723787838661,
+          1487.418470937064,
+          1709.395634801146
+        ],
+        [
+          1388.6969073054545,
+          1534.9477727545354,
+          1271.3387609796582,
+          1646.743332481056
+        ]
+      ],
+      "first_estimated_rotors_rad_s": [
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          1213.359068094904,
+          1217.5569413128808,
+          1173.4647980664815,
+          1203.5280522378007
+        ],
+        [
+          1213.388882737003,
+          1218.8124639669397,
+          1175.0271017300893,
+          1202.8341899253874
+        ]
+      ]
+    },
+    "estimation_rms": {
+      "position_m": 0.2227781880499606,
+      "velocity_m_s": 0.07638280728827249,
+      "attitude_deg": 0.7003494275598036,
+      "body_rate_rad_s": 0.0781626073036735,
+      "rotor_rad_s": 82.14312853195986
+    },
+    "run_dir_relative": "results/matching_faults_v7/runs/baseline/gnss_outage/V13/gust_lateral_p10_VL/seed_4/runs/baseline_gnss_outage/V13/arena_20260929T160010431270Z"
+  },
+  {
+    "profile": "ideal",
+    "sensor_seed": 3,
+    "feedback": "sensors",
+    "sweep": null,
+    "sweep_value": null,
+    "returncode": 0,
+    "campaign_timed_out": false,
+    "run_dir": "/Users/leo/.codex/.chatgpt-projects/g-p-697716ea005481918efd3fc013c6d984/review/sensor-timing-checkpoint/results/matching_ideal_v7/runs/ideal/V13/arena_20260929T160208176050Z",
+    "case_id": "gust_lateral_p10_VH",
+    "factors": {},
+    "extra_params": {},
+    "gust_direction": "lateral",
+    "gust_peak": 10.0,
+    "wind_reference": "absolute",
+    "flow_angle_deg": 6.7098368077569335,
+    "scenario_id": "gust_lateral_p10_VH",
+    "scenario_type": "gust",
+    "controller": "V13",
+    "label": "SMOKE",
+    "rmse_z": 0.017048521908061665,
+    "rmse_vx": 0.01398870690979509,
+    "rmse_velocity": 0.32513515168015,
+    "max_z_error": 0.02120172300968548,
+    "max_velocity_error": 1.2955874446530409,
+    "max_omega": 0.36546588182913725,
+    "omega_sustained_seconds": 0.0,
+    "simulated_seconds": 12.0,
+    "phases": [
+      {
+        "name": "순항",
+        "samples": 1500,
+        "rmse_z": 0.01636957293197391,
+        "rmse_velocity": 0.046788046576325314
+      },
+      {
+        "name": "돌풍",
+        "samples": 1000,
+        "rmse_z": 0.015508469317271888,
+        "rmse_velocity": 0.7927144023415711
+      },
+      {
+        "name": "회복",
+        "samples": 3501,
+        "rmse_z": 0.01773963725945393,
+        "rmse_velocity": 0.027786616952485774
+      }
+    ],
+    "motor_saturation_fraction": 0.0,
+    "pre_gust_ready": true,
+    "recovered": true,
+    "recovery_seconds": 0.0,
+    "gust_max_z_error": 0.02120172300968548,
+    "gust_max_velocity_error": 1.2955874446530409,
+    "passed": true,
+    "failure_reasons": [],
+    "tracking_pass": true,
+    "model_domain_valid": true,
+    "prop_domain_outside_fraction": 0.0,
+    "optimizer_calls": 600,
+    "optimizer_failures": 0,
+    "wall_seconds": 64.20195387501735,
+    "stop_reason": null,
+    "truth_parameter_sha256": "13a1dcc6332987eba93ea4653f4d6087741d1ac085701982ed94c22e6658c807",
+    "trajectory_sha256": "2f97ea88c65be9b69447582d2978998a01a70cc3bb4909d6d24245943de48aff",
+    "sensor_profile": "ideal",
+    "sensor_profile_sha256": "e908c816e868da801c436e3b5d6c290c07f6ff15cabcc4a6da999f261c2bc5fa",
+    "estimator_diagnostics": {
+      "updates": 21,
+      "replays": 6001,
+      "delayed_updates": 20,
+      "rejected_updates": 0,
+      "stale_measurements": 0,
+      "nis": {
+        "gnss": 0.007278790645890213
+      },
+      "barometer_bias_estimate": 0.0
+    },
+    "feedback_delay_s": {
+      "state": 0.0,
+      "rotor": 0.0
+    },
+    "nu_decomposition": {
+      "applicable": true,
+      "normalization": "D_nu = diag(m*g, 100, 100, 100)",
+      "scale": [
+        11.5176828132,
+        100.0,
+        100.0,
+        100.0
+      ],
+      "steps": 6000,
+      "steps_without_alloc": 1,
+      "allocation_residual": {
+        "components": [
+          "thrust",
+          "alpha_x",
+          "alpha_y",
+          "alpha_z"
+        ],
+        "integral": [
+          1.8507439750270933e-18,
+          3.671068804262139e-17,
+          2.434036479315199e-17,
+          2.604462273646711e-17
+        ],
+        "max": [
+          1.5422866458559111e-16,
+          7.48950403620209e-17,
+          7.993605777301127e-17,
+          5.286376648154026e-17
+        ],
+        "norm_integral": 6.482685699541344e-17,
+        "norm_max": 1.8218561182609187e-16
+      },
+      "realization_error": {
+        "components": [
+          "thrust",
+          "alpha_x",
+          "alpha_y",
+          "alpha_z"
+        ],
+        "integral": [
+          0.16611035487133433,
+          0.0006312919372860266,
+          7.81662951196716,
+          0.37580772373032245
+        ],
+        "max": [
+          0.7140717945984655,
+          0.00035505668810468046,
+          0.7665967094250478,
+          0.18876919880146675
+        ],
+        "norm_integral": 7.850868063586669,
+        "norm_max": 0.8893362435789038
+      }
+    },
+    "controller_model_sha256": "2582197db2546d329b62bee631beef5f89459c2c4b11a2131ab024240177956d",
+    "integrators": null,
+    "paper_failed": false,
+    "paper_reasons": [],
+    "paper_z_error_run_seconds": 0.0,
+    "paper_omega_run_seconds": 0.0,
+    "paper_cruise_velocity_run_seconds": 0.0,
+    "paper_max_consecutive_solver_failures": 0,
+    "window": [
+      0.0,
+      12.0
+    ],
+    "window_complete": true,
+    "window_rmse_velocity": 0.32513515168015,
+    "window_rmse_z": 0.017048521908061665,
+    "window_max_velocity_error": 1.2955874446530409,
+    "window_max_z_error": 0.02120172300968548,
+    "window_p95_velocity_error": 1.018631372684226,
+    "window_p95_z_error": 0.01998291780283168,
+    "window_max_omega": 0.36546588182913725,
+    "command_total_variation": 4.755649145715381,
+    "paper_recovery_seconds": 0.0,
+    "variant": "ideal_sampled_legacy15",
+    "fault": "nominal",
+    "source": "results/matching_ideal_v7/campaign.json",
+    "run_dir_relative": "results/matching_ideal_v7/runs/ideal/V13/arena_20260929T160208176050Z"
+  },
+  {
+    "profile": "ideal",
+    "sensor_seed": 3,
+    "feedback": "sensors",
+    "sweep": null,
+    "sweep_value": null,
+    "returncode": 0,
+    "campaign_timed_out": false,
+    "run_dir": "/Users/leo/.codex/.chatgpt-projects/g-p-697716ea005481918efd3fc013c6d984/review/sensor-timing-checkpoint/results/matching_ideal_v7/runs/ideal/F13/arena_20260929T160321756040Z",
+    "case_id": "gust_lateral_p10_VH",
+    "factors": {},
+    "extra_params": {},
+    "gust_direction": "lateral",
+    "gust_peak": 10.0,
+    "wind_reference": "absolute",
+    "flow_angle_deg": 6.7098368077569335,
+    "scenario_id": "gust_lateral_p10_VH",
+    "scenario_type": "gust",
+    "controller": "F13",
+    "label": "SMOKE",
+    "rmse_z": 0.01827675826025121,
+    "rmse_vx": 0.016568381376742505,
+    "rmse_velocity": 0.3280457851891334,
+    "max_z_error": 0.020696606416603203,
+    "max_velocity_error": 1.3091445849359764,
+    "max_omega": 0.2728057772342398,
+    "omega_sustained_seconds": 0.0,
+    "simulated_seconds": 12.0,
+    "phases": [
+      {
+        "name": "순항",
+        "samples": 1500,
+        "rmse_z": 0.017473802256860658,
+        "rmse_velocity": 0.031096872619876058
+      },
+      {
+        "name": "돌풍",
+        "samples": 1000,
+        "rmse_z": 0.01606600789810066,
+        "rmse_velocity": 0.8021930644524908
+      },
+      {
+        "name": "회복",
+        "samples": 3501,
+        "rmse_z": 0.019183982247027852,
+        "rmse_velocity": 0.015374978221329334
+      }
+    ],
+    "motor_saturation_fraction": 0.0,
+    "pre_gust_ready": true,
+    "recovered": true,
+    "recovery_seconds": 0.0,
+    "gust_max_z_error": 0.020696606416603203,
+    "gust_max_velocity_error": 1.3091445849359764,
+    "passed": true,
+    "failure_reasons": [],
+    "tracking_pass": true,
+    "model_domain_valid": true,
+    "prop_domain_outside_fraction": 0.0,
+    "optimizer_calls": 600,
+    "optimizer_failures": 0,
+    "wall_seconds": 209.52738816605415,
+    "stop_reason": null,
+    "truth_parameter_sha256": "13a1dcc6332987eba93ea4653f4d6087741d1ac085701982ed94c22e6658c807",
+    "trajectory_sha256": "a5f88e21308cfed5c034d9255fcbaa12bf8321599c90e600937190833610928c",
+    "sensor_profile": "ideal",
+    "sensor_profile_sha256": "e908c816e868da801c436e3b5d6c290c07f6ff15cabcc4a6da999f261c2bc5fa",
+    "estimator_diagnostics": {
+      "updates": 21,
+      "replays": 6001,
+      "delayed_updates": 20,
+      "rejected_updates": 0,
+      "stale_measurements": 0,
+      "nis": {
+        "gnss": 0.0027221612345699033
+      },
+      "barometer_bias_estimate": 0.0
+    },
+    "feedback_delay_s": {
+      "state": 0.0,
+      "rotor": 0.0
+    },
+    "nu_decomposition": {
+      "applicable": true,
+      "normalization": "D_nu = diag(m*g, 100, 100, 100)",
+      "scale": [
+        11.5176828132,
+        100.0,
+        100.0,
+        100.0
+      ],
+      "steps": 6000,
+      "steps_without_alloc": 1,
+      "allocation_residual": {
+        "components": [
+          "thrust",
+          "alpha_x",
+          "alpha_y",
+          "alpha_z"
+        ],
+        "integral": [
+          2.9217078219092736e-15,
+          2.408452649813288e-15,
+          5.003416095802619e-15,
+          5.0033653415137065e-15
+        ],
+        "max": [
+          9.253719875135468e-16,
+          7.473259624365433e-16,
+          1.6242176603242092e-15,
+          1.5754590325824931e-15
+        ],
+        "norm_integral": 9.537854804789269e-15,
+        "norm_max": 1.6250399350855556e-15
+      },
+      "realization_error": {
+        "components": [
+          "thrust",
+          "alpha_x",
+          "alpha_y",
+          "alpha_z"
+        ],
+        "integral": [
+          0.1256766821108112,
+          0.00010355739363055607,
+          7.821909007383913,
+          0.17795109820038824
+        ],
+        "max": [
+          0.7091740793499054,
+          8.904196354887966e-05,
+          0.7605146891896759,
+          0.15739533408576248
+        ],
+        "norm_integral": 7.84959009941864,
+        "norm_max": 0.8851155011942864
+      }
+    },
+    "controller_model_sha256": "2582197db2546d329b62bee631beef5f89459c2c4b11a2131ab024240177956d",
+    "integrators": null,
+    "paper_failed": false,
+    "paper_reasons": [],
+    "paper_z_error_run_seconds": 0.0,
+    "paper_omega_run_seconds": 0.0,
+    "paper_cruise_velocity_run_seconds": 0.0,
+    "paper_max_consecutive_solver_failures": 0,
+    "window": [
+      0.0,
+      12.0
+    ],
+    "window_complete": true,
+    "window_rmse_velocity": 0.3280457851891334,
+    "window_rmse_z": 0.01827675826025121,
+    "window_max_velocity_error": 1.3091445849359764,
+    "window_max_z_error": 0.020696606416603203,
+    "window_p95_velocity_error": 1.0401163691809314,
+    "window_p95_z_error": 0.019933816025528017,
+    "window_max_omega": 0.2728057772342398,
+    "command_total_variation": 2.4985332343189097,
+    "paper_recovery_seconds": 0.0,
+    "variant": "ideal_sampled_legacy15",
+    "fault": "nominal",
+    "source": "results/matching_ideal_v7/campaign.json",
+    "run_dir_relative": "results/matching_ideal_v7/runs/ideal/F13/arena_20260929T160321756040Z"
+  },
+  {
+    "case_id": "gust_lateral_p10_VH",
+    "factors": {},
+    "extra_params": {},
+    "gust_direction": "lateral",
+    "gust_peak": 10.0,
+    "wind_reference": "absolute",
+    "flow_angle_deg": 6.7098368077569335,
+    "scenario_id": "gust_lateral_p10_VH",
+    "scenario_type": "gust",
+    "controller": "V13",
+    "label": "SMOKE",
+    "rmse_z": 0.016761954711515103,
+    "rmse_vx": 0.01244566366210738,
+    "rmse_velocity": 0.32546400031331413,
+    "max_z_error": 0.0188109332358799,
+    "max_velocity_error": 1.290755761770452,
+    "max_omega": 0.32374598237500923,
+    "omega_sustained_seconds": 0.0,
+    "simulated_seconds": 12.0,
+    "phases": [
+      {
+        "name": "순항",
+        "samples": 1500,
+        "rmse_z": 0.016190747504755305,
+        "rmse_velocity": 0.02822282834778907
+      },
+      {
+        "name": "돌풍",
+        "samples": 1000,
+        "rmse_z": 0.014875464650645738,
+        "rmse_velocity": 0.7964447126248339
+      },
+      {
+        "name": "회복",
+        "samples": 3501,
+        "rmse_z": 0.01749500938276829,
+        "rmse_velocity": 0.006498467008650116
+      }
+    ],
+    "motor_saturation_fraction": 0.0,
+    "pre_gust_ready": true,
+    "recovered": true,
+    "recovery_seconds": 0.0,
+    "gust_max_z_error": 0.0188109332358799,
+    "gust_max_velocity_error": 1.290755761770452,
+    "passed": true,
+    "failure_reasons": [],
+    "tracking_pass": true,
+    "model_domain_valid": true,
+    "prop_domain_outside_fraction": 0.0,
+    "optimizer_calls": 600,
+    "optimizer_failures": 0,
+    "wall_seconds": 56.73401349992491,
+    "stop_reason": null,
+    "truth_parameter_sha256": "13a1dcc6332987eba93ea4653f4d6087741d1ac085701982ed94c22e6658c807",
+    "trajectory_sha256": "7e977f09237e8107918a4f0477dff641cac2533436ed62bf449807becd14dbfc",
+    "feedback": "truth",
+    "nu_decomposition": {
+      "applicable": true,
+      "normalization": "D_nu = diag(m*g, 100, 100, 100)",
+      "scale": [
+        11.5176828132,
+        100.0,
+        100.0,
+        100.0
+      ],
+      "steps": 6000,
+      "steps_without_alloc": 1,
+      "allocation_residual": {
+        "components": [
+          "thrust",
+          "alpha_x",
+          "alpha_y",
+          "alpha_z"
+        ],
+        "integral": [
+          1.5422866458559112e-18,
+          6.449129843432739e-18,
+          4.8867643042343284e-18,
+          4.569314360938987e-18
+        ],
+        "max": [
+          3.0845732917118223e-16,
+          6.381398496910883e-17,
+          6.217248937900877e-17,
+          3.187358629179305e-17
+        ],
+        "norm_integral": 1.2564854546894416e-17,
+        "norm_max": 3.15599622595503e-16
+      },
+      "realization_error": {
+        "components": [
+          "thrust",
+          "alpha_x",
+          "alpha_y",
+          "alpha_z"
+        ],
+        "integral": [
+          0.1284432583868096,
+          0.00015198419285868817,
+          7.8220898246408606,
+          0.17910746242848877
+        ],
+        "max": [
+          0.7140717945984659,
+          0.00011555554969592887,
+          0.7558006475227844,
+          0.14367749050066422
+        ],
+        "norm_integral": 7.848590234017695,
+        "norm_max": 0.8893362435789044
+      }
+    },
+    "controller_model_sha256": "2582197db2546d329b62bee631beef5f89459c2c4b11a2131ab024240177956d",
+    "integrators": null,
+    "paper_failed": false,
+    "paper_reasons": [],
+    "paper_z_error_run_seconds": 0.0,
+    "paper_omega_run_seconds": 0.0,
+    "paper_cruise_velocity_run_seconds": 0.0,
+    "paper_max_consecutive_solver_failures": 0,
+    "window": [
+      0.0,
+      12.0
+    ],
+    "window_complete": true,
+    "window_rmse_velocity": 0.32546400031331413,
+    "window_rmse_z": 0.016761954711515103,
+    "window_max_velocity_error": 1.290755761770452,
+    "window_max_z_error": 0.0188109332358799,
+    "window_p95_velocity_error": 1.0283074956154392,
+    "window_p95_z_error": 0.01811245129216843,
+    "window_max_omega": 0.32374598237500923,
+    "command_total_variation": 2.6356891819783446,
+    "paper_recovery_seconds": 0.0,
+    "variant": "truth",
+    "fault": "nominal",
+    "run_dir": "/Users/leo/.codex/.chatgpt-projects/g-p-697716ea005481918efd3fc013c6d984/review/sensor-timing-checkpoint/results/matching_truth_v7/arena_20260929T155555557689Z",
+    "source": "results/matching_truth_v7/arena_20260929T155555557689Z/trials.jsonl",
+    "run_dir_relative": "results/matching_truth_v7/arena_20260929T155555557689Z"
+  },
+  {
+    "case_id": "gust_lateral_p10_VH",
+    "factors": {},
+    "extra_params": {},
+    "gust_direction": "lateral",
+    "gust_peak": 10.0,
+    "wind_reference": "absolute",
+    "flow_angle_deg": 6.7098368077569335,
+    "scenario_id": "gust_lateral_p10_VH",
+    "scenario_type": "gust",
+    "controller": "F13",
+    "label": "SMOKE",
+    "rmse_z": 0.018095607502364667,
+    "rmse_vx": 0.016433657358759214,
+    "rmse_velocity": 0.3297616558269971,
+    "max_z_error": 0.020322404539946604,
+    "max_velocity_error": 1.314248948464673,
+    "max_omega": 0.2615014274827777,
+    "omega_sustained_seconds": 0.0,
+    "simulated_seconds": 12.0,
+    "phases": [
+      {
+        "name": "순항",
+        "samples": 1500,
+        "rmse_z": 0.01750990190799454,
+        "rmse_velocity": 0.030378496980641767
+      },
+      {
+        "name": "돌풍",
+        "samples": 1000,
+        "rmse_z": 0.015647286781223686,
+        "rmse_velocity": 0.8065441689356782
+      },
+      {
+        "name": "회복",
+        "samples": 3501,
+        "rmse_z": 0.01897322137196998,
+        "rmse_velocity": 0.013807595841008878
+      }
+    ],
+    "motor_saturation_fraction": 0.0,
+    "pre_gust_ready": true,
+    "recovered": true,
+    "recovery_seconds": 0.0,
+    "gust_max_z_error": 0.020322404539946604,
+    "gust_max_velocity_error": 1.314248948464673,
+    "passed": true,
+    "failure_reasons": [],
+    "tracking_pass": true,
+    "model_domain_valid": true,
+    "prop_domain_outside_fraction": 0.0,
+    "optimizer_calls": 600,
+    "optimizer_failures": 0,
+    "wall_seconds": 241.0792225410696,
+    "stop_reason": null,
+    "truth_parameter_sha256": "13a1dcc6332987eba93ea4653f4d6087741d1ac085701982ed94c22e6658c807",
+    "trajectory_sha256": "849833b964729fa66e3d08743c96947b40f72a3c1f0666e1de2cf344376d2ce5",
+    "feedback": "truth",
+    "nu_decomposition": {
+      "applicable": true,
+      "normalization": "D_nu = diag(m*g, 100, 100, 100)",
+      "scale": [
+        11.5176828132,
+        100.0,
+        100.0,
+        100.0
+      ],
+      "steps": 6000,
+      "steps_without_alloc": 1,
+      "allocation_residual": {
+        "components": [
+          "thrust",
+          "alpha_x",
+          "alpha_y",
+          "alpha_z"
+        ],
+        "integral": [
+          2.9093695287424306e-15,
+          2.4149829930464963e-15,
+          5.08046915530905e-15,
+          4.980753397946388e-15
+        ],
+        "max": [
+          9.253719875135468e-16,
+          7.769658275651883e-16,
+          1.5866474800674268e-15,
+          1.609296463450649e-15
+        ],
+        "norm_integral": 9.562770004793768e-15,
+        "norm_max": 1.6130377867182314e-15
+      },
+      "realization_error": {
+        "components": [
+          "thrust",
+          "alpha_x",
+          "alpha_y",
+          "alpha_z"
+        ],
+        "integral": [
+          0.12479027338203476,
+          0.00010378825205113615,
+          7.821958646056678,
+          0.17724217607233927
+        ],
+        "max": [
+          0.7091740793499057,
+          8.580391919868287e-05,
+          0.7593339337458351,
+          0.15234835760978888
+        ],
+        "norm_integral": 7.849692891881102,
+        "norm_max": 0.8850972649425419
+      }
+    },
+    "controller_model_sha256": "2582197db2546d329b62bee631beef5f89459c2c4b11a2131ab024240177956d",
+    "integrators": null,
+    "paper_failed": false,
+    "paper_reasons": [],
+    "paper_z_error_run_seconds": 0.0,
+    "paper_omega_run_seconds": 0.0,
+    "paper_cruise_velocity_run_seconds": 0.0,
+    "paper_max_consecutive_solver_failures": 0,
+    "window": [
+      0.0,
+      12.0
+    ],
+    "window_complete": true,
+    "window_rmse_velocity": 0.3297616558269971,
+    "window_rmse_z": 0.018095607502364667,
+    "window_max_velocity_error": 1.314248948464673,
+    "window_max_z_error": 0.020322404539946604,
+    "window_p95_velocity_error": 1.0444538420881981,
+    "window_p95_z_error": 0.019517486086371605,
+    "window_max_omega": 0.2615014274827777,
+    "command_total_variation": 2.476395851767712,
+    "paper_recovery_seconds": 0.0,
+    "variant": "truth",
+    "fault": "nominal",
+    "run_dir": "/Users/leo/.codex/.chatgpt-projects/g-p-697716ea005481918efd3fc013c6d984/review/sensor-timing-checkpoint/results/matching_truth_v7/arena_20260929T155555557689Z",
+    "source": "results/matching_truth_v7/arena_20260929T155555557689Z/trials.jsonl",
+    "run_dir_relative": "results/matching_truth_v7/arena_20260929T155555557689Z"
+  }
+]

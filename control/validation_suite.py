@@ -1,0 +1,836 @@
+"""Four independent validation stages using the pinned team aircraft.
+
+python -m control.mission_sim --scenario baseline|gust|sweep|mc
+Results describe the tested model and sampled conditions, not a proof for all
+uncertainties. No parameter changes are disclosed to the controller.
+"""
+import argparse
+from copy import deepcopy
+from dataclasses import asdict
+from datetime import datetime, timezone
+import gc
+import hashlib
+import json
+from pathlib import Path
+import platform
+from importlib.metadata import version
+import subprocess
+from time import perf_counter
+
+import numpy as np
+from scipy.spatial.transform import Rotation
+
+from control.mission_profiles import (MissionProfile, GustProfile, DEFAULT_GUST_TIMES,
+                                      DEFAULT_MISSION_DURATIONS)
+from control.validation_metrics import Acceptance, evaluate
+from control.uncertainty import (DEFAULT_RANGES, validate_ranges, perturb_params,
+                                 sweep_cases, monte_carlo_cases, cg_offset_arm_fraction)
+from control.arena_observation_delay import DelayedObservation
+from control.arena_feedback import ArenaSensorFeedback
+from control.arena_sensors import load_sensor_profile
+from control.arena_plant_wrench import build_plant
+from control.arena_trim import find_trim_6dof
+from models.team_light.control.baseline_v2 import baseline_params, parameter_hash
+from models.team_light.control.dynamics import AxialDronePlant
+from models.team_light.control.trim import find_trim
+from models.team_light.control.run_baseline_comparison import Factory, LABELS, DT, solver_of
+from models.team_light.control.propeller_curve import domain_status
+
+ROOT = Path(__file__).resolve().parents[1]
+
+
+def json_safe(value):
+    """Strict JSON: invalid numeric metrics remain null, with failure reasons."""
+    if isinstance(value, np.ndarray):
+        return json_safe(value.tolist())
+    if isinstance(value, np.generic):
+        return json_safe(value.item())
+    if isinstance(value, dict):
+        return {str(k): json_safe(v) for k, v in value.items()}
+    if isinstance(value, (tuple, list)):
+        return [json_safe(v) for v in value]
+    if isinstance(value, float) and not np.isfinite(value):
+        return None
+    if isinstance(value, Path):
+        return str(value)
+    return value
+
+
+def write_json(path, value):
+    path.write_text(json.dumps(json_safe(value), ensure_ascii=False,
+                               indent=2, allow_nan=False)+'\n', encoding='utf-8')
+
+
+def gust_wind(profile, case):
+    if not isinstance(profile, GustProfile) or case.get('gust_peak', 0) == 0:
+        return None
+    start, end = profile.gust_interval
+    axis = {'lateral': 1, 'vertical': 2}[case['gust_direction']]
+
+    def wind(t):
+        w = np.zeros(3)
+        if start <= t <= end:
+            w[axis] = .5*case['gust_peak']*(1-np.cos(2*np.pi*(t-start)/(end-start)))
+        return w
+    return wind
+
+
+def trajectory_sha256(result):
+    """Bit-level fingerprint of the simulated trajectory (time, state, command)."""
+    digest = hashlib.sha256()
+    for key in ('ts', 'xs', 'us'):
+        digest.update(np.ascontiguousarray(result[key], dtype=np.float64).tobytes())
+    return digest.hexdigest()
+
+
+# 원고 식(29)·(37) 계측(2026-09-28 밤). 정규화는 NMPC 비용함수(식 15·17)의 입력 정규화 행렬
+# D_ν = diag(m·g, 100, 100, 100)을 그대로 쓴다(control/hybrid_comparison.py VirtualNMPC, m은 명목 질량) —
+# kj 결정: 모든 제어기에 같은 D_ν. 원문 식(37)의 정규화와 다를 수 있어 원고 갱신 목록에 올렸다.
+NU_ALPHA_SCALE = 100.0
+
+
+def nu_scale(cp):
+    """D_ν 대각 = [명목 m·g, 100, 100, 100]."""
+    return np.array([cp['mass']*cp['g']] + [NU_ALPHA_SCALE]*3)
+
+
+def actual_input_function(truth):
+    """플랜트(팀원 모델, 참 파라미터)의 실제 가상입력 ν_act = [총추력, J⁻¹·M_rotor]. ω = 0으로 불러
+    자이로 결합항을 뺀다 — 제어기의 명목 배분(G)과 같은 '로터 추력·반토크가 만드는 입력 효과' 정의."""
+    import casadi as ca
+    from models.team_light.control.dynamics import _rotor_forces_moments
+    from models.team_light.control.geometry import thrust_axis
+    v, n = ca.SX.sym('v', 3), ca.SX.sym('n', 4)
+    F, M = _rotor_forces_moments(v, n, ca.SX.zeros(3), truth)
+    axis = ca.DM(thrust_axis(truth))
+    J = ca.vertcat(truth['Ixx'], truth['Iyy'], truth['Izz'])
+    return ca.Function('nu_act', [v, n], [ca.vertcat(ca.dot(axis, F), M/J)])
+
+
+def nu_decomposition(nu_d, nu_alloc, nu_act, dt, scale):
+    """식(29): r_ν = ν_alloc − ν_d(배분 잔차), ε_ν = ν_act − ν_alloc(실현 오차). D_ν로 나눈 뒤 성분별
+    [총추력, α_x, α_y, α_z]과 합친 노름의 적분(Σ|·|dt)·최댓값. ν_alloc이 없는 스텝(초기화·NaN 예비 경로)은
+    세고 합계에서 뺀다.
+
+    해석 주의(kj): ε_ν에는 모터 지연과 함께 **제어기 추진 모델 대 플랜트 추진 모델의 차이**가 섞인다
+    (ν_alloc은 제어기 명목 맵, ν_act는 플랜트 참 맵 — 명목 조건에서 I-8 기준 ±5% 이내). 섭동 시험에서는
+    추력 계수·질량 섭동도 여기에 들어간다."""
+    nu_d, nu_alloc, nu_act = (np.asarray(a, dtype=float).reshape(-1, 4) for a in (nu_d, nu_alloc, nu_act))
+    ok = np.all(np.isfinite(nu_alloc), axis=1)
+    r = (nu_alloc[ok] - nu_d[ok])/scale
+    e = (nu_act[ok] - nu_alloc[ok])/scale
+
+    def summary(a):
+        if not len(a):
+            return dict(components=['thrust', 'alpha_x', 'alpha_y', 'alpha_z'],
+                        integral=[0.0]*4, max=[0.0]*4, norm_integral=0.0, norm_max=0.0)
+        norm = np.linalg.norm(a, axis=1)
+        return dict(components=['thrust', 'alpha_x', 'alpha_y', 'alpha_z'],
+                    integral=(np.abs(a).sum(axis=0)*dt).tolist(), max=np.abs(a).max(axis=0).tolist(),
+                    norm_integral=float(norm.sum()*dt), norm_max=float(norm.max()))
+    return dict(applicable=True, normalization='D_nu = diag(m*g, 100, 100, 100)', scale=list(map(float, scale)),
+                steps=int(len(ok)),
+                steps_without_alloc=int((~ok).sum()), allocation_residual=summary(r), realization_error=summary(e))
+
+
+def plant_truth(nominal, case):
+    """시행 하나의 플랜트 파라미터 — run_trial과 본 실험 트림 사전 확인(control/main_experiment.py)이
+    같이 쓴다(둘이 다른 truth를 보면 사전 확인이 뜻이 없다). 제어기는 명목 nominal을 그대로 쓴다."""
+    truth = perturb_params(nominal, case['factors'])
+    extra = case.get('extra_params', {})
+    if 'cg_offset_axis' in extra:
+        # 표7 무게중심 편차 — 곱셈이 아니라 위치벡터 전체의 덧셈 이동이라 update로는 못 담는다.
+        # 플랜트(truth)에만 적용하고, 제어기는 명목 factory.p를 그대로 쓴다. 키가 없으면 안 부른다.
+        truth = cg_offset_arm_fraction(truth, extra['cg_offset_axis'], float(extra['cg_offset_arm_fraction']))
+    truth.update(extra)     # 표7 wrench 훅·관측 지연(곱셈 FACTORS 밖). 무게중심 키는 기록용으로 남는다
+    return truth
+
+
+def run_trial(factory, label, profile, case, limits, feedback=None, sensor_profile=None,
+              sensor_seed=None):
+    """Fresh controller state per trial; nominal gains/solver may be cached.
+
+    A factory may provide make_for_profile/update_at/solver_of/dt (the arena
+    factory does: its controllers need the whole reference profile and the
+    time). Otherwise the team Factory protocol make/update is used unchanged.
+    """
+    # 이전 시행의 제어기(NLP 포함)를 새 NLP를 짓기 전에 확실히 치운다. 순환 참조에 걸린
+    # CasADi 객체는 파이썬 GC가 메모리 크기를 몰라 늦게 풀린다(2026-09-26 실측: 튜닝
+    # 프로세스가 6~10 GB). 계산에는 영향이 없다.
+    from control.sensor_binding import resolve_feedback
+    binding = resolve_feedback(getattr(factory, 'config', None), mode=feedback,
+                               profile=sensor_profile, seed=sensor_seed)
+    feedback, sensor_profile, sensor_seed = binding.mode, binding.profile, binding.seed
+    gc.collect()
+    nominal_hash = parameter_hash(factory.p)
+    truth = plant_truth(factory.p, case)
+    extra = case.get('extra_params', {})
+    initial_v, initial_z, _ = profile.get_ref(0.)
+    if 'cg_offset_axis' in extra:
+        # 벤더 find_trim은 평면(좌우 대칭) 탐색기라 CG 편차 트림을 표현하지 못한다(보고서 20절).
+        # 6자유도 트림: 롤 0 → 옆미끄럼 0 순서, 둘 다 없으면 'vehicle limit' ValueError.
+        # 플랜트 출발 상태에만 쓴다 — 제어기는 명목 모델 트림만 받는다.
+        trim = find_trim_6dof(truth, float(initial_v[0]))
+    else:
+        trim = find_trim(truth, float(initial_v[0]))
+    x = trim['state'].copy()
+    x[2] = initial_z
+    # make() resets the NMPC solution/timing/history and creates a new INDI
+    # inner loop. Cruise references and trim thrust are set before its first call.
+    make_for_profile = getattr(factory, 'make_for_profile', None)
+    ctrl = (make_for_profile(label, profile, case) if make_for_profile is not None
+            else factory.make(label, float(initial_v[0]), initial_z))
+    solver = factory.solver_of(ctrl) if hasattr(factory, 'solver_of') else solver_of(ctrl)
+    update_at = getattr(factory, 'update_at', None)
+    dt = getattr(factory, 'dt', DT)
+    plant = build_plant(truth, dt=dt)
+    # 관측 지연(kj 결정: 측정값 공급 지점, 모든 컨트롤러에 같은 지연). 둘 다 0이면 원본 x 그대로.
+    observer = DelayedObservation(dt, truth.get('state_delay_s', 0.0), truth.get('rotor_delay_s', 0.0))
+    observer.reset()
+    sensor_feedback = None
+    if feedback == 'sensors':
+        if sensor_profile is None:
+            raise ValueError('sensor feedback requires a sensor profile')
+        sensor_feedback = ArenaSensorFeedback(x, sensor_profile, dt, seed=sensor_seed)
+        xdot0 = np.asarray(plant.evaluate_xdot(x, trim['control'], np.zeros(3)), dtype=float)
+        sensor_feedback.initial_packets(0.0, x, xdot0)
+    elif feedback != 'truth':
+        raise ValueError(f'unknown feedback mode {feedback!r}')
+    wind = gust_wind(profile, case)
+    ts, xs, us, winds = [0.], [x.copy()], [], []
+    # 식(29) 계측 — 가상입력 인터페이스가 있는 제어기(V13 사다리·F13의 ProperHybrid)만. 기록 전용.
+    probe_owner = getattr(ctrl, 'inner', None)
+    nu_rec = None
+    feedback_rec = None
+    if probe_owner is not None and hasattr(probe_owner, 'probe'):
+        nu_act_fn = actual_input_function(truth)
+        nu_rec = dict(d=[], alloc=[], act=[])
+        feedback_rec = {name: [] for name in ('path', 'n_feedback', 'omega_dot_filtered',
+                        'rotor_thrust_raw', 'rotor_thrust_used', 'allocation_error',
+                        'rotor_increment', 'rotor_ready', 'rotor_sample_time_s')}
+    outside, reason = 0, None
+    estimator_trace = [sensor_feedback.state] if sensor_feedback is not None else None
+    started = perf_counter()
+    for k in range(round(profile.T_total/dt)):
+        t = k*dt
+        v, z, _ = profile.get_ref(t)
+        w = wind(t) if wind else np.zeros(3)
+        try:
+            if update_at is not None:
+                update_at(ctrl, t, v, z)
+            else:
+                factory.update(ctrl, v, z)
+            x_obs = observer.observe(sensor_feedback.state if sensor_feedback is not None else x)
+            if probe_owner is not None and hasattr(probe_owner, 'set_rotor_feedback_ready'):
+                probe_owner.set_rotor_feedback_ready(sensor_feedback is None or sensor_feedback.rotors.ready)
+            u = np.asarray(ctrl(t, x_obs), dtype=float)
+            if u.shape != (4,) or not np.all(np.isfinite(u)):
+                reason = 'nonfinite or malformed motor command'
+                break
+            if np.any(u < truth['n_min']-1e-6) or np.any(u > truth['n_max']+1e-6):
+                reason = 'command outside physical motor bounds'
+                break
+            if solver is not None and solver.consec_fail >= 5:
+                reason = '5 consecutive optimizer failures'
+                break
+            xn = plant.step(x, u, w)
+        except (ValueError, RuntimeError, np.linalg.LinAlgError) as exc:
+            reason = f'{type(exc).__name__}: {exc}'
+            break
+        us.append(u.copy())
+        winds.append(w)
+        if nu_rec is not None:
+            probe = probe_owner.probe or {}
+            vb_act = Rotation.from_quat(x[6:10]).as_matrix().T @ (x[3:6] - w)     # 이 스텝의 참 상태·바람
+            nu_rec['d'].append(np.asarray(probe.get('nu_d', [np.nan]*4), dtype=float))
+            alloc = probe.get('nu_alloc')
+            nu_rec['alloc'].append(np.full(4, np.nan) if alloc is None else np.asarray(alloc, dtype=float))
+            nu_rec['act'].append(np.array(nu_act_fn(vb_act, x[13:17])).ravel())
+            detail = getattr(probe_owner, 'feedback_probe', {})
+            feedback_rec['path'].append(probe.get('path', 'unknown'))
+            for key in ('n_feedback', 'omega_dot_filtered', 'rotor_thrust_raw',
+                        'rotor_thrust_used', 'allocation_error', 'rotor_increment'):
+                width = 3 if key == 'omega_dot_filtered' else 4
+                feedback_rec[key].append(np.asarray(detail.get(key, np.full(width, np.nan))).copy())
+            feedback_rec['rotor_ready'].append(sensor_feedback is None or sensor_feedback.rotors.ready)
+            sample_time = sensor_feedback.rotors.sample_time if sensor_feedback is not None else t
+            feedback_rec['rotor_sample_time_s'].append(np.nan if sample_time is None else sample_time)
+        xs.append(xn.copy())
+        ts.append((k+1)*dt)
+        x = xn
+        if not np.all(np.isfinite(x)):
+            reason = 'nonfinite plant state'
+            break
+        vb = Rotation.from_quat(x[6:10]).as_matrix().T@(x[3:6]-w)
+        outside += not domain_status(truth, x[13:17], vb)['inside_assumed_domain']
+        if np.linalg.norm(x[10:13]) > limits.max_omega or abs(x[2]-z) > 50:
+            reason = 'body-rate or altitude divergence stop'
+            break
+        if sensor_feedback is not None:
+            # The endpoint sample represents the instantaneous measurement at
+            # t+dt.  Its packet can arrive later; the estimator retains it.
+            xdot_next = np.asarray(plant.evaluate_xdot(x, u, w), dtype=float)
+            sensor_feedback.step((k+1)*dt, x, xdot_next, u)
+            estimator_trace.append(sensor_feedback.state.copy())
+    ts, xs = np.asarray(ts), np.asarray(xs)
+    vr, zr = profile.compute_refs(ts)
+    result = dict(ts=ts, xs=xs, us=np.asarray(us).reshape(-1, 4),
+                  v_refs=vr, z_refs=zr, wind=np.asarray(winds).reshape(-1, 3), error=reason)
+    if estimator_trace is not None:
+        result['xs_est'] = np.asarray(estimator_trace)
+        result['sensor_feedback'] = feedback
+        result['sensor_profile'] = sensor_feedback.profile.get('name', 'custom')
+        result['estimator_diagnostics'] = sensor_feedback.diagnostics
+        if sensor_feedback.filter.trace_updates:
+            result['navigation_trace'] = dict(
+                schema='navigation-trace/1', updates=sensor_feedback.filter.update_trace,
+                arrivals=sensor_feedback.filter.arrival_trace,
+                semantics='Updates are recorded once, at first processing. Later replays do not '
+                          'rewrite these records. Arrival state differences include propagation '
+                          'and replay of older measurements; they are not per-sensor causal effects.')
+    if nu_rec is not None:
+        # 궤적 해시(ts·xs·us)에는 안 들어간다 — 기록을 더해도 trajectory_sha256은 그대로다
+        for key in ('d', 'alloc', 'act'):
+            result[f'nu_{key}'] = np.asarray(nu_rec[key], dtype=float).reshape(-1, 4)
+        for key, values in feedback_rec.items():
+            result[f'indi_{key}'] = np.asarray(values)
+    metrics = evaluate(result, profile, limits, truth['n_max'])
+    log = deepcopy(solver.solve_log) if solver is not None else []
+    metrics.update(tracking_pass=metrics['passed'],
+                   model_domain_valid=outside == 0 and len(us) > 0 and bool(np.all(np.isfinite(xs))),
+                   prop_domain_outside_fraction=outside/max(len(us), 1),
+                   optimizer_calls=len(log),
+                   optimizer_failures=sum(not entry['accepted'] for entry in log),
+                   wall_seconds=perf_counter()-started, stop_reason=reason,
+                   truth_parameter_sha256=parameter_hash(truth),
+                   trajectory_sha256=trajectory_sha256(result))
+    if sensor_feedback is not None:
+        metrics.update(binding.metadata)
+        metrics['estimator_diagnostics'] = sensor_feedback.diagnostics
+        metrics['feedback_delay_s'] = dict(state=observer.k_state*dt, rotor=observer.k_rotor*dt)
+    else:
+        metrics['feedback'] = 'truth'
+    if nu_rec is not None:
+        metrics['nu_decomposition'] = nu_decomposition(result['nu_d'], result['nu_alloc'], result['nu_act'],
+                                                       dt, nu_scale(factory.cp))
+    else:
+        metrics['nu_decomposition'] = dict(applicable=False)       # 가상입력 인터페이스 없음(M17·GSLQR·CPID)
+    if 'condition' in trim:
+        metrics['plant_trim_condition'] = trim['condition']     # CG 사례에만 — 기본 경로 필드는 그대로
+    if hasattr(factory, 'controller_model_sha256'):
+        metrics['controller_model_sha256'] = factory.controller_model_sha256
+    integrator_report = getattr(ctrl, 'integrator_report', None)
+    if integrator_report is not None:
+        # 적분기 한계 도달·정지 스텝(GSLQR·CPID, 같은 형식). NMPC 계열은 None.
+        metrics['integrators'] = integrator_report()
+    if outside:
+        metrics['passed'] = False
+        metrics['failure_reasons'].append('propulsion_model_domain')
+    if parameter_hash(factory.p) != nominal_hash:
+        raise AssertionError('controller nominal parameters mutated during trial')
+    return metrics, result, log
+
+
+def summarize(rows, scenario):
+    """Failures stay in the denominator; RMSE distributions use completions."""
+    summary = {}
+    for label in sorted({r['controller'] for r in rows}):
+        selected = [r for r in rows if r['controller'] == label]
+        count = len(selected)
+        failures = sum(not r['passed'] for r in selected)
+        record = dict(trials=count, passed=count-failures, failed=failures,
+                      failure_rate=failures/count,
+                      tracking_passed=sum(r.get('tracking_pass', False) for r in selected),
+                      domain_valid=sum(r.get('model_domain_valid', False) for r in selected))
+        # Wilson interval only for the independent random trials, not OAT/grid.
+        if scenario == 'mc':
+            z, p = 1.959963984540054, failures/count
+            den = 1+z*z/count
+            center = (p+z*z/(2*count))/den
+            half = z*np.sqrt(p*(1-p)/count+z*z/(4*count*count))/den
+            record['failure_rate_wilson95'] = [max(0., center-half), min(1., center+half)]
+        complete = [r for r in selected if not r.get('stop_reason') and
+                    'incomplete' not in r['failure_reasons'] and r.get('rmse_velocity') is not None]
+        record['complete_metric_trials'] = len(complete)
+        for key in ('rmse_z', 'rmse_velocity', 'max_omega'):
+            values = [r[key] for r in complete if np.isfinite(r[key])]
+            if values:
+                record[key] = dict(mean=float(np.mean(values)), std=float(np.std(values)),
+                                   p95=float(np.percentile(values, 95)), worst=float(max(values)))
+        summary[label] = record
+    return summary
+
+
+def write_report(out, manifest, rows):
+    summary = summarize(rows, manifest['scenario'])
+    lines = [f'# Validation: {manifest["scenario"]}', '',
+             f'Model: `{manifest["params"]["profile_id"]}`; planned duration: {manifest["duration"]:g} s.',
+             '', 'Pass requires tracking/safety criteria AND propulsion model domain validity.',
+             'Early-stop RMSE describes only the recorded prefix, not the full mission.', '',
+             '| Case | Controller | Simulated s | Tracking | Model domain | Pass | Reasons |',
+             '|---|---|---:|---|---|---|---|']
+    for r in rows:
+        lines.append(f'| {r["case_id"]} | {r["controller"]} | {r["simulated_seconds"]:.3f} | '
+                     f'{r.get("tracking_pass", False)} | {r.get("model_domain_valid", False)} | '
+                     f'{r["passed"]} | {", ".join(r["failure_reasons"])} |')
+    lines += ['', '## Aggregate', '', '```json',
+              json.dumps(json_safe(summary), indent=2), '```', '',
+              'Uncertainty ranges are exploratory assumptions unless replaced with measured tolerances.',
+              'Monte Carlo uses independent uniform factors; its interval is conditional on this distribution.',
+              'No claim about untested conditions or real flight follows from these results.', '']
+    (out/'REPORT.md').write_text('\n'.join(lines), encoding='utf-8')
+
+
+def plot_traces(out, cases, labels, profile):
+    import matplotlib
+    matplotlib.use('Agg')
+    import matplotlib.pyplot as plt
+    for case in cases:
+        fig, axes = plt.subplots(4, 1, figsize=(11, 10), sharex=True)
+        plotted = False
+        for label in labels:
+            path = out/f'{case["case_id"]}_{label}.npz'
+            if not path.exists():
+                continue
+            with np.load(path) as trace:
+                ts, xs = trace['ts'], trace['xs']
+                display = 'NMPC + INDI (Split)' if label == 'Split' else label
+                legend = display+(' [stopped]' if ts[-1] < profile.T_total-1e-8 else '')
+                axes[0].plot(ts, xs[:, 3], label=legend)
+                axes[1].plot(ts, np.linalg.norm(xs[:, 3:6]-trace['v_refs'], axis=1), label=legend)
+                axes[2].plot(ts, xs[:, 2]-trace['z_refs'], label=legend)
+                axes[3].plot(ts, np.linalg.norm(xs[:, 10:13], axis=1), label=legend)
+                plotted = True
+        if plotted:
+            grid = np.linspace(0, profile.T_total, 1000)
+            refs, _ = profile.compute_refs(grid)
+            axes[0].plot(grid, refs[:, 0], 'k--', label='Reference')
+            for ax, title in zip(axes, ['Forward speed [m/s]', 'Velocity error norm [m/s]',
+                                       'Altitude error [m]', 'Body rate norm [rad/s]']):
+                ax.set_ylabel(title)
+                ax.grid(alpha=.25)
+                ax.legend()
+                ax.set_xlim(0, profile.T_total)
+                if profile.gust_interval is not None and case.get('gust_peak', 0):
+                    ax.axvspan(*profile.gust_interval, color='red', alpha=.12)
+                for _, start, _ in profile.get_phase_boundaries():
+                    ax.axvline(start, color='grey', alpha=.2)
+            axes[-1].set_xlabel('Time [s]')
+            fig.suptitle(f'Team light rocket | {case["case_id"]}')
+            fig.tight_layout()
+            fig.savefig(out/f'{case["case_id"]}.png', dpi=140)
+        plt.close(fig)
+
+
+def build_parser():
+    p = argparse.ArgumentParser(description=__doc__)
+    p.add_argument('--scenario', choices=['baseline', 'gust', 'sweep', 'mc'], default='baseline')
+    p.add_argument('--controllers', nargs='+', choices=LABELS, default=['GS-LQR', 'Split'])
+    p.add_argument('--speed', type=float, default=70.)
+    p.add_argument('--altitude', type=float, default=50.)
+    p.add_argument('--durations', type=float, nargs=5, default=list(DEFAULT_MISSION_DURATIONS),
+                   metavar=('HOVER1', 'ACCEL', 'CRUISE', 'DECEL', 'HOVER2'))
+    p.add_argument('--gust-settle', type=float, default=DEFAULT_GUST_TIMES[0])
+    p.add_argument('--gust-duration', type=float, default=DEFAULT_GUST_TIMES[1])
+    p.add_argument('--gust-recovery', type=float, default=DEFAULT_GUST_TIMES[2])
+    p.add_argument('--gust-peak', type=float, default=2., help='m/s; signed peak allowed')
+    p.add_argument('--gust-directions', nargs='+', choices=['vertical', 'lateral'],
+                   default=['vertical', 'lateral'])
+    p.add_argument('--ranges', type=Path, help='JSON mapping factor -> [min, max] multipliers')
+    p.add_argument('--sweep-mode', choices=['oat', 'grid'], default='oat')
+    p.add_argument('--points', type=int, default=3)
+    p.add_argument('--trials', type=int, default=100)
+    p.add_argument('--seed', type=int, default=42)
+    p.add_argument('--criteria', type=Path, help='JSON overrides for Acceptance fields')
+    p.add_argument('--output', type=Path, default=ROOT/'results'/'validation', help='parent output directory')
+    p.add_argument('--dry-run', action='store_true', help='save configuration/cases without simulation')
+    p.add_argument('--save-traces', action='store_true', help='also save every sweep/MC trajectory')
+    arena = p.add_argument_group('arena (configs/arena.json)')
+    arena.add_argument('--config', type=Path,
+                       help='arena config; runs every scenario in it with the current controllers')
+    arena.add_argument('--smoke', action='store_true',
+                       help='arena: one full run of each scenario, labelled SMOKE')
+    arena.add_argument('--only-cases', nargs='+', help='arena: run only these scenario ids')
+    arena.add_argument('--only-controllers', nargs='+', help='arena: run only these controllers')
+    arena.add_argument('--reference-out', type=Path,
+                       help='arena: also write the compact reference summary to this path')
+    arena.add_argument('--tuned', type=Path,
+                       help='arena: use each controller\'s best values from this tuning run-dir '
+                            '(records must be complete, tuned on this config, and pass I-4)')
+    arena.add_argument('--feedback', choices=['truth', 'sensors'], default=None,
+                       help='arena state supplied to controllers (truth preserves the baseline)')
+    arena.add_argument('--sensor-profile', type=Path,
+                       help='arena JSON sensor profile used with --feedback sensors')
+    arena.add_argument('--sensor-seed', type=int, default=None,
+                       help='deterministic seed for sensor noise/dropouts')
+    return p
+
+
+def make_plan(args):
+    if not np.isfinite(args.speed) or not 0 <= args.speed <= 85:
+        raise ValueError('speed must be within the checked nominal trim range 0..85 m/s')
+    if not np.isfinite(args.gust_peak):
+        raise ValueError('gust peak must be finite')
+    if args.trials < 1 or args.points < 2 or args.seed < 0:
+        raise ValueError('trials >= 1, points >= 2 and seed >= 0 are required')
+    ranges = validate_ranges(json.loads(args.ranges.read_text(encoding='utf-8'))
+                             if args.ranges else deepcopy(DEFAULT_RANGES))
+    limits = Acceptance(**(json.loads(args.criteria.read_text(encoding='utf-8')) if args.criteria else {}))
+    if args.scenario == 'gust':
+        profile = GustProfile(args.speed, args.altitude, args.gust_settle,
+                              args.gust_duration, args.gust_recovery)
+        if args.gust_settle < limits.recovery_hold or args.gust_recovery < limits.recovery_hold:
+            raise ValueError('gust settling/recovery windows must cover recovery_hold')
+        cases = [dict(case_id='cruise_control', factors={}, gust_peak=0.)]
+        cases += [dict(case_id=f'gust_{direction}', factors={}, gust_direction=direction,
+                       gust_peak=args.gust_peak) for direction in dict.fromkeys(args.gust_directions)]
+    else:
+        profile = MissionProfile(args.speed, args.altitude, args.durations)
+        if args.scenario == 'sweep':
+            if args.sweep_mode == 'grid' and args.points**len(ranges) > 100000:
+                raise ValueError('grid exceeds 100000 cases; select fewer factors or use MC')
+            cases = sweep_cases(ranges, args.points, args.sweep_mode)
+        elif args.scenario == 'mc':
+            cases = monte_carlo_cases(ranges, args.trials, args.seed)
+        else:
+            cases = [dict(case_id='nominal', factors={})]
+    for _, start, duration, *_ in profile.phases:
+        if abs(duration/DT-round(duration/DT)) > 1e-7:
+            raise ValueError(f'phase durations must be multiples of {DT} seconds')
+    return profile, cases, ranges, limits
+
+
+THREAD_VARIABLES = ('OMP_NUM_THREADS', 'OPENBLAS_NUM_THREADS', 'VECLIB_MAXIMUM_THREADS',
+                    'MKL_NUM_THREADS')
+# Compact per-trial fields kept for cross-run comparison. Wall-clock fields are
+# excluded on purpose: they depend on the machine load, not on the result.
+ARENA_REFERENCE_FIELDS = (
+    'scenario_id', 'scenario_type', 'controller', 'label', 'passed', 'tracking_pass',
+    'model_domain_valid', 'failure_reasons', 'stop_reason', 'simulated_seconds',
+    'rmse_z', 'rmse_vx', 'rmse_velocity', 'max_z_error', 'max_velocity_error', 'max_omega',
+    'omega_sustained_seconds', 'motor_saturation_fraction', 'prop_domain_outside_fraction',
+    'optimizer_calls', 'optimizer_failures', 'final_settled', 'recovered', 'recovery_seconds',
+    'paper_failed', 'paper_reasons', 'paper_recovery_seconds', 'window', 'window_complete',
+    'window_rmse_velocity', 'window_rmse_z', 'window_max_velocity_error', 'window_max_z_error',
+    'window_p95_velocity_error', 'window_p95_z_error', 'window_max_omega',
+    'command_total_variation', 'flow_angle_deg', 'factors', 'trajectory_sha256',
+    'feedback', 'sensor_profile', 'estimator_diagnostics',
+    'truth_parameter_sha256', 'controller_model_sha256', 'integrators', 'skipped', 'skip_reason')
+
+
+def environment_fingerprint():
+    """Where a result was produced. Same fingerprint -> bit-identical rerun expected."""
+    import os
+    cpu = None
+    try:
+        if platform.system() == 'Darwin':
+            cpu = subprocess.check_output(['sysctl', '-n', 'machdep.cpu.brand_string'],
+                                          text=True).strip()
+        elif Path('/proc/cpuinfo').exists():
+            cpu = next((line.split(':', 1)[1].strip()
+                        for line in Path('/proc/cpuinfo').read_text().splitlines()
+                        if line.startswith('model name')), None)
+    except (OSError, subprocess.CalledProcessError):
+        pass
+    return dict(system=platform.system(), release=platform.release(),
+                machine=platform.machine(), cpu=cpu, python=platform.python_version(),
+                packages={name: version(name) for name in ('numpy', 'scipy', 'casadi', 'matplotlib')},
+                threads={name: os.environ.get(name) for name in THREAD_VARIABLES})
+
+
+def git_state():
+    try:
+        revision = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip()
+        dirty = bool(subprocess.check_output(['git', 'status', '--porcelain', '--untracked-files=no'],
+                                             cwd=ROOT, text=True).strip())
+        return revision, dirty
+    except (OSError, subprocess.CalledProcessError):
+        return None, None
+
+
+def source_hashes():
+    files = [p for folder in ('control', 'models/team_light/control') for p in (ROOT/folder).glob('*.py')]
+    files += list((ROOT/'configs').rglob('*.json'))
+    return {str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(files)}
+
+
+def write_arena_report(out, manifest, rows):
+    from control.arena import integrator_limit_flags
+    tuned = manifest.get('tuned')
+    lines = [f'# Arena {manifest["label"]} run', '',
+             f'**{manifest["label"]}** — pipeline check, not a performance result. '
+             'No superiority or inferiority conclusion is drawn from these numbers.', '']
+    if tuned:
+        lines += [f'Gains: **tuned** — best values from `{tuned["run_dir"]}` (same-budget tuning, PILOT): '
+                  + '; '.join(f'{name} record sha256 `{t["record_sha256"][:12]}`'
+                              for name, t in tuned['controllers'].items())
+                  + '. Still one deterministic run per case.', '']
+    lines += [f'Config `{manifest["config_path"]}` sha256 `{manifest["config_sha256"][:12]}`; '
+             f'git `{manifest["git_revision"]}` dirty={manifest["git_dirty"]}.', '',
+             'Suite pass = tracking/safety (Acceptance) AND propulsion-model domain. '
+             'Paper = section 5.10 flags (stricter, reported alongside). '
+             'Window RMSE = section 5.8 evaluation window. '
+             'Integ limit / frozen = share of steps with an integrator at its limit / frozen by '
+             'saturation (GSLQR and CPID, same format; NMPC family has no integrators).', '']
+    for scenario in manifest['scenarios']:
+        lines += [f'## {scenario["id"]} ({scenario["type"]})', '',
+                  '| Controller | Sim s | Suite pass | Tracking | Domain | Paper fail | '
+                  'Window RMSE v | Window RMSE z | max |ω| | Integ limit % | Integ frozen % | '
+                  'Stop / reasons |',
+                  '|---|---:|---|---|---|---|---:|---:|---:|---:|---:|---|']
+        for r in (r for r in rows if r['scenario_id'] == scenario['id']):
+            if r.get('skipped'):
+                # kj 결정(2026-09-26): 설계 영역 밖 사례는 시뮬레이션하지 않고 제외로만 적는다
+                lines.append(f'| {r["controller"]} | — | excluded | — | — | — | — | — | — | — | — | '
+                             f'{r.get("skip_reason", "")} |')
+                continue
+
+            def fmt(key, r=r):
+                value = r.get(key)
+                return '—' if value is None else f'{value:.4g}'
+            integ = r.get('integrators') or {}
+            limit = f'{100*integ["at_limit_fraction"]:.2f}' if integ else '—'
+            frozen = f'{100*integ["frozen_fraction"]:.2f}' if integ else '—'
+            reasons = ', '.join(r.get('failure_reasons', []) + r.get('paper_reasons', []))
+            stop = r.get('stop_reason') or ''
+            lines.append(f'| {r["controller"]} | {r.get("simulated_seconds", 0):.3f} | '
+                         f'{r.get("passed")} | {r.get("tracking_pass")} | '
+                         f'{r.get("model_domain_valid")} | {r.get("paper_failed")} | '
+                         f'{fmt("window_rmse_velocity")} | {fmt("window_rmse_z")} | '
+                         f'{fmt("max_omega")} | {limit} | {frozen} | {stop} {reasons} |')
+        lines.append('')
+    threshold, flags = integrator_limit_flags(rows, manifest['config'])
+    lines += [f'## Integrator limit > {100*threshold:g}% of the trial (kj rule 2026-09-26)', '',
+              'Any row listed here goes to "decision needed" in the status report.', '']
+    lines += ([f'- {f["controller"]} / {f["case"]}: {100*f["at_limit_fraction"]:.2f}% '
+               f'(steps at limit per channel {f["channels"]})' for f in flags] or ['- none'])
+    lines.append('')
+    (out/'REPORT.md').write_text('\n'.join(lines), encoding='utf-8')
+
+
+# verify_arena가 대조하는 참조(사전값 게인). 튜닝값 실행이 이것을 덮어쓰면 검증이 엉뚱한 값과 비교한다.
+SMOKE_REFERENCE = ROOT/'results'/'arena'/'smoke_reference.json'
+
+
+def run_arena(args, parser):
+    """Every scenario in the arena config x every controller, once (SMOKE)."""
+    from control.arena import (load_config, config_sha256, check_confirmed_facts, build_scenarios,
+                               excluded_from)
+    from control.arena_factory import ArenaFactory
+    from control.validation_metrics import PaperCriteria, paper_evaluate
+    if not args.smoke:
+        parser.error('arena runs must be labelled: use --smoke (full campaigns are not defined yet)')
+    sensor_config = None
+    if args.sensor_profile is not None:
+        try:
+            sensor_config = load_sensor_profile(args.sensor_profile)
+        except (ValueError, OSError, KeyError, json.JSONDecodeError) as exc:
+            parser.error(f'sensor profile: {exc}')
+    try:
+        config = load_config(args.config)
+    except (ValueError, OSError, KeyError) as exc:
+        parser.error(f'arena config: {exc}')
+    from control.sensor_binding import resolve_feedback
+    try:
+        binding = resolve_feedback(config, mode=args.feedback, profile=sensor_config,
+                                   seed=args.sensor_seed)
+    except (ValueError, TypeError) as exc:
+        parser.error(f'sensor feedback: {exc}')
+    args.feedback, sensor_config, args.sensor_seed = binding.mode, binding.profile, binding.seed
+    native = baseline_params()
+    violations = check_confirmed_facts(config, native)
+    if violations:
+        parser.error('arena config contradicts the confirmed facts: ' + '; '.join(violations))
+    labels = list(dict.fromkeys(args.only_controllers or config['controllers']))
+    unknown = [label for label in labels if label not in config['controllers']]
+    if unknown:
+        parser.error(f'controllers not in the arena config: {unknown}')
+    tuned, overrides = None, None
+    if args.tuned:
+        # 튜닝값 스모크(보고서 11.5-4): 본시험 캠페인이 아직 정의되지 않아 표기는 여전히 SMOKE다
+        from control.arena_design_check import tuned_overrides
+        if args.reference_out and args.reference_out.resolve() == SMOKE_REFERENCE.resolve():
+            parser.error('--tuned must not overwrite the untuned smoke reference that verify_arena compares against')
+        try:
+            overrides, used = tuned_overrides(config, args.tuned, labels)
+        except (ValueError, OSError, KeyError) as exc:
+            parser.error(f'--tuned: {exc}')
+        tuned = dict(run_dir=str(args.tuned), controllers=used)
+    factory = ArenaFactory(config, native, overrides=overrides)
+    scenarios = build_scenarios(config, factory.cp, native, only=args.only_cases)
+    missing = set(args.only_cases or []) - {s.id for s in scenarios}
+    if missing:
+        parser.error(f'scenario ids not in the arena config: {sorted(missing)}')
+    if args.only_cases and args.only_controllers:
+        # 설계 영역 밖 쌍을 이름으로 콕 집어 요청하면 돌릴 것이 없다 — 조용히 빈 결과를 내지 않고 막는다
+        asked = [(s.id, name, excluded_from(config, name, s)) for s in scenarios for name in labels]
+        refused = [f'{sid}/{name}: {why}' for sid, name, why in asked if why]
+        if refused:
+            parser.error('requested pairs are excluded from the main test: ' + '; '.join(refused))
+    limits = Acceptance(**config['acceptance'])
+    paper = PaperCriteria(**config['paper_criteria'])
+    label = 'SMOKE'
+    out = args.output/('arena_'+datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S%fZ'))
+    out.mkdir(parents=True, exist_ok=False)
+    revision, dirty = git_state()
+    manifest = dict(
+        mode='arena', label=label, config_path=str(args.config),
+        config_sha256=config_sha256(config), config=config,
+        scenarios=[dict(id=s.id, type=s.type, window=s.window, phases=s.profile.phases,
+                        T_total=s.profile.T_total, gust_interval=s.profile.gust_interval,
+                        meta=s.meta, cases=s.cases) for s in scenarios],
+        controllers=labels, parameter_sha256=parameter_hash(native),
+        controller_model_sha256=factory.controller_model_sha256, dt=factory.dt,
+        git_revision=revision, git_dirty=dirty, source_sha256=source_hashes(),
+        environment=environment_fingerprint(), criteria=asdict(limits),
+        paper_criteria=asdict(paper), expected_trials=len(scenarios)*len(labels),
+        status='running', **({} if tuned is None else dict(tuned=tuned)))
+    manifest.update(feedback=args.feedback,
+                    sensor_profile=(str(args.sensor_profile) if args.sensor_profile else None),
+                    sensor_profile_config=sensor_config,
+                    sensor_seed=args.sensor_seed)
+    if binding.mode == 'sensors':
+        manifest['sensor_profile_sha256'] = binding.metadata['sensor_profile_sha256']
+    write_json(out/'manifest.json', manifest)
+    print(f'Results: {out}', flush=True)
+    rows = []
+    for scenario in scenarios:
+        for case in scenario.cases:
+            for name in labels:
+                skip_reason = excluded_from(config, name, scenario)
+                if skip_reason:
+                    row = dict(case, scenario_id=scenario.id, scenario_type=scenario.type,
+                               controller=name, label=label, skipped=True, skip_reason=skip_reason,
+                               passed=None, tracking_pass=None, failure_reasons=[], paper_reasons=[],
+                               stop_reason=None, simulated_seconds=None)
+                    rows.append(row)
+                    with (out/'trials.jsonl').open('a', encoding='utf-8') as stream:
+                        stream.write(json.dumps(json_safe(row), ensure_ascii=False, allow_nan=False)+'\n')
+                    print(f'Skipping {scenario.id} / {name}: {skip_reason}', flush=True)
+                    continue
+                print(f'Running {scenario.id} / {name}', flush=True)
+                try:
+                    metrics, result, log = run_trial(factory, name, scenario.profile, case, limits,
+                                                    feedback=args.feedback,
+                                                    sensor_profile=sensor_config,
+                                                    sensor_seed=args.sensor_seed)
+                    metrics.update(paper_evaluate(result, scenario.profile, paper,
+                                                  window=scenario.window, solve_log=log,
+                                                  n_max=native['n_max']))
+                except (ValueError, RuntimeError, np.linalg.LinAlgError) as exc:
+                    metrics = dict(passed=False, tracking_pass=False, failure_reasons=['setup_error'],
+                                   stop_reason=f'{type(exc).__name__}: {exc}', simulated_seconds=0.)
+                    result, log = None, []
+                row = dict(case, scenario_id=scenario.id, scenario_type=scenario.type,
+                           controller=name, label=label, **metrics)
+                rows.append(row)
+                tag = f'{scenario.id}_{name}'
+                with (out/'trials.jsonl').open('a', encoding='utf-8') as stream:
+                    stream.write(json.dumps(json_safe(row), ensure_ascii=False, allow_nan=False)+'\n')
+                if log:
+                    write_json(out/(tag+'.solver.json'), log)
+                if result is not None:
+                    if 'navigation_trace' in result:
+                        write_json(out/(tag+'.navigation.json'), result['navigation_trace'])
+                    np.savez_compressed(out/(tag+'.npz'),
+                                        **{k: v for k, v in result.items() if k not in ('error', 'navigation_trace')})
+                print(f'  suite pass={row["passed"]} paper_fail={row.get("paper_failed")} '
+                      f't={row["simulated_seconds"]:g}s reasons={row["failure_reasons"]}', flush=True)
+    manifest.update(status='complete', recorded_trials=len(rows),
+                    controller_settings=factory.settings)
+    write_json(out/'manifest.json', manifest)
+    reference = dict(
+        label=label, created_utc=datetime.now(timezone.utc).isoformat(),
+        command='python -m control.validation_suite --config '+str(args.config)+' --smoke'
+                + ('' if tuned is None else ' --tuned '+str(args.tuned))
+                + (' --only-controllers '+' '.join(labels) if args.only_controllers else '')
+                + (' --only-cases '+' '.join(args.only_cases) if args.only_cases else '')
+                + ' --feedback '+args.feedback
+                + (' --sensor-profile '+str(args.sensor_profile) if args.sensor_profile else '')
+                + (' --sensor-seed '+str(args.sensor_seed) if args.feedback == 'sensors' else ''),
+        config_sha256=manifest['config_sha256'], git_revision=revision, git_dirty=dirty,
+        parameter_sha256=manifest['parameter_sha256'],
+        controller_model_sha256=manifest['controller_model_sha256'],
+        environment=manifest['environment'], source_sha256=manifest['source_sha256'],
+        scenarios=manifest['scenarios'], controller_settings=factory.settings,
+        rows=[{key: row.get(key) for key in ARENA_REFERENCE_FIELDS} for row in rows],
+        **({} if tuned is None else dict(tuned=tuned)))
+    write_json(out/'arena_reference.json', reference)
+    if args.reference_out:
+        args.reference_out.parent.mkdir(parents=True, exist_ok=True)
+        write_json(args.reference_out, reference)
+    write_arena_report(out, manifest, rows)
+    return out
+
+
+def main(argv=None):
+    parser = build_parser()
+    args = parser.parse_args(argv)
+    if args.config is not None:
+        return run_arena(args, parser)
+    try:
+        profile, cases, ranges, limits = make_plan(args)
+    except (ValueError, TypeError, OSError) as exc:
+        parser.error(str(exc))
+    labels = list(dict.fromkeys(args.controllers))
+    out = args.output/('run_'+datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S%fZ'))
+    out.mkdir(parents=True, exist_ok=False)
+    params = baseline_params()
+    sources = {str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest()
+               for folder in ('control', 'models/team_light/control') for p in (ROOT/folder).glob('*.py')}
+    try:
+        revision = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip()
+    except (OSError, subprocess.CalledProcessError):
+        revision = None
+    manifest = dict(scenario=args.scenario, controllers=labels, arguments=vars(args),
+                    phases=profile.phases, duration=profile.T_total, gust_interval=profile.gust_interval,
+                    params=params, parameter_sha256=parameter_hash(params),
+                    uncertainty_ranges=ranges, sampling='independent uniform' if args.scenario == 'mc' else args.scenario,
+                    criteria=asdict(limits), dt=DT, git_revision=revision,
+                    source_sha256=sources, python=platform.python_version(),
+                    packages={name: version(name) for name in ('numpy', 'scipy', 'casadi', 'matplotlib')},
+                    controller_settings=dict(N=15, dt_prediction=.04, dt_control=.04, max_iter=80,
+                                             future_reference_preview=False),
+                    case_count=len(cases), expected_trials=len(cases)*len(labels),
+                    status='planned' if args.dry_run else 'running')
+    write_json(out/'manifest.json', manifest)
+    write_json(out/'cases.json', cases)
+    print(f'Results: {out}', flush=True)
+    profile.print_profile()
+    print(f'{len(cases)} cases x {len(labels)} controllers', flush=True)
+    if args.dry_run:
+        return out
+    factory = Factory(params)
+    rows = []
+    for case in cases:
+        for label in labels:
+            print(f'Running {case["case_id"]} / {label}', flush=True)
+            try:
+                metrics, result, log = run_trial(factory, label, profile, case, limits)
+            except (ValueError, RuntimeError, np.linalg.LinAlgError) as exc:
+                metrics = dict(passed=False, tracking_pass=False, failure_reasons=['setup_error'],
+                               stop_reason=f'{type(exc).__name__}: {exc}', simulated_seconds=0.)
+                result, log = None, []
+            row = dict(case, controller=label, **metrics)
+            rows.append(row)
+            tag = f'{case["case_id"]}_{label}'
+            with (out/'trials.jsonl').open('a', encoding='utf-8') as stream:
+                stream.write(json.dumps(json_safe(row), ensure_ascii=False, allow_nan=False)+'\n')
+            if log:
+                write_json(out/(tag+'.solver.json'), log)
+            if result is not None and (args.save_traces or args.scenario in ('baseline', 'gust')):
+                np.savez_compressed(out/(tag+'.npz'), **{k: v for k, v in result.items() if k != 'error'})
+            write_json(out/'summary.json', summarize(rows, args.scenario))
+            print(f'  pass={row["passed"]}, t={row["simulated_seconds"]:g}s, '
+                  f'reasons={row["failure_reasons"]}', flush=True)
+    manifest.update(status='complete', recorded_trials=len(rows))
+    write_json(out/'manifest.json', manifest)
+    write_report(out, manifest, rows)
+    if args.scenario in ('baseline', 'gust'):
+        plot_traces(out, cases, labels, profile)
+    print(json.dumps(json_safe(summarize(rows, args.scenario)), indent=2), flush=True)
+    return out
+
+
+if __name__ == '__main__':
+    main()

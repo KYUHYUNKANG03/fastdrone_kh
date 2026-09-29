@@ -1,0 +1,1306 @@
+"""
+베이스라인 제어기 — Cascaded PID + LQR
+=======================================
+
+1) CascadedPID: 속도/고도 PID → 자세 PD → 할당 → 모터속도
+2) LQRController: 트림점 선형화 → ARE → 풀스테이트 피드백
+
+공통 구조:
+  controller(t, x) → u[4] (모터 속도 명령)
+"""
+
+import numpy as np
+from scipy.spatial.transform import Rotation
+from scipy.linalg import solve_continuous_are
+import casadi as ca
+
+
+# ══════════════════════════════════════════════════════
+# 1. Cascaded PID
+# ══════════════════════════════════════════════════════
+
+class CascadedPID:
+    """
+    캐스케이드 PID 속도/자세 제어기.
+
+    외부: 속도 P + 고도 PID → 원하는 힘 F_des
+    중간: F_des → 원하는 자세 R_des + 추력 T
+    내부: 자세 PD + 자이로 FF → 모멘트 → 할당 → 모터속도
+    """
+
+    def __init__(self, params, v_ref=None, z_ref=0.0, heading=0.0, dt=0.001):
+        self.p = params
+        self.m = params['mass']
+        self.g = params['g']
+        self.dt = dt
+
+        self.v_ref = np.array(v_ref) if v_ref is not None else np.zeros(3)
+        self.z_ref = z_ref
+        self.heading = heading
+
+        # ── 외부 게인 ──
+        self.Kp_vel = 1.0
+        # 수평 속도 적분(조건부) — 논문 §5.3 306행 "적분기는 포화 시 조건부 적분".
+        # 기본값 0이면 기존과 비트 동일하다. P만 있으면 순항 항력을 속도 오차로
+        # 버텨 10·20 m/s에서 정상오차가 1.4·3.4 m/s 남았다(2026-09-25 설계영역
+        # 점검, kj 결정으로 추가). 경기장 값은 configs/gains/cpid.json.
+        self.Ki_vel = 0.0
+        # 적분 한계는 **가속도 권한 [m/s²]** 으로 준다. PX4 PositionControl과 같은
+        # 방식이다(적분에 Ki를 먼저 곱해 가속도 단위로 쌓고, 수직은 ±1 g로 자른다).
+        # 상태 크기(m)로 자르면 권한이 Ki에 묶인다. 처음 넣은 int_v_max=5 [m]는
+        # Ki 0.15에서 0.75 m/s²밖에 못 내서 트림 항력(10 m/s 1.47, 20 m/s 4.64 m/s²)을
+        # 못 지웠다. 설계점검에서 시행 시간의 59~86%를 한계에 붙어 있었다(2026-09-25).
+        # 값 1 g는 kj 결정(2026-09-26, PX4 원본과 같게).
+        self.a_int_max = 9.81
+        self.Kp_z   = 2.0
+        self.Kd_z   = 2.0
+        self.Ki_z   = 0.5       # 고도 적분 게인 (정상상태 오차 제거)
+        self.int_z_max = 5.0    # 안티와인드업 한계 (기존 방식: 적분 상태 크기, m·s)
+        # 고도 적분의 경기장 방식(kj 결정 2026-09-26). None이면 위의 기존 방식 그대로다
+        # (매 스텝 적분, 상태 크기로 자름 — 비트 동일). 값을 주면 속도 적분과 같은
+        # 규칙이 된다: 가속도 권한 [m/s²]으로 자르고, 포화 시 적분을 멈춘다(논문 §5.3).
+        # 기존 방식은 권한이 Ki_z·int_z_max = 2.5 m/s²다. 20 m/s 트림 유지에 필요한
+        # 2.85 m/s²(양력 몫)를 막아 고도 오차 +0.175 m를 영구히 남겼다(60초 유지 시험).
+        self.a_int_z_max = None
+
+        # ── 내부 게인 ──
+        self.Kp_att = np.array([200, 500, 500])
+        self.Kd_att = np.array([20, 50, 50])
+
+        self.max_tilt = np.radians(35)
+        self.axis = params.get('thrust_axis', 'z')
+
+        from control.dynamics import compute_allocation_matrix
+        self.f_to_TM, self.TM_to_f = compute_allocation_matrix(params)
+        self.J = np.diag([params['Ixx'], params['Iyy'], params['Izz']])
+
+        # 적분기 상태
+        self._int_ez = 0.0
+        self._int_ev = np.zeros(2)
+        self._saturated = False     # 이번 스텝에 기울기 한계·로터 한계가 걸렸는가
+
+        # 참조 가속도 피드포워드(kj 결정 2026-09-26 오후). PX4 PositionControl은 궤적 설정점의
+        # 가속도(_acc_sp) 위에 속도 PID 출력을 더한다 — 그것과 같은 구조다. a_ref는 세계 좌표
+        # [m/s²]이고 경기장(arena_factory.update_at)이 참조 창에서 넣는다. 기본값 False면 기존과
+        # 비트 동일하다(a_ref를 읽지 않는다).
+        self.acc_feedforward = False
+        self.a_ref = np.zeros(3)
+
+    def reset(self):
+        """적분기·참조 가속도 초기화."""
+        self._int_ez = 0.0
+        self._int_ev = np.zeros(2)
+        self._saturated = False
+        self.a_ref = np.zeros(3)
+
+    def __call__(self, t, x):
+        pos, vel = x[0:3], x[3:6]
+        q, omega = x[6:10], x[10:13]
+        R = Rotation.from_quat(q).as_matrix()
+
+        # ── 외부: 속도/고도 → 원하는 힘 ──
+        e_vel = vel - self.v_ref
+        e_z   = pos[2] - self.z_ref
+
+        # 고도 적분기 — 기존 방식(a_int_z_max 없음): 매 스텝 적분 + 상태 크기 한계
+        if self.a_int_z_max is None:
+            self._int_ez += e_z * self.dt
+            self._int_ez = np.clip(self._int_ez, -self.int_z_max, self.int_z_max)
+
+        a_des = np.zeros(3)
+        a_des[0:2] = -self.Kp_vel * e_vel[0:2]
+        if self.Ki_vel:
+            a_des[0:2] -= self.Ki_vel * self._int_ev
+        a_des[2]   = -self.Kp_z * e_z - self.Kd_z * vel[2] - self.Ki_z * self._int_ez
+        # 참조가 일정하면 a_ref가 정확히 0이라 더하지 않는다(더해도 같지만, 건너뛰면 비트 동일이 자명하다)
+        if self.acc_feedforward and np.any(self.a_ref):
+            a_des = a_des + self.a_ref
+
+        F_des = self.m * (a_des + np.array([0, 0, self.g]))
+
+        # ── 중간: 힘 → 추력 + 자세 ──
+        self._saturated = False
+        T_cmd, R_des = self._force_to_attitude(F_des)
+
+        # ── 내부: 자세 PD → 모멘트 ──
+        S_err = 0.5 * (R_des.T @ R - R.T @ R_des)
+        att_err = np.array([-S_err[1, 2], S_err[0, 2], -S_err[0, 1]])
+        gyro_ff = np.cross(omega, self.J @ omega)
+        M_cmd = self.J @ (-self.Kp_att * att_err - self.Kd_att * omega) + gyro_ff
+
+        # ── 할당 → 모터속도 ──
+        n_cmd = self._allocate(T_cmd, M_cmd, x)
+
+        # 조건부 적분: 이번 명령이 기울기 한계나 로터 한계에 걸렸으면 적분을
+        # 멈춘다(낼 수 없는 가속도를 계속 적분하면 풀린 뒤 크게 튄다). 한계는
+        # 가속도 권한이라 튜닝으로 Ki를 바꿔도 적분이 낼 수 있는 가속도는 같다.
+        if not self._saturated:
+            if self.Ki_vel:
+                self._int_ev += e_vel[0:2] * self.dt
+                limit = self.a_int_max / self.Ki_vel
+                np.clip(self._int_ev, -limit, limit, out=self._int_ev)
+            if self.a_int_z_max is not None and self.Ki_z:
+                self._int_ez += e_z * self.dt
+                limit = self.a_int_z_max / self.Ki_z
+                self._int_ez = float(np.clip(self._int_ez, -limit, limit))
+        return n_cmd
+
+    def preload_integrators(self, a_ff):
+        """적분기를 '이미 a_ff를 내고 있는' 상태로 채운다. 즉 트림에서 무충격으로 출발한다.
+
+        경기장 규칙(kj 결정 2026-09-26): 모든 제어기는 시작 시점에 명목 제어기
+        모델의 트림 정보를 똑같이 받는다. NMPC는 트림 입력으로 웜스타트하고,
+        GSLQR은 트림 피드포워드가 있다. CPID는 공력 피드포워드가 없어서 트림을
+        적분기로만 유지한다. 그래서 적분기가 0에서 출발하면 20 m/s에서 다 차는 데
+        ~30초가 걸렸다(정확한 트림에서 출발해도 5초 뒤 고도 +0.52 m, 속도 −2.3 m/s).
+
+        a_ff : 트림 유지에 필요한 가속도 명령 [m/s², 세계 좌표].
+               F_des = m(a_ff + g·e_z)가 트림 추력 벡터가 되게 하는 값이다
+               (arena_factory.ControllerModel.trim_acceleration).
+        한계를 넘는 몫은 자른다. 잘린 만큼은 비례항이 오차를 남기며 버틴다.
+        """
+        a_ff = np.asarray(a_ff, dtype=float)
+        if self.Ki_vel:
+            a_xy = np.clip(a_ff[0:2], -self.a_int_max, self.a_int_max)
+            self._int_ev = -a_xy / self.Ki_vel          # a_des = −Ki·∫e 이므로 부호가 반대
+        if self.Ki_z:
+            limit = (self.a_int_z_max if self.a_int_z_max is not None
+                     else self.Ki_z * self.int_z_max)
+            self._int_ez = -float(np.clip(a_ff[2], -limit, limit)) / self.Ki_z
+
+    def integrator_status(self):
+        """적분기 계측용(결과 무영향). 채널별 (현재 크기, 한계)와 이번 스텝 적분 정지 여부.
+
+        크기와 한계는 같은 단위다(가속도 권한 방식은 m/s², 기존 고도 방식은 m·s).
+        경기장이 GSLQR과 같은 형식으로 '한계 도달 스텝'과 '적분 정지 스텝'을 센다.
+        """
+        channels = {}
+        if self.Ki_vel:
+            a = np.abs(self.Ki_vel * self._int_ev)
+            channels['vx'] = (float(a[0]), float(self.a_int_max))
+            channels['vy'] = (float(a[1]), float(self.a_int_max))
+        if self.Ki_z:
+            if self.a_int_z_max is None:
+                channels['z'] = (abs(float(self._int_ez)), float(self.int_z_max))
+            else:
+                channels['z'] = (abs(self.Ki_z * float(self._int_ez)), float(self.a_int_z_max))
+        conditional = bool(self.Ki_vel) or self.a_int_z_max is not None
+        return dict(channels=channels, frozen=bool(self._saturated) and conditional)
+
+    def _force_to_attitude(self, F_des):
+        """F_des → (T_cmd, R_des).
+
+        2026-09-25 밤(야간지시 3-e): 로켓형(thrust_axis='x')에서는 추력이
+        동체 +x다. 틸트 제한은 "F_des가 세계 수직에서 얼마나 기우는가"라는
+        물리량이라 축과 무관하게 그대로 쓴다 — F_hat(= F_des 방향, 예전
+        b3_des=-F_hat과 부호만 다르다)의 세계 z성분으로 잰다. 축마다 달라지는
+        건 그 다음, F_hat을 **어느 동체축에 정렬시키는가**뿐이다:
+          z축: 3번째 열(body z)을 -F_hat에 (추력이 body -z)
+          x축: 1번째 열(body x)을 +F_hat에 (추력이 body +x)
+        control/gindi.py::GeometricGuidance._desired_attitude와 같은 축
+        분기를 쓴다 — GINDI의 기하 외부루프와 CPID가 원래 같은 구성이어야
+        한다는 논문 306행 서술과도 맞다. 요(heading)만 CPID 고유 자유도
+        (self.heading, 임의 목표 방위)라 GINDI의 고정 heading 대신 그걸 쓴다.
+        """
+        F_norm = max(np.linalg.norm(F_des), 1e-6)
+        T_cmd = F_norm
+        F_hat = F_des / F_norm
+
+        # 틸트 제한 — 세계 수직(+z)에서 F_hat이 벗어난 각도를 제한한다.
+        cos_tilt = F_hat[2]
+        cos_max = np.cos(self.max_tilt)
+        if cos_tilt < cos_max:
+            self._saturated = True             # 조건부 속도 적분이 멈추는 조건 1
+            f_hor = F_hat.copy(); f_hor[2] = 0
+            hn = np.linalg.norm(f_hor)
+            if hn > 1e-8:
+                s = np.sqrt(1 - cos_max**2) / hn
+                F_hat = np.array([f_hor[0]*s, f_hor[1]*s, cos_max])
+            else:
+                F_hat = np.array([0.0, 0.0, 1.0])
+
+        c1 = np.array([np.cos(self.heading), np.sin(self.heading), 0])
+
+        if self.axis == 'x':
+            b1 = F_hat
+            b2_raw = np.cross(b1, c1)          # heading 을 body-x에 수직 평면으로 투영
+            bn = np.linalg.norm(b2_raw)
+            if bn < 1e-6:
+                b2_raw = np.cross(b1, np.array([0, 0, 1.0]))
+                bn = np.linalg.norm(b2_raw)
+            b2 = b2_raw / bn
+            b3 = np.cross(b1, b2)
+            R_des = np.column_stack([b1, b2, b3])
+        else:
+            b3 = -F_hat
+            b2_raw = np.cross(b3, c1)
+            bn = np.linalg.norm(b2_raw)
+            if bn < 1e-6:
+                b2_raw = np.cross(b3, np.array([0, 1, 0]))
+                bn = np.linalg.norm(b2_raw)
+            b2 = b2_raw / bn
+            b1 = np.cross(b2, b3)
+            R_des = np.column_stack([b1, b2, b3])
+        return T_cmd, R_des
+
+    def _allocate(self, T_cmd, M_cmd, x=None):
+        """[T, Mx, My, Mz] → 모터 속도.
+
+        팀원 곡선 기체(propulsion_model이 APC 곡선)이고 현재 상태 x를 받으면
+        두 곳을 제어기 공통 곡선으로 바꾼다(2026-09-25 경로 감사, kj 지시):
+          ① 로터 추력 → 회전수: 정지 역산 sqrt(f/k_T) 대신 현재 축방향 유속에서
+             T(n)=ρ·Ct(J(n))·n²·D⁴ 를 n에 대해 푼다. 정지 역산은 35 m/s 이상에서
+             명령 회전수가 영추력점 아래로 떨어져 추력 0을 만들었다.
+          ② 반토크/추력 비: 상수 k_Q/k_T 대신 측정 회전수의 γ(J) — 할당 행렬의
+             스핀축 모멘트 행이 J에 따라 변한다.
+        그 밖의 기체(우리 자체 기체 등)는 기존 식 그대로다(비트 동일).
+        """
+        from control.dynamics import (uses_prop_curve, axial_airspeed, reaction_torque_ratio,
+                                      rotor_speed_for_thrust, compute_allocation_matrix)
+        TM = np.array([T_cmd, M_cmd[0], M_cmd[1], M_cmd[2]])
+        if x is not None and uses_prop_curve(self.p):
+            v_axial = axial_airspeed(self.p, x)
+            gamma = reaction_torque_ratio(self.p, x[13:17], v_axial)
+            _, TM_to_f = compute_allocation_matrix(self.p, gamma=gamma)
+            f_ind = TM_to_f @ TM
+            n_cmd = np.array([rotor_speed_for_thrust(self.p, f, v_axial) for f in f_ind])
+        else:
+            f_ind = self.TM_to_f @ TM
+            n_cmd = np.zeros(4)
+            for i in range(4):
+                n_cmd[i] = np.sqrt(max(f_ind[i], 0) / self.p['k_T'])
+        n_out = np.clip(n_cmd, self.p['n_min'], self.p['n_max'])
+        # 조건부 속도 적분이 멈추는 조건 2: 어느 로터든 한계에 닿았다(음추력 요구 포함).
+        if np.any(f_ind <= 0.0) or np.any(n_cmd >= self.p['n_max']) or np.any(n_out != n_cmd):
+            self._saturated = True
+        return n_out
+
+
+# ══════════════════════════════════════════════════════
+# 2. Error-State 선형화 + LQR
+# ══════════════════════════════════════════════════════
+
+def _quat_left_mult_matrix(q):
+    """
+    쿼터니언 왼쪽 곱셈 행렬 Q_L: q ⊗ p = Q_L(q) @ p.
+    q, p 모두 scalar-last [x,y,z,w].
+
+    유도: (q⊗p)_x = qw·px - qz·py + qy·pz + qx·pw  등.
+    """
+    qx, qy, qz, qw = q
+    return np.array([
+        [ qw, -qz,  qy,  qx],
+        [ qz,  qw, -qx,  qy],
+        [-qy,  qx,  qw,  qz],
+        [-qx, -qy, -qz,  qw]])
+
+
+def linearize_error_state(params, x_trim, u_trim):
+    """
+    Error-State 선형화: 17D 풀 야코비안 → 15D 축소 시스템.
+
+    축소 상태 δx_r(15):
+      [δz(1), δv(3), δφ(3), δω(3), δn(4), 미사용1(1)] → 실제 15D 사용
+      위치 x,y 제거 (속도 제어기라 불필요)
+      쿼터니언 4 → 오차 각도 3 (δφ via 오차 쿼터니언 벡터부)
+
+    변환: δx_full(17) = T(17×15) @ δx_reduced(15)
+    축소: A_r = T⁺ A T,  B_r = T⁺ B
+    """
+    from control.dynamics import build_dynamics
+
+    # 풀 야코비안 (17×17, 17×4)
+    f, x_sym, u_sym = build_dynamics(params)
+    xdot = f(x_sym, u_sym)
+    A_fn = ca.Function('A', [x_sym, u_sym], [ca.jacobian(xdot, x_sym)])
+    B_fn = ca.Function('B', [x_sym, u_sym], [ca.jacobian(xdot, u_sym)])
+
+    A_full = np.array(A_fn(x_trim, u_trim)).astype(float)  # 17×17
+    B_full = np.array(B_fn(x_trim, u_trim)).astype(float)  # 17×4
+
+    # ── 변환 행렬 T (17×15) ──
+    # 풀 상태: [px,py,pz, vx,vy,vz, qx,qy,qz,qw, wx,wy,wz, n1,n2,n3,n4]
+    # 축소:    [   δz,     δv(3),     δφ(3),       δω(3),     δn(4)]  = 15D
+    #
+    # 매핑:
+    #   δpz → idx 2
+    #   δv  → idx 3:6
+    #   δq = ∂q/∂φ @ δφ  (4×3), 트림 쿼터니언에서 계산
+    #   δω  → idx 10:13
+    #   δn  → idx 13:17
+
+    q_trim = x_trim[6:10]
+    Q_L = _quat_left_mult_matrix(q_trim)
+    dq_dphi = 0.5 * Q_L[:, 0:3]   # 4×3: ∂q/∂δφ
+
+    T = np.zeros((17, 15))
+    # δz(1)     → 풀 상태 idx 2
+    T[2, 0] = 1.0
+    # δv(3)     → 풀 상태 idx 3:6
+    T[3:6, 1:4] = np.eye(3)
+    # δφ(3)     → 풀 상태 idx 6:10 (through dq_dphi)
+    T[6:10, 4:7] = dq_dphi
+    # δω(3)     → 풀 상태 idx 10:13
+    T[10:13, 7:10] = np.eye(3)
+    # δn(4)     → 풀 상태 idx 13:17
+    T[13:17, 10:14] = np.eye(4)
+    # 미사용 15번째 열은 0 (패딩, 실질 14D지만 15로 맞춤)
+    # 실제로는 14D. 15번째 = 미사용.
+    # → 14D로 하자.
+
+    T = T[:, :14]  # 17×14
+
+    # 축소: A_r = T⁺ A T,  B_r = T⁺ B  (T⁺ = pseudo-inverse)
+    T_pinv = np.linalg.pinv(T)  # 14×17
+
+    A_r = T_pinv @ A_full @ T   # 14×14
+    B_r = T_pinv @ B_full       # 14×4
+
+    return A_r, B_r, T, T_pinv
+
+
+# ══════════════════════════════════════════════════════════════════════
+# GSLQR 비용 가중치 — 논문 §5.3 프로토콜로 튜닝된 값
+# ══════════════════════════════════════════════════════════════════════
+# 오차상태 순서 δx_r(14) = [δz, δv(3), δφ(3), δω(3), δn(4)]
+#
+# 2026-09-22 research/tune_gains.py 가 §5.3 프로토콜(독립 튜닝 시나리오,
+# 동일 예산 120평가, 본시험 비참조)로 찾은 값. 이력·선택 규칙은
+# research/results/tuned_gains.json, 설명은 research/GAIN_TUNING.md.
+#
+# 튜닝 전 placeholder 였던 [100,10,10,20, 50,50,50, 5,5,5, .01x4] / 0.05·I 가
+# 2026-09-24까지 control 에 남아 있었다. **그 상태로는 논문의 주된 주장
+# (LQR 대비 하이브리드 우수성)을 낼 수 없다** — 미튜닝 기준선을 이긴 것이
+# 되기 때문이다. 선정 프로파일 섭동회복 실측:
+#
+#   V=8  RMSE_z  placeholder 1.1199 → 튜닝 0.1160  (9.7배)
+#   V=14 RMSE_z  placeholder 2.0311 → 튜닝 0.1564  (13.0배)
+#
+# 같은 조건 V13 하이브리드는 0.0758 / 0.1515 다. 즉 기준선을 튜닝하면
+# 하이브리드의 고도 우위가 V=8 에서 14.8배→1.53배, V=14 에서 13.4배→1.03배로
+# 줄어든다. 자세한 비교는 results/LQR_VS_HYBRID_FAIRNESS.md.
+#
+# 개정3 채택값. 개정1(q_v_h ×64)과 개정2(q_z ×128)가 각각 한 축만 찾고 그
+# 조합을 한 번도 방문하지 못한 것이 나침반 탐색의 경로의존성 때문이었다 —
+# 출발점만 옮겨 같은 절차·같은 예산으로 다시 돌리자 조합을 찾았다.
+# GSLQR 의 고도 추종이 나빴던 것은 구조 한계(적분기 부재)가 아니라 가중치
+# 문제였다.
+#
+# ⚠ §5.3 이 본시험 결과를 보고 가중치를 다시 고르는 것을 금지한다.
+#   손으로 고치지 말 것 — test_lqr_gains_match_the_tuned_values 가 묶어 둔다.
+TUNED_Q_DIAG = [6400, 1280, 1280, 20, 50, 50, 50, 5, 5, 5, .01, .01, .01, .01]
+TUNED_R_SCALE = .00625
+
+# 튜닝 전 값. 옛 결과 재현·비교용으로만 남긴다(논문 결과에 쓰지 말 것).
+PLACEHOLDER_Q_DIAG = [100, 10, 10, 20, 50, 50, 50, 5, 5, 5, .01, .01, .01, .01]
+PLACEHOLDER_R_SCALE = 0.05
+
+
+class LQRController:
+    """
+    Error-State LQR — 쿼터니언 축소 (17D → 14D 오차상태).
+
+    오차상태 δx_r(14): [δz, δv(3), δφ(3), δω(3), δn(4)]
+
+    u = u_trim - K_r @ δx_r
+    여기서 δx_r은 현재 상태에서 트림으로의 오차를 14D로 변환한 것.
+    """
+
+    def __init__(self, params, x_trim, u_trim, Q=None, R=None,
+                 integral_states=(), Q_integral=None):
+        """
+        integral_states : tuple
+            적분 증강(LQI)할 오차상태 인덱스. 빈 튜플(기본값)이면 순수 LQR.
+            오차상태 순서가 [δz, δv(3), δφ(3), δω(3), δn(4)]이므로
+            ``(0,)`` 은 고도, ``(0, 1)`` 은 고도와 전진속도다.
+
+            왜 필요한가 — 논문 표7의 섭동은 **플랜트에만** 걸리고 제어기 명목값은
+            고정된다. 그러면 트림 피드포워드 u_trim 이 틀린 값이 되는데, 적분기가
+            없는 LQR 은 그 일정 오차를 영영 없애지 못한다. 실측(V=40 순항):
+
+                섭동            GSLQR δz    V13 δz
+                없음             0.0000    -0.0006
+                질량 +30%       -0.2443    -0.0929
+                추력계수 -30%    -0.3469    -0.1371
+
+            명목에서 GSLQR 은 정확히 0 이다 — 튜닝이 나쁜 게 아니라 구조가
+            일정 외란을 못 지운다. 표준 추종용 LQR 은 보통 적분 증강을 쓰므로,
+            이걸 빼고 비교하면 "적분기만 넣으면 되는 것 아니냐"는 반론이 선다.
+            공정한 비교를 위해 GSLQR 과 GSLQR-I 를 함께 보고할 것.
+
+            증강 방식은 표준 LQI 다 — 오차상태에 적분상태를 붙여 A·B 를 키우고
+            ARE 를 다시 푼다. 사후에 적분항을 더하는 방식이 아니다(그건 최적성이
+            깨지고 이득 조율이 임의가 된다).
+        Q_integral : array-like | None
+            적분상태의 가중치. None 이면 해당 상태 가중치의 0.5배를 쓴다 —
+            적분이 비례항보다 느리게 작용하도록.
+        """
+        self.p = params
+        self.x_trim = x_trim.copy()
+        self.u_trim = u_trim.copy()
+
+        # Error-state 선형화
+        A_r, B_r, T, T_pinv = linearize_error_state(params, x_trim, u_trim)
+        self.A_r, self.B_r = A_r, B_r
+        self.T, self.T_pinv = T, T_pinv
+        self.n_reduced = A_r.shape[0]  # 14
+
+        # ── 비용 행렬 (14D) ──
+        if Q is None:
+            Q = np.diag(TUNED_Q_DIAG)
+        if R is None:
+            R = np.eye(4) * TUNED_R_SCALE
+
+        self.Q, self.R_cost = Q, R
+        self.integral_states = tuple(int(i) for i in integral_states)
+        self.n_integral = len(self.integral_states)
+
+        # ── 적분 증강 (LQI) ──
+        # ẋ_i = C δx_r  를 상태에 붙인다. A_aug = [[A, 0], [C, 0]], B_aug = [[B], [0]]
+        if self.n_integral:
+            n = self.n_reduced
+            C = np.zeros((self.n_integral, n))
+            for row, idx in enumerate(self.integral_states):
+                C[row, idx] = 1.0
+            self.C_integral = C
+            A_des = np.block([[A_r, np.zeros((n, self.n_integral))],
+                              [C, np.zeros((self.n_integral,)*2)]])
+            B_des = np.vstack([B_r, np.zeros((self.n_integral, B_r.shape[1]))])
+            if Q_integral is None:
+                Q_integral = [0.5*Q[i, i] for i in self.integral_states]
+            Q_des = np.block([
+                [Q, np.zeros((n, self.n_integral))],
+                [np.zeros((self.n_integral, n)), np.diag(np.asarray(Q_integral, float))]])
+        else:
+            self.C_integral = None
+            A_des, B_des, Q_des = A_r, B_r, Q
+
+        # ── ARE 풀이 ──
+        try:
+            P = solve_continuous_are(A_des, B_des, Q_des, R)
+            K_des = np.linalg.inv(R) @ B_des.T @ P
+            # 적분 이득은 따로 보관 — δx_r 에 곱할 부분만 K_r 로 둔다.
+            self.K_r = K_des[:, :self.n_reduced]      # 4×14
+            self.K_integral = (K_des[:, self.n_reduced:] if self.n_integral
+                               else None)
+            self.valid = True
+
+            # 폐루프 고유값은 **증강계** 기준이어야 한다 — 적분상태를 뺀
+            # 부분행렬로 재면 적분 모드의 안정성을 못 본다.
+            A_cl = A_des - B_des @ K_des
+            self.eigvals = np.linalg.eigvals(A_cl)
+            self.max_real = np.max(np.real(self.eigvals))
+
+            # 풀 상태용 K: K_full(4×17) = K_r(4×14) @ T_pinv(14×17)
+            # (적분 부분은 상태가 아니라 제어기 내부 기억이라 여기 안 들어간다)
+            self.K = self.K_r @ self.T_pinv
+
+        except np.linalg.LinAlgError as e:
+            print(f"  [경고] ARE 풀이 실패: {e}")
+            self.K = np.zeros((4, 17))
+            self.K_r = np.zeros((4, self.n_reduced))
+            self.K_integral = None
+            self.valid = False
+            self.eigvals = np.array([])
+            self.max_real = float('inf')
+
+    def set_position_ref(self, pos):
+        self.x_trim[0:3] = pos
+
+    def _compute_error_state(self, x):
+        """현재 상태 → 14D 오차상태."""
+        # 위치 오차 (z만)
+        dz = x[2] - self.x_trim[2]
+        # 속도 오차
+        dv = x[3:6] - self.x_trim[3:6]
+        # 쿼터니언 오차 → 오차 각도 3D
+        q = x[6:10]
+        q_trim = self.x_trim[6:10]
+        # 오차 쿼터니언: δq = q_trim⁻¹ ⊗ q
+        # q_trim⁻¹ = conjugate (단위 쿼터니언)
+        q_trim_inv = np.array([-q_trim[0], -q_trim[1], -q_trim[2], q_trim[3]])
+        # Hamilton product: q_trim_inv ⊗ q
+        dq = self._quat_mult(q_trim_inv, q)
+        # 최단경로 보정: q와 -q는 같은 자세. 이 기체는 트림 w≡0(180° about x)
+        # 이라 부호 경계가 정상 비행자세 바로 위 — SITL/실기의 w>0 정규화
+        # (frame_utils/offboard_node)가 롤 ± 절반에서 q 부호를 뒤집으면
+        # δφ가 반전되어 정피드백이 됨 (2026-08-04 코드리뷰 검증).
+        if dq[3] < 0.0:
+            dq = -dq
+        # 소교란: δφ ≈ 2 * dq[0:3] (벡터부)
+        dphi = 2.0 * dq[0:3]
+        # 각속도 오차
+        dw = x[10:13] - self.x_trim[10:13]
+        # 로터 오차
+        dn = x[13:17] - self.x_trim[13:17]
+
+        return np.concatenate([[dz], dv, dphi, dw, dn])
+
+    @staticmethod
+    def _quat_mult(p, q):
+        """Hamilton product p ⊗ q, scalar-last [x,y,z,w]."""
+        return np.array([
+            p[3]*q[0] + p[0]*q[3] + p[1]*q[2] - p[2]*q[1],
+            p[3]*q[1] - p[0]*q[2] + p[1]*q[3] + p[2]*q[0],
+            p[3]*q[2] + p[0]*q[1] - p[1]*q[0] + p[2]*q[3],
+            p[3]*q[3] - p[0]*q[0] - p[1]*q[1] - p[2]*q[2]])
+
+    def __call__(self, t, x):
+        dx_r = self._compute_error_state(x)
+        u = self.u_trim - self.K_r @ dx_r
+        return np.clip(u, self.p['n_min'], self.p['n_max'])
+
+    def print_info(self):
+        if not self.valid:
+            print("  LQR 설계 실패!")
+            return
+
+        print(f"  오차상태 차원: {self.n_reduced}D (17D → {self.n_reduced}D)")
+        print(f"  K_r 크기: {self.K_r.shape}")
+        print(f"  폐루프 최대 실수부: {self.max_real:.4f}",
+              "(안정)" if self.max_real < -1e-6 else "(⚠ 불안정!)")
+
+        eigs = self.eigvals
+        real_neg = eigs[np.real(eigs) < -1e-10]
+        if len(real_neg) > 0:
+            slowest = real_neg[np.argmax(np.real(real_neg))]
+            fastest = real_neg[np.argmin(np.real(real_neg))]
+            print(f"  가장 느린 모드: λ = {slowest:.3f}  (τ = {-1/np.real(slowest):.3f} s)")
+            print(f"  가장 빠른 모드: λ = {fastest:.3f}")
+
+
+# ══════════════════════════════════════════════════════
+# 3. Gain-Scheduled PID
+# ══════════════════════════════════════════════════════
+
+class ScheduledPID(CascadedPID):
+    """
+    속도 기반 게인 스케줄링 PID.
+
+    CascadedPID 상속. 매 호출 시 v_x에 따라 게인 보간:
+      - max_tilt: 35°→55° (고속에서 큰 틸트 허용)
+      - Kp_att/Kd_att: 감소 (고속 공력 감쇠가 자연 감쇠 제공)
+      - Kp_vel: 감소 (고속 민감도 완화)
+
+    왜 이렇게 스케줄링하나:
+      고속에서 동압(q=0.5ρV²) 증가 → 공력 모멘트 증가.
+      C_mq 감쇠가 이미 자세를 안정시키므로 제어기 게인을 줄여
+      진동/과도응답을 방지. 틸트 제한은 항력 보상을 위해 완화.
+    """
+
+    def __call__(self, t, x):
+        self._schedule(x[3])
+        return super().__call__(t, x)
+
+    def _schedule(self, V):
+        """v_x 기반 게인 연속 스케줄링."""
+        # alpha: 0(정지)~1(80 m/s) 정규화 속도
+        alpha = np.clip(V / 80.0, 0.0, 1.0)
+
+        # 틸트 제한: 35°(호버) → 55°(80 m/s)
+        # 고속에서 항력 보상 + 속도 제어에 더 큰 틸트 필요
+        self.max_tilt = np.radians(35 + 20 * alpha)
+
+        # 자세 P: 1.0→0.67 스케일. 공력 강성(x_cp)이 이미 복원력 제공
+        att_scale = 1.0 / (1.0 + 0.5 * alpha)
+        self.Kp_att = np.array([200, 500, 500]) * att_scale
+
+        # 자세 D: 1.0→0.7 스케일. C_mq 감쇠가 자연 감쇠 제공
+        self.Kd_att = np.array([20, 50, 50]) * (1.0 - 0.3 * alpha)
+
+        # 속도 P: 1.0→0.8. 고속에서 같은 틸트가 더 큰 힘 → 민감도 완화
+        self.Kp_vel = 1.0 - 0.2 * alpha
+
+
+# ══════════════════════════════════════════════════════
+# 4. Gain-Scheduled LQR (선형 보간)
+# ══════════════════════════════════════════════════════
+
+# ── GSLQR 참조 가속도 피드포워드(kj 결정 2026-09-26 오후) ─────────────────────
+# 유효 범위 규칙은 시뮬레이션 결과를 보기 전에 계획서에 적었다(명목 모델만 쓴다).
+FF_REL_TOL = 0.1       # 선형 목표점에서 명목 모델의 가속도 오차 ≤ 요청의 10% (전진·수직 각각)
+FF_ANG_TOL = 2.0       # 선형 목표점의 각가속도 ≤ 2 rad/s² (I-10의 트림 각가속도 문턱과 같다)
+FF_SCAN_STEP = 0.1     # a를 0.1 m/s² 간격으로 키우며 본다
+FF_SCAN_MAX = 100.0    # 이보다 크게는 보지 않는다(경기장 참조 가속 최대 ~60 m/s², ρ=1)
+_FF_ROWS = [1, 2, 3, 7, 8, 9]      # 오차상태 [δz, δv(3), δφ(3), δω(3), δn(4)]의 δv·δω 행
+_FF_PHI, _FF_N = [4, 5, 6], [10, 11, 12, 13]
+
+
+def feedforward_gain(lqr):
+    """전진(세계 x) 가속 1 m/s²를 정상 상태로 내는 [δφ(3), δn(4)] — 선형 오차상태 모델의 해.
+
+    표준 추종 LQR 피드포워드(참조가 요구하는 상태·입력을 정상 상태 식에서 구한다)를 가속하는
+    참조에 쓴 것이다. 정상 가속 조건(δz = δv = δω = 0, 모터 정상이라 δu = δn):
+      속도 행 3개      A_vφ·δφ + (A_vn + B_v)·δn = [a, 0, 0]
+      각가속도 행 3개  A_ωφ·δφ + (A_ωn + B_ω)·δn = 0
+    미지수 7개, 식 6개라 해가 한 줄로 모인다. 그중 LQR 자기 가중치 W = diag(Q_φ, Q_n + R)로 잰
+    크기가 가장 작은 해를 고른다(최소 가중 노름: W⁻¹Mᵀ(MW⁻¹Mᵀ)⁻¹b). 전진 가속에서는 남는
+    자유도(롤·요) 성분이 0이라 가중치는 결과를 바꾸지 않는다(계획 검토에서 격자 18점 확인).
+    호버에서 1 m/s²당 피치 ≈ 1/g rad(5.84°, 소각), 85 m/s에서 −0.09°·회전수 +0.6~0.7% n_max다.
+    """
+    A, B = lqr.A_r, lqr.B_r
+    M = np.hstack([A[np.ix_(_FF_ROWS, _FF_PHI)], A[np.ix_(_FF_ROWS, _FF_N)] + B[_FF_ROWS, :]])
+    q, r = np.diag(lqr.Q), np.diag(lqr.R_cost)
+    w_inv = 1.0/np.r_[q[_FF_PHI], q[_FF_N] + r]
+    b = np.zeros(len(_FF_ROWS))
+    b[0] = 1.0
+    return w_inv*(M.T @ np.linalg.solve((M*w_inv) @ M.T, b))
+
+
+def feedforward_target(params, x_trim, u_trim, d):
+    """트림에 선형 피드포워드 편차 d = [δφ(3), δn(4)]를 얹은 상태·입력(ω = 0, 모터 정상 n = u).
+
+    자세는 ScheduledLQR._compute_error_state의 규약을 거꾸로 쓴다: q = q_trim ⊗ δq,
+    δq = [δφ/2, √(1 − |δφ/2|²)] (scalar-last) — 그래야 오차상태가 정확히 δφ가 된다.
+    """
+    x = np.array(x_trim, dtype=float)
+    half = 0.5*np.asarray(d[0:3], dtype=float)
+    dq = np.r_[half, np.sqrt(max(1.0 - float(half @ half), 0.0))]
+    q = LQRController._quat_mult(x[6:10], dq)
+    x[6:10] = q/np.linalg.norm(q)
+    x[10:13] = 0.0
+    n = np.clip(np.asarray(u_trim, dtype=float) + np.asarray(d[3:7], dtype=float),
+                params['n_min'], params['n_max'])
+    x[13:17] = n
+    return x, n
+
+
+def feedforward_validity(params, x_trim, u_trim, gain, plant=None):
+    """선형 피드포워드가 맞는 전진 가속 범위 (a⁻, a⁺) [m/s², 크기] — 명목 모델만으로 정한다.
+
+    a를 0.1 m/s²씩 키우며 선형 목표점(feedforward_target)에서 명목 제어기 모델의 가속도를 잰다.
+    |v̇_x − a| ≤ 0.1·|a|, |v̇_z| ≤ 0.1·|a|, |ω̇| ≤ 2 rad/s²가 0부터 이어서 성립하는 가장 큰 |a|가
+    그 방향의 한계다(시뮬레이션 결과로 문턱을 고르지 않는다). 선형 모델은 작은 가속에서만 맞는다 —
+    예: 호버에서 기울여 가속하면 추력의 수직 성분이 줄어(2차 효과) 고도가 빠진다. 이 범위 밖에서
+    남는 차이가 '선형 가정의 한계'다(참조 정보는 다 받았다).
+    """
+    from control.dynamics import AxialDronePlant
+    plant = plant if plant is not None else AxialDronePlant(params, dt=0.001)
+    limits = []
+    for sign in (-1.0, 1.0):
+        a_ok = 0.0
+        for k in range(1, int(round(FF_SCAN_MAX/FF_SCAN_STEP)) + 1):
+            a = sign*k*FF_SCAN_STEP
+            x, n = feedforward_target(params, x_trim, u_trim, gain*a)
+            xd = plant.evaluate_xdot(x, n)
+            if (abs(xd[3] - a) > FF_REL_TOL*abs(a) or abs(xd[5]) > FF_REL_TOL*abs(a)
+                    or np.max(np.abs(xd[10:13])) > FF_ANG_TOL):
+                break
+            a_ok = abs(a)
+        limits.append(a_ok)
+    return limits[0], limits[1]
+
+
+class ScheduledLQR:
+    """
+    속도별 게인 스케줄링 LQR — np.interp 선형 보간.
+
+    초기화:
+      V_table(0,10,...,80 m/s) 각 속도에서
+      find_trim → linearize_error_state → ARE → K_r(4×14) 사전 계산.
+
+    런타임:
+      v_ref[0]으로 K_r, x_trim, u_trim을 np.interp 선형 보간.
+      인접 게인 간 부드러운 천이 (계단형 불연속 없음).
+
+    왜 선형 보간인가:
+      최근접(nearest) 선택은 속도가 테이블 경계를 넘을 때 게인이
+      불연속적으로 점프 → 제어 입력 튐. 선형 보간은 이를 방지.
+    """
+
+    def __init__(self, params, v_ref, z_ref=0.0, V_table=None, Q=None, R=None,
+                 integral_states=(), Q_integral=None, dt=0.001,
+                 integral_limit=5.0, trims=None, acceleration_feedforward=False):
+        """
+        acceleration_feedforward : bool
+            참조 가속도 피드포워드(kj 결정 2026-09-26 오후). 켜면 격자점마다 전진 가속
+            1 m/s²를 정상 상태로 내는 자세·회전수 편차(feedforward_gain)와 그것이 맞는 가속도
+            범위(feedforward_validity, 명목 모델)를 구해 K처럼 보간한다. 런타임에 a_ref(세계
+            좌표, 경기장이 참조 창에서 넣는다)의 x 성분을 그 범위로 자른 만큼만 쓴다.
+            기본값 False면 계산도 하지 않고 기존과 비트 동일하다(경기장 밖 사용처가 많다).
+        integral_states : tuple
+            적분 증강(LQI)할 오차상태 인덱스. 기본값 ()이면 순수 LQR로
+            기존 동작이 그대로 보존된다. ``(0,)``=고도, ``(0,1)``=고도+전진속도.
+            근거와 실측은 LQRController 의 같은 인자 설명 참조.
+        integral_limit : float
+            적분상태 크기 제한(안티와인드업). 회전수 명령이 포화한 동안에는
+            적분을 아예 멈추고, 그와 별개로 크기도 이 값으로 자른다.
+            포화 중 계속 적분하면 풀린 뒤 크게 튄다.
+        trims : list[dict] | None
+            V_table 각 속도의 트림(``state``·``control``·``converged``)을 밖에서
+            준다. None(기본값)이면 기존처럼 안에서 find_trim 연속법으로 구한다.
+            필요한 경우 — 팀원 기체(models/team_light)는 플랜트의 호버 자세가
+            우리 트림과 추력축 둘레 180° 다르다. 트림을 우리 규약으로 두면
+            오차 쿼터니언이 처음부터 180° 롤 오차를 보고 폭주한다. 경기장
+            (control/arena_factory.py)이 플랜트 규약으로 옮긴 트림을 넘긴다.
+        """
+        from control.trim import find_trim
+
+        self.p = params
+        self.v_ref = np.array(v_ref, dtype=float)
+        self.z_ref = z_ref
+        self.integral_states = tuple(int(i) for i in integral_states)
+        self.n_integral = len(self.integral_states)
+        self.dt = dt
+        self.integral_limit = float(integral_limit)
+        self._x_int = np.zeros(self.n_integral)
+        self._saturated = False     # 이번 스텝 회전수 명령이 포화했는가(적분 정지 조건)
+        self.acc_feedforward = bool(acceleration_feedforward)
+        self.a_ref = np.zeros(3)
+
+        if V_table is None:
+            V_table = np.arange(0, 90, 10).astype(float)
+        self.V_table = np.array(V_table, dtype=float)
+
+        # ── 각 속도에서 게인 사전 계산 ──
+        #
+        # ★ **트림이 수렴한 속도만 격자에 넣는다.** 예전에는 find_trim 의
+        #   'converged' 를 보지 않고 실패한 점까지 넣었다. _interpolate 가
+        #   np.interp 로 이웃과 선형 보간하므로, 물리적으로 없는 트림점 하나가
+        #   **유효 구간의 게인까지 끌어내린다.**
+        #   실측(선정 프로파일, 기본 격자 0..80): 20 이상 7개 점이 트림 없음인데
+        #   전부 격자에 들어갔고, 로그는 "9/9 유효"라고 찍었다(lqr.valid 는 ARE 가
+        #   풀렸는지만 보지 트림 존재를 보지 않는다). 그 결과 **트림이 멀쩡한
+        #   V=15 에서 게인이 직접 설계 대비 190% 어긋났다**(‖K‖ 1952 vs 799,
+        #   u_trim 682 vs 1004). rocket 프로파일도 70·80 에서 같은 일을 겪고 있었다.
+        #
+        # ★ 연속법(직전 해를 다음 초기값으로)을 쓴다. trim.py 가 "냉시동 fsolve 는
+        #   고속에서 엉뚱한 가지로 빠진다"고 경고하는 그대로다. 실측: rocket 의
+        #   70·80 이 냉시동에선 실패하지만 연속법으론 수렴한다. 기존 점들의 해는
+        #   솔버 허용오차 수준(상태 최대 5.8e-8, 수렴 판정 1e-6 보다 작다)에서 같다.
+        speeds, K_r_list, x_trim_list, u_trim_list = [], [], [], []
+        K_i_list = []
+        ff_gain_list, ff_limit_list = [], []
+        ff_plant = None
+        if self.acc_feedforward:
+            from control.dynamics import AxialDronePlant
+            ff_plant = AxialDronePlant(params, dt=0.001)     # 명목 모델 — 유효 범위 판정용
+        dropped, guess = [], None
+
+        if trims is not None and len(trims) != len(self.V_table):
+            raise ValueError('trims must match V_table one-to-one')
+        for i, V in enumerate(self.V_table):
+            if trims is not None:
+                trim = trims[i]
+            else:
+                trim = find_trim(params, float(V), guess=guess, quiet=True)
+            if not trim['converged']:
+                dropped.append((float(V), trim.get('why') or '미수렴'))
+                continue
+            guess = trim.get('guess', guess)
+
+            lqr = LQRController(params, trim['state'], trim['control'], Q, R,
+                                integral_states=self.integral_states,
+                                Q_integral=Q_integral)
+            if not lqr.valid:
+                dropped.append((float(V), 'ARE 해 없음'))
+                continue
+
+            speeds.append(float(V))
+            K_r_list.append(lqr.K_r.flatten())        # 4×14 = 56개 원소
+            if self.n_integral:
+                K_i_list.append(lqr.K_integral.flatten())   # 4×n_i
+            x_trim_list.append(trim['state'].copy())
+            u_trim_list.append(trim['control'].copy())
+            if self.acc_feedforward:
+                gain = feedforward_gain(lqr)
+                ff_gain_list.append(gain)
+                ff_limit_list.append(feedforward_validity(params, trim['state'], trim['control'],
+                                                          gain, plant=ff_plant))
+
+        if len(speeds) < 2:
+            raise ValueError(
+                f"ScheduledLQR: 트림이 잡히는 속도점이 {len(speeds)}개뿐이라 보간할 수 없다. "
+                f"버려진 점: {dropped}. V_table 을 트림이 존재하는 구간으로 좁혀야 한다.")
+
+        # 보간 격자는 **살아남은 속도만** 담는다.
+        self.V_table = np.array(speeds)
+        self.dropped = dropped
+        self._K_r_flat = np.array(K_r_list)       # (N_valid, 56)
+        self._K_i_flat = np.array(K_i_list) if self.n_integral else None
+        self._x_trim_arr = np.array(x_trim_list)  # (N_valid, 17)
+        self._u_trim_arr = np.array(u_trim_list)  # (N_valid, 4)
+        self._nr = 14  # 축소 상태 차원
+        # 참조 가속도 피드포워드: 1 m/s²당 [δφ(3), δn(4)]와 그것이 맞는 가속도 크기 (a⁻, a⁺)
+        self._ff_gain = np.array(ff_gain_list) if self.acc_feedforward else None    # (N_valid, 7)
+        self._ff_limits = np.array(ff_limit_list) if self.acc_feedforward else None  # (N_valid, 2)
+
+        print(f"  ScheduledLQR: {len(speeds)}/{len(V_table)} 속도점 유효"
+              f" (격자 {speeds[0]:.0f}~{speeds[-1]:.0f} m/s)")
+        if dropped:
+            detail = ', '.join(f"{v:.0f}({why})" for v, why in dropped)
+            print(f"    제외: {detail}")
+        # 요청 격자의 절반 이상이 잘려나갔다면 격자 자체가 이 기체의 트림 구간을
+        # 훨씬 벗어난 것이다. 남은 점들 바깥은 외삽(clip)이라 조용히 틀린 게인이
+        # 쓰인다 — 실측으로 85.6% 오차가 났다. 프로파일과 무관한 일반 안전장치다.
+        if len(dropped) * 2 > len(V_table):
+            print(f"    ⚠ 요청 격자 {len(V_table)}점 중 {len(dropped)}점이 제외됐다. "
+                  f"V_table 이 이 기체의 트림 구간({speeds[0]:.0f}~{speeds[-1]:.0f} m/s)보다 "
+                  f"훨씬 넓다 — 그 바깥은 외삽이라 게인이 크게 어긋난다. "
+                  f"격자를 트림 구간에 맞춰 다시 줄 것.")
+
+    def _interpolate_integral(self, V):
+        """V에서 적분 이득 K_i(4×n_i) 선형 보간. 적분 없으면 None."""
+        if not self.n_integral:
+            return None
+        V_c = np.clip(V, self.V_table[0], self.V_table[-1])
+        return np.array([
+            np.interp(V_c, self.V_table, self._K_i_flat[:, j])
+            for j in range(self._K_i_flat.shape[1])
+        ]).reshape(4, self.n_integral)
+
+    def _interpolate(self, V):
+        """V에서 K_r(4×14), x_trim(17), u_trim(4) 선형 보간."""
+        V_c = np.clip(V, self.V_table[0], self.V_table[-1])
+
+        # K_r: 56개 원소 각각 보간 → 4×14로 reshape
+        K_r = np.array([
+            np.interp(V_c, self.V_table, self._K_r_flat[:, j])
+            for j in range(self._K_r_flat.shape[1])
+        ]).reshape(4, self._nr)
+
+        # x_trim: 17개 원소 각각 보간
+        x_trim = np.array([
+            np.interp(V_c, self.V_table, self._x_trim_arr[:, j])
+            for j in range(17)])
+        # 보간된 쿼터니언 재정규화 (선형 보간은 단위구 벗어남)
+        q = x_trim[6:10]
+        qn = np.linalg.norm(q)
+        if qn > 1e-10:
+            x_trim[6:10] = q / qn
+
+        # u_trim: 4개 원소 각각 보간
+        u_trim = np.array([
+            np.interp(V_c, self.V_table, self._u_trim_arr[:, j])
+            for j in range(4)])
+
+        return K_r, x_trim, u_trim
+
+    @staticmethod
+    def _compute_error_state(x, x_trim):
+        """
+        14D 오차상태: [δz, δv(3), δφ(3), δω(3), δn(4)].
+
+        LQRController._compute_error_state와 동일하지만
+        x_trim을 인자로 받아 외부에서 사용 가능.
+        """
+        dz = x[2] - x_trim[2]
+        dv = x[3:6] - x_trim[3:6]
+
+        # 쿼터니언 오차 → 오차 각도 3D
+        q, q_t = x[6:10], x_trim[6:10]
+        q_t_inv = np.array([-q_t[0], -q_t[1], -q_t[2], q_t[3]])
+        dq = LQRController._quat_mult(q_t_inv, q)
+        if dq[3] < 0.0:
+            dq = -dq          # 최단경로 보정 (LQRController와 동일 — 위 주석 참고)
+        dphi = 2.0 * dq[0:3]
+
+        dw = x[10:13] - x_trim[10:13]
+        dn = x[13:17] - x_trim[13:17]
+
+        return np.concatenate([[dz], dv, dphi, dw, dn])
+
+    def __call__(self, t, x):
+        # v_ref[0]으로 스케줄링 (목표 속도의 게인/트림 사용)
+        V = self.v_ref[0]
+        K_r, x_trim, u_trim = self._interpolate(V)
+
+        # 위치 x,y는 동역학에 무관 → 현재 값 사용
+        x_trim[0:2] = x[0:2]
+        x_trim[2] = self.z_ref
+
+        dx_r = self._compute_error_state(x, x_trim)
+        # 참조가 일정하면 a_ref가 정확히 0이라 피드포워드를 건너뛴다(비트 동일이 자명하다)
+        if self.acc_feedforward and np.any(self.a_ref):
+            d_ff = self._feedforward(V)                      # [δφ(3), δn(4)]
+            dx_ff = np.zeros(self._nr)
+            dx_ff[4:7], dx_ff[10:14] = d_ff[0:3], d_ff[3:7]
+            # 표준 추종 형태 u = u_ss − K(x − x_ss): 목표 상태·입력을 가속하는 정상점으로 옮긴다.
+            # dx_ff의 δz·δv 칸은 0이라 적분기 입력(δz, δvx)은 그대로다.
+            u = u_trim + d_ff[3:7] - K_r @ (dx_r - dx_ff)
+        else:
+            u = u_trim - K_r @ dx_r
+
+        if self.n_integral:
+            K_i = self._interpolate_integral(V)
+            u = u - K_i @ self._x_int
+
+        u_sat = np.clip(u, self.p['n_min'], self.p['n_max'])
+
+        if self.n_integral:
+            # 안티와인드업 — 포화 중에는 적분을 멈춘다. 낼 수 없는 명령을 계속
+            # 적분하면 포화가 풀린 뒤 크게 튄다. 크기 제한도 함께 건다.
+            self._saturated = not np.allclose(u, u_sat)
+            if not self._saturated:
+                self._x_int += self.dt*np.array(
+                    [dx_r[i] for i in self.integral_states])
+                np.clip(self._x_int, -self.integral_limit, self.integral_limit,
+                        out=self._x_int)
+        return u_sat
+
+    _INTEGRAL_NAMES = ('z', 'vx', 'vy', 'vz')     # 오차상태 앞 4개 [δz, δv(3)]
+
+    def integrator_status(self):
+        """적분기 계측용(결과 무영향). CascadedPID.integrator_status와 같은 형식이다.
+
+        한계는 적분 상태 크기(ξ_z는 m·s, ξ_vx는 m)로 걸려 있어서 크기도 같은 단위로 준다.
+        가속도로 환산한 권한은 운용점·가중치마다 다르다(2026-09-26 진단: 사전 가중치에서
+        x 10.6~20.9, z 13.6~70.6 m/s²).
+        """
+        channels = {}
+        for k, i in enumerate(self.integral_states):
+            name = self._INTEGRAL_NAMES[i] if i < len(self._INTEGRAL_NAMES) else f's{i}'
+            channels[name] = (abs(float(self._x_int[k])), self.integral_limit)
+        return dict(channels=channels, frozen=bool(self.n_integral) and self._saturated)
+
+    def _feedforward(self, V):
+        """V에서 참조 가속도 피드포워드 [δφ(3), δn(4)] — 이득·유효 범위를 V로 선형 보간한다.
+
+        a_ref의 x 성분을 유효 범위 [−a⁻(V), a⁺(V)]로 자른 만큼만 쓴다. 경기장 참조는 x 성분만
+        변하므로 y·z 성분이 0이 아니면 조용히 버리지 않고 오류로 멈춘다.
+        """
+        if self.a_ref[1] != 0.0 or self.a_ref[2] != 0.0:
+            raise ValueError('GSLQR feedforward covers forward (world x) reference acceleration only, '
+                             f'got a_ref={self.a_ref}')
+        V_c = np.clip(V, self.V_table[0], self.V_table[-1])
+        gain = np.array([np.interp(V_c, self.V_table, self._ff_gain[:, j]) for j in range(7)])
+        lower = np.interp(V_c, self.V_table, self._ff_limits[:, 0])
+        upper = np.interp(V_c, self.V_table, self._ff_limits[:, 1])
+        return gain*float(np.clip(self.a_ref[0], -lower, upper))
+
+    def feedforward_limits(self):
+        """격자점별 유효 범위 표 [(V, a⁻, a⁺)] — 보고서용(피드포워드를 끄면 빈 목록)."""
+        if not self.acc_feedforward:
+            return []
+        return [(float(V), float(lo), float(hi)) for V, (lo, hi) in zip(self.V_table, self._ff_limits)]
+
+    def reset(self):
+        """MC 시행 간 독립성 — 적분 상태와 참조 가속도를 비운다."""
+        self._x_int = np.zeros(self.n_integral)
+        self._saturated = False
+        self.a_ref = np.zeros(3)
+
+
+# ══════════════════════════════════════════════════════
+# 5. INDI (Incremental Nonlinear Dynamic Inversion)
+# ══════════════════════════════════════════════════════
+
+class INDIController:
+    """
+    INDI — 증분 비선형 동적 역전.
+
+    외측: 속도P + 고도PID → F_des → R_des + T_cmd (PID와 동일)
+    내측: INDI
+      1) 자세 오차 → 원하는 각가속도 ω̇_des  (PD)
+      2) 측정 각가속도 ω̇_meas = LPF(Δω/Δt)  (센서 기반)
+      3) 제어 효과 G(n) = ∂[T,ω̇]/∂n          (현재 작동점)
+      4) 증분: Δn = G⁻¹ @ ([T,ω̇]_des - [T,ω̇]_meas)
+      5) n_cmd = n_actual + Δn
+
+    핵심 원리:
+      기존 제어: 모델에서 '필요한 제어 전체'를 계산 → 모델 오차/외란에 취약
+      INDI:      '현재 센서 측정'과 '원하는 것'의 차이만 보정
+               → ω̇_meas가 바람·모델오차·자이로를 이미 포함
+               → 외란이 자동 상쇄됨 (센서 기반 강건성)
+
+    구조:
+      [속도/고도 PID] → F_des → [R_des + T_cmd]
+                                      ↓
+      [SO(3) 자세 오차] → ω̇_des → [INDI: Δn = G⁻¹(ν_des - ν_meas)]
+                                      ↓
+                                  n_cmd = n_actual + Δn
+    """
+
+    def __init__(self, params, v_ref=None, z_ref=0.0, dt=0.001, f_cut=50.0):
+        self.p = params
+        self.m = params['mass']
+        self.g = params['g']
+        self.dt = dt
+
+        self.v_ref = np.array(v_ref) if v_ref is not None else np.zeros(3)
+        self.z_ref = z_ref
+
+        # ── 외측 게인 (PID 외측과 동일 → 비교 공정성) ──
+        self.Kp_vel = 1.0
+        self.Kp_z = 2.0
+        self.Kd_z = 2.0
+        self.Ki_z = 0.5
+        self.int_z_max = 5.0
+        self.max_tilt = np.radians(45)
+
+        # ── 내측 INDI 게인 ──
+        # 2차 응답 설계: φ̈ + Kd·φ̇ + Kp·φ = 0
+        # ωn=20 rad/s, ζ=0.7 → 빠르고 안정적 자세 추종
+        # INDI에서 게인은 관성과 무관 (G가 관성을 자동 보정)
+        wn = 20.0
+        zeta = 0.7
+        self.Kp_indi = np.full(3, wn**2)           # 400 rad/s²/rad
+        self.Kd_indi = np.full(3, 2 * zeta * wn)   # 28 rad/s²/(rad/s)
+
+        # ── LPF (1차 IIR, 각가속도 필터링) ──
+        # f_cut=50Hz: 기계적 동역학은 통과, 수치 노이즈 차단
+        self._alpha = dt / (dt + 1.0 / (2 * np.pi * f_cut))
+
+        # ── 폴백용 할당 행렬 (로터 정지 시) ──
+        from control.dynamics import compute_allocation_matrix
+        _, self._TM_to_f = compute_allocation_matrix(params)
+
+        # ── 내부 상태 ──
+        self._omega_prev = np.zeros(3)
+        self._omega_dot_filt = np.zeros(3)
+        self._int_ez = 0.0
+        self._initialized = False
+
+    def reset(self):
+        self._omega_prev = np.zeros(3)
+        self._omega_dot_filt = np.zeros(3)
+        self._int_ez = 0.0
+        self._initialized = False
+
+    def __call__(self, t, x):
+        pos, vel = x[0:3], x[3:6]
+        q, omega = x[6:10], x[10:13]
+        n_actual = x[13:17]
+        R = Rotation.from_quat(q).as_matrix()
+
+        # ━━ 1. 외측: 속도/고도 → T_cmd + R_des ━━
+        e_vel = vel - self.v_ref
+        e_z = pos[2] - self.z_ref
+        self._int_ez += e_z * self.dt
+        self._int_ez = np.clip(self._int_ez, -self.int_z_max, self.int_z_max)
+
+        a_des = np.zeros(3)
+        a_des[0:2] = -self.Kp_vel * e_vel[0:2]
+        a_des[2] = -self.Kp_z * e_z - self.Kd_z * vel[2] - self.Ki_z * self._int_ez
+        F_des = self.m * (a_des + np.array([0, 0, self.g]))
+
+        T_cmd, R_des = self._force_to_attitude(F_des)
+
+        # ━━ 2. 자세 오차 → 원하는 각가속도 ━━
+        S_err = 0.5 * (R_des.T @ R - R.T @ R_des)
+        att_err = np.array([-S_err[1, 2], S_err[0, 2], -S_err[0, 1]])
+        # gyro FF 불필요: ω̇_meas에 이미 자이로·공력 효과 포함
+        omega_dot_des = -self.Kp_indi * att_err - self.Kd_indi * omega
+
+        # ━━ 3. 각가속도 측정 (LPF) ━━
+        # 측정 NaN 가드 (리뷰 3d): 자기참조 LPF는 NaN 1회로 영구 고착
+        if not (np.all(np.isfinite(omega)) and np.all(np.isfinite(n_actual))):
+            return self._fallback(T_cmd, omega_dot_des)
+
+        if not self._initialized:
+            self._omega_prev = omega.copy()
+            self._initialized = True
+            return self._fallback(T_cmd, omega_dot_des)
+
+        omega_dot_raw = (omega - self._omega_prev) / self.dt
+        self._omega_dot_filt = (self._alpha * omega_dot_raw
+                                + (1 - self._alpha) * self._omega_dot_filt)
+        self._omega_prev = omega.copy()
+
+        # ━━ 4. INDI 증분 ━━
+        # 전진비(advance ratio) 반영 — 버그픽스 3-1을 standalone INDI에도 적용.
+        # (수직상승/이륙 등 축방향 유입 V_axial>0 이면 fac<1 → 추력·자세효과 과대평가 방지.
+        #  ProperHybrid.compute_control_effectiveness와 동일 규칙.)
+        v_body = R.T @ vel
+        V_axial = max(-v_body[2], 0.0)
+        T_meas = 0.0
+        for i in range(4):
+            ni = n_actual[i]
+            n_rps = ni / (2 * np.pi)
+            Jadv = V_axial / (n_rps * self.p['D_prop'] + 1e-8)
+            fac = max(1.0 - Jadv / self.p['J_max'], 0.0)
+            T_meas += self.p['k_T'] * ni**2 * fac
+
+        # 가상 제어 오차: [추력, 각가속도] 기대 - 측정
+        dv = np.array([T_cmd - T_meas,
+                       omega_dot_des[0] - self._omega_dot_filt[0],
+                       omega_dot_des[1] - self._omega_dot_filt[1],
+                       omega_dot_des[2] - self._omega_dot_filt[2]])
+
+        # G: 현재 로터 속도에서의 제어 효과 (4×4, 전진비 반영)
+        G = self._compute_G(n_actual, v_body)
+
+        try:
+            dn = np.linalg.solve(G, dv)
+        except np.linalg.LinAlgError:
+            return self._fallback(T_cmd, omega_dot_des)
+
+        n_cmd = n_actual + dn
+        return np.clip(n_cmd, self.p['n_min'], self.p['n_max'])
+
+    def _compute_G(self, n_actual, v_body=None):
+        """
+        제어 효과 행렬 G(4×4): ∂[T_total, ω̇]/∂n. (전진비 반영, 버그픽스 3-1)
+
+        전진비 fac = max(1 - J/J_max, 0),  J = V_axial/(n_rps·D)
+          dT/dn = k_T·n·(1+fac),  dQ/dn = k_Q·n·(1+fac)
+          fac=1(호버): 2·k_T·n (기존과 동일)
+        v_body=None이면 fac=1 (호버 가정) → 하위호환.
+        """
+        G = np.zeros((4, 4))
+        pos = self.p['rotor_positions']
+        dirs = self.p['rotor_directions']
+        k_T, k_Q = self.p['k_T'], self.p['k_Q']
+        Jxx, Jyy, Jzz = self.p['Ixx'], self.p['Iyy'], self.p['Izz']
+        D, J_max = self.p['D_prop'], self.p['J_max']
+        V_axial = max(-v_body[2], 0.0) if v_body is not None else 0.0
+
+        for i in range(4):
+            ni = max(n_actual[i], 1.0)           # 0 방지
+            if V_axial > 0:
+                n_rps = ni / (2 * np.pi)
+                Jadv = V_axial / (n_rps * D + 1e-8)
+                fac = max(1.0 - Jadv / J_max, 0.0)
+            else:
+                fac = 1.0
+            dT = k_T * ni * (1.0 + fac)          # ∂T_i/∂n_i (전진비 반영)
+            G[0, i] = dT
+            G[1, i] = -pos[i, 1] * dT / Jxx     # r_y × (-T) 모멘트
+            G[2, i] = pos[i, 0] * dT / Jyy      # r_x × T 모멘트
+            G[3, i] = dirs[i] * k_Q * ni * (1.0 + fac) / Jzz  # 반토크
+
+        return G
+
+    def _force_to_attitude(self, F_des):
+        """F_des → (T_cmd, R_des). CascadedPID와 동일 로직."""
+        F_norm = max(np.linalg.norm(F_des), 1e-6)
+        T_cmd = F_norm
+        b3_des = -F_des / F_norm
+
+        cos_tilt = -b3_des[2]
+        cos_max = np.cos(self.max_tilt)
+        if cos_tilt < cos_max:
+            b3_hor = b3_des.copy(); b3_hor[2] = 0
+            hn = np.linalg.norm(b3_hor)
+            if hn > 1e-8:
+                s = np.sqrt(1 - cos_max**2) / hn
+                b3_des = np.array([b3_hor[0]*s, b3_hor[1]*s, -cos_max])
+            else:
+                b3_des = np.array([0, 0, -1])
+
+        c1 = np.array([1, 0, 0])
+        b2_raw = np.cross(b3_des, c1)
+        bn = np.linalg.norm(b2_raw)
+        if bn < 1e-6:
+            b2_raw = np.cross(b3_des, np.array([0, 1, 0]))
+            bn = np.linalg.norm(b2_raw)
+        b2 = b2_raw / bn
+        b1 = np.cross(b2, b3_des)
+        R_des = np.column_stack([b1, b2, b3_des])
+        return T_cmd, R_des
+
+    def _fallback(self, T_cmd, omega_dot_des):
+        """G 특이(로터 정지 등) 시 모델 기반 폴백."""
+        J = np.diag([self.p['Ixx'], self.p['Iyy'], self.p['Izz']])
+        M_cmd = J @ omega_dot_des
+        TM = np.array([T_cmd, M_cmd[0], M_cmd[1], M_cmd[2]])
+        f_ind = self._TM_to_f @ TM
+        n_cmd = np.zeros(4)
+        for i in range(4):
+            n_cmd[i] = np.sqrt(max(f_ind[i], 0) / self.p['k_T'])
+        return np.clip(n_cmd, self.p['n_min'], self.p['n_max'])
+
+
+# ══════════════════════════════════════════════════════
+# 비교 시뮬레이션
+# ══════════════════════════════════════════════════════
+
+def run_comparison():
+    from control.vehicle_params import vehicle_params as P
+    from control.dynamics import AxialDronePlant
+    from control.trim import find_trim, print_trim
+
+    plant = AxialDronePlant(P, dt=0.001)
+    dt = plant.dt
+
+    print("\n" + "=" * 60)
+    print("  PID vs LQR 베이스라인 비교")
+    print("=" * 60)
+
+    # ── 트림점 (30 m/s) ──
+    V_cruise = 30.0
+    trim = find_trim(P, V_cruise)
+    print(f"\n[트림] {V_cruise} m/s")
+    print_trim(trim, V_cruise, P)
+
+    x_trim = trim['state']
+    u_trim = trim['control']
+
+    # ── 제어기 생성 ──
+    pid = CascadedPID(P, v_ref=[V_cruise, 0, 0], z_ref=50.0, dt=dt)
+    lqr = LQRController(P, x_trim, u_trim)
+
+    print(f"\n[LQR 설계]")
+    lqr.print_info()
+
+    # ── 시나리오: 트림 + 교란 ──
+    x0 = x_trim.copy()
+    x0[2] = 50.0           # 고도 50m
+    x0[5] += 2.0           # 수직 속도 교란 +2 m/s
+    x0[3] += 3.0           # 수평 속도 교란 +3 m/s
+
+    T_sim = 10.0
+
+    # LQR 트림 위치를 초기 위치에 맞춤 (위치는 동역학에 비의존)
+    lqr.set_position_ref(x0[0:3])
+
+    # PID 시뮬
+    pid.reset()
+    ts, xs_pid, us_pid = plant.simulate(x0.copy(), pid, T_sim)
+
+    # LQR 시뮬
+    ts, xs_lqr, us_lqr = plant.simulate(x0.copy(), lqr, T_sim)
+
+    # ── 결과 비교 ──
+    print(f"\n[결과] {T_sim}초 시뮬 (초기 교란: Δvx=+3, Δvz=+2 m/s)")
+    print(f"{'':>20s}  {'PID':>12s}  {'LQR':>12s}  {'기준':>8s}")
+    print(f"  {'─'*56}")
+
+    for label, idx, ref in [
+        ("v_x [m/s]",    3, V_cruise),
+        ("v_z [m/s]",    5, 0.0),
+        ("z [m]",        2, 50.0),
+    ]:
+        val_pid = xs_pid[-1, idx]
+        val_lqr = xs_lqr[-1, idx]
+        print(f"  {label:>18s}  {val_pid:>12.4f}  {val_lqr:>12.4f}  {ref:>8.1f}")
+
+    # RMSE 계산 (속도 추종)
+    rmse_vx_pid = np.sqrt(np.mean((xs_pid[:, 3] - V_cruise)**2))
+    rmse_vx_lqr = np.sqrt(np.mean((xs_lqr[:, 3] - V_cruise)**2))
+    rmse_z_pid  = np.sqrt(np.mean((xs_pid[:, 2] - 50.0)**2))
+    rmse_z_lqr  = np.sqrt(np.mean((xs_lqr[:, 2] - 50.0)**2))
+
+    print(f"\n  {'RMSE v_x':>18s}  {rmse_vx_pid:>12.4f}  {rmse_vx_lqr:>12.4f}")
+    print(f"  {'RMSE z':>18s}  {rmse_z_pid:>12.4f}  {rmse_z_lqr:>12.4f}")
+
+    # 제어 입력 비교
+    u_rms_pid = np.sqrt(np.mean(us_pid**2, axis=0))
+    u_rms_lqr = np.sqrt(np.mean(us_lqr**2, axis=0))
+    print(f"\n  {'RMS 모터속도':>18s}  {np.mean(u_rms_pid):>12.1f}  {np.mean(u_rms_lqr):>12.1f}")
+
+    print(f"\n{'='*60}")
+
+    # ── 호버 교란 비교 ──
+    print(f"\n[호버 교란 비교]")
+    trim_hov = find_trim(P, 0.0)
+    x0_h = trim_hov['state'].copy()
+    x0_h[2] = 10.0
+    x0_h[3] = 2.0   # 수평 교란
+    x0_h[5] = 1.0   # 수직 교란
+
+    pid_h = CascadedPID(P, v_ref=[0, 0, 0], z_ref=10.0, dt=dt)
+    lqr_h = LQRController(P, trim_hov['state'], trim_hov['control'])
+    lqr_h.set_position_ref(x0_h[0:3])   # 위치 기준점 맞춤
+
+    ts, xs_pid_h, _ = plant.simulate(x0_h.copy(), pid_h, 5.0)
+    ts, xs_lqr_h, _ = plant.simulate(x0_h.copy(), lqr_h, 5.0)
+
+    print(f"  5초 후 |v|: PID = {np.linalg.norm(xs_pid_h[-1,3:6]):.4f}, "
+          f"LQR = {np.linalg.norm(xs_lqr_h[-1,3:6]):.4f} m/s")
+    print(f"  5초 후 z:   PID = {xs_pid_h[-1,2]:.4f}, "
+          f"LQR = {xs_lqr_h[-1,2]:.4f} m (기준 10.0)")
+
+
+if __name__ == '__main__':
+    run_comparison()

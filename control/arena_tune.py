@@ -1,0 +1,498 @@
+"""같은 예산 튜닝 — kj 작업지시서(2026-09-25) 작업 E. 결과는 항상 **PILOT**.
+
+논문 §5.3: "모든 제어기는 독립된 튜닝 시나리오에서 같은 튜닝 예산을 받으며,
+본시험 난수는 튜닝에 사용하지 않는다." 이 스크립트가 그 규칙을 코드로 강제한다.
+
+과거 튜닝(research/tune_gains.py)에서 찾은 불공정 요인과 여기서의 처리:
+  - baseline·시작점 평가가 예산 밖이었다      → 첫 평가(사전값)부터 예산에 넣는다
+  - 재방문 후보를 다시 돌려 예산을 썼다        → 캐시하되 **똑같이 계상**한다
+    (계산은 아끼고 예산 규칙은 모든 제어기에 같게)
+  - GSLQR만 불안정 후보를 무료로 거를 수 있었다 → 무료 사전선별 없음
+  - 예산이 남은 채 수렴하면 평가 횟수가 달라진다 → 보폭을 되돌려 재시작, 예산을
+    **정확히** 다 쓴다(I-4: 평가 횟수가 같아야 한다)
+  - 벽시계 의존                               → 솔버는 반복 상한만, 결과에 시간 없음
+
+탐색: 사전값 대비 log₂ 배수 좌표에서의 나침반(compass) 탐색. 한 번의 폴링은 좌표마다
++s·-s 두 후보(2n개)를 전부 평가하고, 가장 좋은 후보가 현재보다 좋으면 옮긴다.
+아니면 보폭 s를 반으로(배수 2 → √2 → 2^¼ → 2^⅛), 2^⅛ 다음은 재시작(s=1).
+좌표가 이진 분수라 캐시 키가 정확하다.
+
+실행 예(제어기별 병렬 프로세스, 같은 run-dir):
+  python -m control.arena_tune --controllers V13 --budget 24 --run-dir results/arena/tuning/pilot24
+  python -m control.arena_tune --summarize --run-dir results/arena/tuning/pilot24
+"""
+import argparse
+from contextlib import contextmanager
+from datetime import datetime, timezone
+import json
+import os
+from pathlib import Path
+
+import numpy as np
+
+from control.arena import (load_config, config_sha256, build_scenarios, integrator_limit_flags,
+                           DEFAULT_CONFIG, ROOT)
+from control.arena_factory import ArenaFactory, ControllerModel, ARENA_LABELS, NMPC_LABELS
+from control.nmpc_common import PAPER_COST_WEIGHTS
+from control.validation_metrics import Acceptance, PaperCriteria, paper_evaluate
+
+LABEL = 'PILOT'
+
+
+# ══════════════════════════════════════════════════════════════════
+# 파라미터 공간 — 제어기별 이름·사전값·적용 방법
+# ══════════════════════════════════════════════════════════════════
+
+def _gslqr_groups(g):
+    """gslqr.json의 14개 대각 가중치를 9개 튜닝 그룹으로 묶는다(구조가 맞는지 확인)."""
+    q = [float(v) for v in g['Q_diag']]
+    if not (q[1] == q[2] and q[4] == q[5] == q[6] and q[7] == q[8] == q[9]
+            and q[10] == q[11] == q[12] == q[13]):
+        raise ValueError('gslqr.json Q_diag does not have the grouped structure assumed here')
+    q_iz, q_ivx = (float(v) for v in g['Q_integral'])
+    return dict(q_z=q[0], q_v_h=q[1], q_v_z=q[3], q_phi=q[4], q_omega=q[7], q_n=q[10],
+                r=float(g['R_scale']), q_iz=q_iz, q_ivx=q_ivx)
+
+
+def parameter_space(config, label, factory_gains):
+    """(이름 목록, 사전값 dict, 값 dict → factory overrides 함수)."""
+    names = config['tuning']['parameters']['NMPC' if label in NMPC_LABELS else label]
+    if label in NMPC_LABELS:
+        prior = dict(PAPER_COST_WEIGHTS, Q_z=float(config['nmpc_common']['Q_z']))
+
+        def apply(values):
+            weights = {k: values[k] for k in PAPER_COST_WEIGHTS}
+            return {label: dict(cost_weights=weights, Q_z=values['Q_z'])}
+    elif label == 'GSLQR':
+        prior = _gslqr_groups(factory_gains['GSLQR'])
+
+        def apply(values):
+            v = values
+            return {'GSLQR': dict(
+                Q_diag=[v['q_z'], v['q_v_h'], v['q_v_h'], v['q_v_z']] + [v['q_phi']]*3
+                       + [v['q_omega']]*3 + [v['q_n']]*4,
+                R_scale=v['r'], Q_integral=[v['q_iz'], v['q_ivx']])}
+    else:
+        g = factory_gains['CPID']
+        prior = dict(Kp_vel=g['Kp_vel'], Ki_vel=g['Ki_vel'], Kp_z=g['Kp_z'], Kd_z=g['Kd_z'],
+                     Ki_z=g['Ki_z'], Kp_att=1.0, Kd_att=1.0)   # 벡터 게인은 사전값 전체에 곱하는 배수
+
+        def apply(values):
+            v = values
+            return {'CPID': dict(Kp_vel=v['Kp_vel'], Ki_vel=v['Ki_vel'], Kp_z=v['Kp_z'],
+                                 Kd_z=v['Kd_z'], Ki_z=v['Ki_z'],
+                                 Kp_att=[v['Kp_att']*a for a in g['Kp_att']],
+                                 Kd_att=[v['Kd_att']*a for a in g['Kd_att']])}
+    missing = [n for n in names if n not in prior]
+    if missing:
+        raise ValueError(f'{label}: tuning parameters {missing} have no prior value')
+    return list(names), {n: float(prior[n]) for n in names}, apply
+
+
+# ══════════════════════════════════════════════════════════════════
+# 목적함수 — 모든 제어기에 같은 식
+# ══════════════════════════════════════════════════════════════════
+
+class Evaluator:
+    """튜닝 시나리오 전체를 돌려 목적함수 하나를 낸다(시간·난수 무관).
+
+    scenario_workers > 1이면 시나리오를 별도 프로세스에서 나눠 돌린다. 시나리오끼리 상태를
+    나누지 않으므로(NLP는 시행마다 새로 짓고, 트림 캐시는 호출 순서와 무관) 순차와 비트 동일해야
+    한다 — test_arena_tune_parallel.py가 확인한다. 결과 목록은 항상 시나리오 순서다.
+
+    병렬일 때 작업 배정 순서: 직전 평가에서 오래 걸린 시나리오부터 보낸다(가장 긴 시나리오가 끝을
+    붙잡지 않게). 잰 시간은 배정 순서에만 쓰고 결과·로그에는 넣지 않는다(결과에 벽시계 없음).
+    """
+
+    def __init__(self, config, native, model, label, scenario_workers=1):
+        if int(scenario_workers) < 1:
+            raise ValueError(f'scenario_workers must be >= 1, got {scenario_workers}')
+        self.config, self.native, self.model, self.label = config, native, model, label
+        from control.sensor_binding import resolve_feedback
+        binding = resolve_feedback(config)
+        if binding.mode == 'sensors':
+            lo, hi = config['seeds']['tuning']
+            if not lo <= binding.seed <= hi:
+                raise ValueError('sensor tuning seed must lie in seeds.tuning')
+        self.scenarios = build_scenarios(config, model.cp, native,
+                                         scenarios=config['tuning']['scenarios'])
+        self.limits = Acceptance(**config['acceptance'])
+        self.paper = PaperCriteria(**config['paper_criteria'])
+        self.penalty = float(config['tuning']['objective']['failure_penalty'])
+        self.scenario_workers = int(scenario_workers)
+        self._pool = None
+        self._durations = {}          # 시나리오 인덱스 → 직전 평가의 소요 시간[s] (배정 순서용)
+        self.last_order = None
+
+    def __call__(self, overrides):
+        if self.scenario_workers == 1:
+            factory = ArenaFactory(self.config, self.native, overrides=overrides, model=self.model)
+            scores = [self.score(factory, scenario) for scenario in self.scenarios]
+        else:
+            pool = self._scenario_pool()
+            # sorted는 안정 정렬이라 첫 평가(시간 기록 없음)는 인덱스 순서 그대로다.
+            order = sorted(range(len(self.scenarios)), key=lambda i: -self._durations.get(i, 0.0))
+            futures = {i: pool.submit(_score_in_worker, (overrides, i)) for i in order}
+            scores = []
+            for i in range(len(self.scenarios)):
+                entry, self._durations[i] = futures[i].result()
+                scores.append(entry)
+            self.last_order = order
+        return float(np.mean([e['score'] for e in scores])), scores
+
+    def score(self, factory, scenario):
+        """시나리오 하나를 돌려 채점 항목(dict)을 낸다."""
+        import control.validation_suite as suite
+        entry = dict(id=scenario.id)
+        try:
+            row, result, log = suite.run_trial(factory, self.label, scenario.profile,
+                                               scenario.cases[0], self.limits)
+            paper = paper_evaluate(result, scenario.profile, self.paper, window=scenario.window,
+                                   solve_log=log, n_max=self.native['n_max'])
+            failed = bool(row['stop_reason']) or paper['paper_failed']
+            entry.update(stop_reason=row['stop_reason'], paper_reasons=paper['paper_reasons'],
+                         window_rmse_velocity=paper['window_rmse_velocity'],
+                         window_rmse_z=paper['window_rmse_z'], max_omega=row['max_omega'],
+                         trajectory_sha256=row['trajectory_sha256'],
+                         integrators=row.get('integrators'))
+            if row.get('feedback') == 'sensors':
+                entry.update({key: row[key] for key in ('feedback', 'sensor_seed',
+                             'sensor_profile', 'sensor_profile_sha256')})
+        except (ValueError, RuntimeError, np.linalg.LinAlgError) as exc:
+            failed = True
+            entry.update(stop_reason=f'{type(exc).__name__}: {exc}')
+        value = (self.penalty if failed or entry.get('window_rmse_velocity') is None
+                 else entry['window_rmse_velocity'] + entry['window_rmse_z'])
+        entry.update(failed=failed, score=float(value))
+        return entry
+
+    def _scenario_pool(self):
+        # spawn 고정: 리눅스 기본 fork는 부모의 CasADi·BLAS 상태를 복제한다. 맥·Windows(기본 spawn)와
+        # 리눅스에서 같은 방식으로 돌게 한다.
+        if self._pool is None:
+            import multiprocessing
+            from concurrent.futures import ProcessPoolExecutor
+            self._pool = ProcessPoolExecutor(
+                max_workers=min(self.scenario_workers, len(self.scenarios)),
+                mp_context=multiprocessing.get_context('spawn'),
+                initializer=_init_scenario_worker,
+                initargs=(self.config, self.native, self.label, self.model.sha256))
+        return self._pool
+
+    def close(self):
+        if self._pool is not None:
+            self._pool.shutdown()
+            self._pool = None
+
+
+_WORKER = {}
+
+
+def _exit_when_parent_dies():
+    # 작업자는 작업 대기열에서 막혀 기다리므로 부모가 kill되면 고아로 남아 메모리를 쥔다(M17은 개당 약 2 GiB).
+    import multiprocessing
+    import os
+    parent = multiprocessing.parent_process()
+    if parent is not None:
+        parent.join()
+        os._exit(1)
+
+
+def _init_scenario_worker(config, native, label, model_sha256):
+    """작업자 프로세스마다 한 번: 제어기 모델을 다시 적합하고 부모와 같은지 확인한다."""
+    import threading
+    threading.Thread(target=_exit_when_parent_dies, daemon=True).start()
+    model = ControllerModel(native)
+    if model.sha256 != model_sha256:
+        raise RuntimeError(f'scenario worker built a different controller model '
+                           f'({model.sha256} vs parent {model_sha256})')
+    _WORKER['evaluator'] = Evaluator(config, native, model, label)
+
+
+def _score_in_worker(task):
+    """(채점 항목, 소요 시간[s]). 시간은 부모가 다음 평가의 배정 순서를 정하는 데만 쓴다."""
+    import time
+    overrides, index = task
+    evaluator = _WORKER['evaluator']
+    started = time.perf_counter()
+    factory = ArenaFactory(evaluator.config, evaluator.native, overrides=overrides,
+                           model=evaluator.model)
+    entry = evaluator.score(factory, evaluator.scenarios[index])
+    return entry, time.perf_counter() - started
+
+
+# ══════════════════════════════════════════════════════════════════
+# 탐색 — 결정적 나침반 탐색, 예산을 정확히 다 쓴다
+# ══════════════════════════════════════════════════════════════════
+
+def compass_search(n, budget, evaluate, initial_step=2.0, min_step=1.05):
+    """log₂ 배수 좌표 e(길이 n)에서 탐색. evaluate(e) → 목적함수(작을수록 좋음).
+
+    evaluate는 캐시·로그를 책임진다(여기선 '요청'만 센다). 반환: (최선 e, 최선값, 이력).
+    """
+    s0 = float(np.log2(initial_step))
+    s_min = float(np.log2(min_step))
+    center = tuple([0.0]*n)
+    best = evaluate(center)
+    spent, s, restarts, history = 1, s0, 0, []
+    while spent < budget:
+        poll = []
+        for i in range(n):
+            for sign in (+1.0, -1.0):
+                if spent >= budget:
+                    break
+                cand = list(center)
+                cand[i] += sign*s
+                cand = tuple(cand)
+                poll.append((evaluate(cand), cand))
+                spent += 1
+        history.append(dict(center=center, step_exponent=s, evaluated=len(poll)))
+        if poll:
+            value, cand = min(poll, key=lambda item: item[0])
+            if value < best - 1e-12:
+                center, best = cand, value
+                continue
+        s /= 2.0
+        if s < s_min:
+            s, restarts = s0, restarts + 1         # 예산이 남으면 보폭을 되돌려 계속
+    return center, best, dict(spent=spent, restarts=restarts, polls=history)
+
+
+# ══════════════════════════════════════════════════════════════════
+# 실행·기록·재개
+# ══════════════════════════════════════════════════════════════════
+
+def _environment():
+    from control.validation_suite import environment_fingerprint, git_state
+    revision, dirty = git_state()
+    return dict(environment=environment_fingerprint(), git_revision=revision, git_dirty=dirty)
+
+
+def _write_json(path, value):
+    from control.validation_suite import json_safe
+    tmp = path.with_suffix(path.suffix + '.tmp')
+    tmp.write_text(json.dumps(json_safe(value), ensure_ascii=False, indent=2, allow_nan=False) + '\n',
+                   encoding='utf-8')
+    tmp.replace(path)
+
+
+def check_resume_compatible(config, label, run_dir):
+    """이어 돌리기 전에, 남은 기록이 **지금 설정**으로 만든 것인지 확인한다.
+
+    재개는 로그의 지수만 대조한다. 튜닝 시나리오나 설정이 바뀐 뒤 같은 run-dir에서 이어 돌리면
+    옛 목적함수를 조용히 재생해 새 기록에 섞는다(2026-09-26 탐색에서 발견). 설정 해시와 튜닝
+    시나리오 id가 다르면 멈추고 새 run-dir을 쓰게 한다.
+    """
+    record_path = Path(run_dir)/f'{label}.record.json'
+    if not record_path.exists():
+        return
+    record = json.loads(record_path.read_text(encoding='utf-8'))
+    now_ids = [s['id'] for s in config['tuning']['scenarios']]
+    problems = []
+    if record.get('config_sha256') != config_sha256(config):
+        problems.append('config sha256 differs')
+    if record.get('scenario_ids') != now_ids:
+        problems.append(f'tuning scenarios differ ({record.get("scenario_ids")} vs {now_ids})')
+    from control.sensor_binding import sensor_record_problems
+    problems.extend(sensor_record_problems(record, config))
+    if problems:
+        raise RuntimeError(f'{label}: cannot resume {run_dir} — ' + '; '.join(problems)
+                           + '. Start a new --run-dir.')
+
+
+def tune_controller(config, label, budget, run_dir, native=None, model=None, scenario_workers=1):
+    """한 제어기를 예산만큼 튜닝. 같은 run_dir에 로그가 있으면 이어서 한다.
+
+    scenario_workers는 실행 방식일 뿐 결과를 바꾸지 않으므로 재개 검사에 넣지 않는다."""
+    check_resume_compatible(config, label, run_dir)
+    from models.team_light.control.baseline_v2 import baseline_params
+    native = native if native is not None else baseline_params()
+    model = model if model is not None else ControllerModel(native)
+    gains = ArenaFactory(config, native, model=model).gains
+    names, prior, apply = parameter_space(config, label, gains)
+    evaluator = Evaluator(config, native, model, label, scenario_workers=scenario_workers)
+    run_dir.mkdir(parents=True, exist_ok=True)
+    log_path, record_path = run_dir/f'{label}.jsonl', run_dir/f'{label}.record.json'
+    logged = ([json.loads(line) for line in log_path.read_text(encoding='utf-8').splitlines() if line]
+              if log_path.exists() else [])
+    cache, counter = {}, {'index': 0}
+    search = config['tuning']['search']
+    record = dict(label=LABEL, controller=label, budget=int(budget), spent=0,
+                  parameter_names=names, prior=prior,
+                  scenario_ids=[s.id for s in evaluator.scenarios],
+                  main_scenario_ids=[s['id'] for s in config['scenarios']],
+                  objective=config['tuning']['objective'], search=search,
+                  seeds=dict(tuning_range=config['seeds']['tuning'], main_range=config['seeds']['main'],
+                             used=[]),
+                  config_sha256=config_sha256(config),
+                  controller_model_sha256=model.sha256, scenario_workers=int(scenario_workers),
+                  status='running', **_environment())
+    from control.sensor_binding import resolve_feedback
+    binding = resolve_feedback(config)
+    if binding.mode == 'sensors':
+        record['seeds']['used'] = [binding.seed]
+        record.update(binding.metadata)
+        from control.sensor_binding import runtime_source_hashes
+        record['sensor_runtime_source_sha256'] = runtime_source_hashes()
+
+    def values_of(e):
+        return {name: prior[name]*2.0**exp for name, exp in zip(names, e)}
+
+    def evaluate(e):
+        index = counter['index']
+        counter['index'] += 1
+        if index < len(logged):                    # 재개: 로그를 그대로 재생한다
+            entry = logged[index]
+            if tuple(entry['exponents']) != tuple(e):
+                raise RuntimeError(f'{label}: resume log diverges at evaluation {index} — '
+                                   'different config/code; start a new run-dir')
+            cache.setdefault(tuple(e), entry['objective'])
+            return entry['objective']
+        hit = tuple(e) in cache
+        if hit:
+            objective, scores = cache[tuple(e)], None
+        else:
+            objective, scores = evaluator(apply(values_of(e)))
+            cache[tuple(e)] = objective
+        entry = dict(index=index, exponents=list(e), values=values_of(e), objective=objective,
+                     cache_hit=hit, scenarios=scores)
+        with log_path.open('a', encoding='utf-8') as stream:
+            from control.validation_suite import json_safe
+            stream.write(json.dumps(json_safe(entry), ensure_ascii=False, allow_nan=False) + '\n')
+        record.update(spent=index + 1)
+        _write_json(record_path, record)
+        print(f'  [{label}] eval {index + 1}/{budget} objective={objective:.6g}'
+              f'{" (cache)" if hit else ""}', flush=True)
+        return objective
+
+    try:
+        best_e, best, info = compass_search(len(names), int(budget), evaluate,
+                                            initial_step=float(search['initial_step']),
+                                            min_step=float(search['min_step']))
+    finally:
+        evaluator.close()
+    prior_objective = cache[tuple([0.0]*len(names))]
+    record.update(spent=info['spent'], restarts=info['restarts'], best_exponents=list(best_e),
+                  best_values=values_of(best_e), best_objective=best,
+                  prior_objective=prior_objective, status='complete',
+                  finished_utc=datetime.now(timezone.utc).isoformat())
+    _write_json(record_path, record)
+    return record
+
+
+def check_tuning_records(records, config):
+    """불변식 I-4 — 위반 목록(빈 목록이면 통과)."""
+    bad = []
+    if not records:
+        return ['no tuning records']
+    budgets = {r['controller']: r['budget'] for r in records}
+    if len(set(budgets.values())) != 1:
+        bad.append(f'budgets differ: {budgets}')
+    for r in records:
+        from control.sensor_binding import sensor_record_problems
+        bad.extend(f"{r['controller']}: {message}" for message in sensor_record_problems(r, config))
+        if r.get('status') != 'complete':
+            bad.append(f"{r['controller']}: status {r.get('status')}")
+        if r['spent'] != r['budget']:
+            bad.append(f"{r['controller']}: spent {r['spent']} != budget {r['budget']}")
+        if set(r['scenario_ids']) & {s['id'] for s in config['scenarios']}:
+            bad.append(f"{r['controller']}: tuning used main-test scenarios")
+        lo_t, hi_t = r['seeds']['tuning_range']
+        lo_m, hi_m = config['seeds']['main']
+        if not (hi_m < lo_t or hi_t < lo_m):
+            bad.append(f"{r['controller']}: tuning seed range overlaps main-test seeds")
+        if any(lo_m <= s <= hi_m or not lo_t <= s <= hi_t for s in r['seeds']['used']):
+            bad.append(f"{r['controller']}: used a seed outside the tuning range")
+    for key in ('scenario_ids', 'objective', 'search'):
+        if len({json.dumps(r[key], sort_keys=True) for r in records}) != 1:
+            bad.append(f'{key} differs between controllers')
+    return bad
+
+
+def _evaluation_entries(run_dir):
+    """튜닝 로그(<label>.jsonl)의 시나리오별 항목을 평평하게 모은다(적분기 1% 규칙 검사용).
+    캐시 적중 평가는 새로 돌리지 않았으므로 항목이 없다."""
+    entries = []
+    for path in sorted(Path(run_dir).glob('*.jsonl')):
+        controller = path.stem
+        for line in path.read_text(encoding='utf-8').splitlines():
+            if not line:
+                continue
+            evaluation = json.loads(line)
+            for score in evaluation.get('scenarios') or []:
+                entries.append(dict(score, controller=controller, evaluation=evaluation['index']))
+    return entries
+
+
+ES_CONTINUOUS = 0x80000000
+ES_SYSTEM_REQUIRED = 0x00000001
+
+
+@contextmanager
+def keep_system_awake():
+    """Windows에서 튜닝 동안 시스템 절전만 막는다(화면 꺼짐은 막지 않음). 관리자 권한이 필요 없고,
+    이 스레드가 끝나거나 되돌리면 풀린다. 다른 OS에서는 아무것도 하지 않는다. 계산에는 관여하지 않는다.
+    학교 정책의 강제 재시작·로그오프는 막지 못한다 — DISTRIBUTED_RUN.md의 재개 절차로 이어 간다."""
+    if os.name != 'nt':
+        yield
+        return
+    import ctypes
+    kernel32 = ctypes.windll.kernel32
+    kernel32.SetThreadExecutionState(ES_CONTINUOUS | ES_SYSTEM_REQUIRED)
+    try:
+        yield
+    finally:
+        kernel32.SetThreadExecutionState(ES_CONTINUOUS)
+
+
+def main(argv=None):
+    parser = argparse.ArgumentParser(description=__doc__,
+                                     formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument('--config', type=Path, default=DEFAULT_CONFIG)
+    parser.add_argument('--controllers', nargs='+', choices=ARENA_LABELS)
+    parser.add_argument('--budget', type=int, help='evaluations per controller (default: config)')
+    parser.add_argument('--run-dir', type=Path, required=True)
+    parser.add_argument('--summarize', action='store_true',
+                        help='collect <label>.record.json files, check I-4, write summary.json')
+    parser.add_argument('--scenario-workers', type=int, default=1,
+                        help='processes per evaluation for the tuning scenarios (default 1 = sequential; '
+                             'results are bit-identical, only wall time and memory change)')
+    args = parser.parse_args(argv)
+    config = load_config(args.config)
+    if args.summarize:
+        paths = sorted(args.run_dir.glob('*.record.json'))
+        records = [json.loads(p.read_text(encoding='utf-8')) for p in paths]
+        violations = check_tuning_records(records, config)
+        # 설정 해시 규칙(2026-09-28 밤): 승계 표(모멘트 보정 설정일 때만)에 있는 기록만 옛 해시를 허용한다.
+        from control.tuning_carryover import load_table, record_hash_problems
+        table = load_table() if 'moment_correction' in config['controller_model'] else None
+        violations += record_hash_problems(list(zip(records, paths)), config, table)
+        threshold, flags = integrator_limit_flags(_evaluation_entries(args.run_dir), config)
+        summary = dict(label=LABEL, run_dir=str(args.run_dir), i4_violations=violations,
+                       integrator_limit=dict(threshold=threshold, flagged=len(flags), flags=flags),
+                       controllers={r['controller']: dict(
+                           budget=r['budget'], spent=r['spent'], status=r['status'],
+                           prior_objective=r.get('prior_objective'),
+                           best_objective=r.get('best_objective'),
+                           best_values=r.get('best_values')) for r in records})
+        _write_json(args.run_dir/'summary.json', summary)
+        print(json.dumps(summary, indent=2, ensure_ascii=False, default=str))
+        return 0 if not violations else 1
+    if not args.controllers:
+        parser.error('--controllers is required unless --summarize')
+    if args.scenario_workers < 1:
+        parser.error('--scenario-workers must be >= 1')
+    budget = args.budget or int(config['tuning']['budget'])
+    from models.team_light.control.baseline_v2 import baseline_params
+    native = baseline_params()
+    model = ControllerModel(native)
+    with keep_system_awake():
+        for label in args.controllers:
+            print(f'== {LABEL} tuning {label}: budget {budget} ==', flush=True)
+            tune_controller(config, label, budget, args.run_dir, native=native, model=model,
+                            scenario_workers=args.scenario_workers)
+    return 0
+
+
+if __name__ == '__main__':
+    raise SystemExit(main())

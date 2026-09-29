@@ -1,0 +1,81 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+
+# ROS2 빌드 산출물
+ros2_ws/build/
+ros2_ws/install/
+ros2_ws/log/
+
+# acados 생성 파일
+c_generated_code/
+acados_ocp_*.json
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# 환경
+.env
+*.swp
+*.swo
+
+# Python venv
+.venv/
+.pytest_cache/
+
+# Validation campaigns (timestamped, never overwrite archived figures)
+results/validation/
+models/team_light/results/baseline_v2/run_*/
+!models/team_light/results/baseline_v2/run_20260924T161648152853Z/
+
+# SITL 실행 로그/아티팩트 (scripts/sitl_run.sh 출력)
+results/sitl_runs/
+
+# Gazebo SDF (Ubuntu PX4 폴더에 원본 있음, 여기는 임시 복사본)
+*.sdf
+
+# Claude Code 개인 설정 / 개인 작업 문서
+CLAUDE.md
+HANDOFF.md
+TODO.md
+
+# 발표 자료
+ppts/
+external/kms_fast_drone_control/
+
+# Local sensor-fusion workspaces and credentials
+.venv*/
+venv/
+.sensor-revision-backups/
+.env.*
+!.env.example
+*.zip
+
+# Generated simulation campaigns stay local. Track only reviewed summaries and references.
+/results/*
+!/results/arena/
+/results/arena/*
+!/results/arena/smoke_reference.json
+!/results/arena/tuning/
+/results/arena/tuning/*
+!/results/arena/tuning/env_check/
+!/results/sensor_readiness_v7/
+/results/sensor_readiness_v7/*
+!/results/sensor_readiness_v7/report.md
+!/results/sensor_readiness_v7/comparison.png
+!/results/sensor_readiness_v7/outcomes.json
+!/results/sensor_readiness_v7/verification.json
+!/results/sensor_readiness_v7/locked_environment.json
+!/results/sensor_readiness_v7/locked_environment_tests.xml
+!/results/sensor_readiness_v7/portable_tools_tests.xml
+!/results/sensor_readiness_v7/requirements-macos-reference.txt
+!/results/sensor_readiness_v7/build_report.py
