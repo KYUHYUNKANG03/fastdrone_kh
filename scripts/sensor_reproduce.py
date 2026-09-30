@@ -26,8 +26,9 @@ NUMERICS = ('simulated_seconds', 'rmse_z', 'rmse_velocity', 'max_omega',
 def canonical_source_hashes(hashes):
     """Normalize path separators at the portable artifact boundary, not bytes.
 
-    Runtime manifests use native Path string keys. Windows backslashes must
-    compare with the Mac reference's slashes without weakening any file hash.
+    Current runtime manifests already use portable relative POSIX names. Keep
+    this boundary normalization for historical Windows artifacts, without
+    weakening any file hash or accepting duplicate normalized names.
     """
     normalized = {}
     for name, digest in hashes.items():
@@ -87,7 +88,7 @@ def reproduce(reference, output):
 
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument('--reference', type=Path, default=ROOT/'scripts/data/sensor_reproduction_v9.json')
+    p.add_argument('--reference', type=Path, default=ROOT/'scripts/data/sensor_reproduction_v13.json')
     p.add_argument('--output', type=Path, required=True)
     a = p.parse_args(argv)
     result = reproduce(a.reference, a.output)

@@ -1,0 +1,61 @@
+{
+  "stage": "DEVELOPMENT",
+  "runtime_change_commit": "d367c0f101edf5c5450f51ea2f4642991442a061",
+  "previous_source_commit": "4d30e025679c56b3acb72edb112d67c706b2cbeb",
+  "tests": [
+    {
+      "path": "runtime_tests.xml",
+      "passed": 42,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "ba96909aac7362e9f1286c66d0d567e20618a57fb1c550fb427d3b65e4a29cd1"
+    },
+    {
+      "path": "tool_tests.xml",
+      "passed": 47,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "b183bfe7d44187ffa5be8926b3919936d5a6e81a1dc4b0c660eba5d00b9b69fb"
+    }
+  ],
+  "distinct_tests_passed": 89,
+  "reference_captures": [
+    {
+      "kind": "projected",
+      "receipt": "projected/comparison.json",
+      "receipt_sha256": "96acab2a310a3e6be2874bf39b72486f6e7e3f4b8649127938d632fa07224be1",
+      "reference": "scripts/data/sensor_reproduction_v13.json",
+      "reference_sha256": "c92d88fe0ef8f50cfdb55257180a297f373251c35e04c2759c61d18b4e5cc9e6",
+      "trajectory_bit_identical": true,
+      "comparison_problems": [],
+      "controller": "V13",
+      "scenario": "gust_lateral_p10_VH",
+      "seed": 3,
+      "tracking_pass": true,
+      "model_domain_valid": true,
+      "simulated_seconds": 12.0,
+      "trajectory_sha256": "db4216a3fb4705ae3da69e1283e0bd3dca8fbf36071cb598cb6bc51b327d361a"
+    },
+    {
+      "kind": "legacy",
+      "receipt": "legacy/comparison.json",
+      "receipt_sha256": "082830264489fc7ff08f223ef1e6f58ebc23f9e9ff4f490ace5d99dac16740d4",
+      "reference": "scripts/data/sensor_legacy_reproduction_v13.json",
+      "reference_sha256": "d1ef91ce67b0caacfcbb5c2300cf5120145efd2eb55a2a98ab02e282c1f8ff83",
+      "trajectory_bit_identical": true,
+      "comparison_problems": [],
+      "controller": "V13",
+      "scenario": "gust_lateral_p10_VL",
+      "seed": 4,
+      "tracking_pass": true,
+      "model_domain_valid": false,
+      "simulated_seconds": 12.0,
+      "trajectory_sha256": "ea5c566b2d028745ce0165b0b25dfb955d8fa65d578f6397023ef6c47646b4c6"
+    }
+  ],
+  "native_windows_verified": false,
+  "paper_ready": false,
+  "note": "Source-manifest-only change. Fresh Mac captures retain original configurations, seeds, trajectory hashes, metrics and verdicts. Archived v9 fixtures remain unchanged. No final tuning or held-out campaign launched."
+}
