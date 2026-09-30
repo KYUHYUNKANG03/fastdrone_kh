@@ -122,3 +122,18 @@ def test_corrupt_shapes_still_raise_instead_of_hiding_diagnostics(tmp_path):
     np.savez(path, ts=np.arange(3), xs=np.zeros((2, 17)))
     with pytest.raises(ValueError, match='malformed'):
         report.trace_metrics(path, 'truth')
+
+
+def test_non_indi_controller_keeps_estimation_metrics_without_fabricating_readiness(tmp_path):
+    path = tmp_path/'m17.npz'
+    xs = np.zeros((5, 17)); xs[:, 9] = 1.
+    estimate = xs.copy(); estimate[:, 0] = .5
+    np.savez(path, ts=np.arange(5)*.002, xs=xs, xs_est=estimate)
+    result = report.trace_metrics(path, 'sensors')
+    assert result['estimation_rms']['position_m'] == .5
+    assert result['rotor_availability_unavailable'] == 'controller_has_no_indi_probe'
+    assert 'rotor_availability' not in result
+    np.savez(path, ts=np.arange(5)*.002, xs=xs, xs_est=estimate,
+             indi_rotor_ready=np.ones(4, dtype=bool))
+    with pytest.raises(ValueError, match='incomplete INDI'):
+        report.trace_metrics(path, 'sensors')

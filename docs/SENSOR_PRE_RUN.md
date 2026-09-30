@@ -108,6 +108,11 @@ python scripts/sensor_preparation.py run --output results/prepared_sensor_valida
 python scripts/sensor_preparation.py run --output results/prepared_sensor_validation_v11_final --stage gnss_startup
 ```
 
+The [startup study guide](SENSOR_STARTUP_STUDY.md) documents an optional two-worker
+V13/F13 GNSS executor and the full-plan diagnostic report. Integration, including
+M17, stays serial on the reference Mac. The alternative executor records its
+own source contract and uses the same exclusive plan lock.
+
 Each `run` first audits the local development prerequisites and verifies the
 saved plan byte/content contract. Each task uses a fresh subprocess. Completed
 failures and timeouts remain recorded and are skipped on resume. Missing trial

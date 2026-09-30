@@ -58,6 +58,14 @@ def trace_metrics(path, feedback):
                 velocity_m_s=rms(error[:, 3:6]), body_rate_rad_s=rms(error[:, 10:13]),
                 rotor_rad_s=rms(error[:, 13:17]),
                 attitude_deg=float(np.rad2deg(np.sqrt(np.mean(angle*angle)))))
+            probe_keys = {'indi_rotor_ready', 'indi_rotor_sample_time_s', 'indi_path'}
+            present = probe_keys.intersection(trace.files)
+            if not present:
+                # M17/GSLQR/CPID have state estimates but no INDI probe.
+                result['rotor_availability_unavailable'] = 'controller_has_no_indi_probe'
+                return result
+            if present != probe_keys:
+                raise ValueError('incomplete INDI availability trace')
             ready = trace['indi_rotor_ready'].astype(bool)
             times = trace['ts'][:len(ready)]
             sample = trace['indi_rotor_sample_time_s']
