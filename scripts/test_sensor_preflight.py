@@ -53,12 +53,14 @@ def test_cli_paper_requirement_fails_and_report_cannot_be_overwritten(tmp_path, 
         preflight.main(['--output', str(path)])
 
 
-def test_process_environment_sets_threads_and_git_without_touching_profiles(monkeypatch):
-    monkeypatch.setattr(preflight, 'git_binary', lambda: '/example/cli/git')
-    monkeypatch.setattr(os, 'environ', {'PATH': '/prior/bin'})
+def test_process_environment_sets_threads_and_git_without_touching_profiles(monkeypatch, tmp_path):
+    git_directory = tmp_path/'cli'
+    prior_directory = tmp_path/'prior'/'bin'
+    monkeypatch.setattr(preflight, 'git_binary', lambda: str(git_directory/'git'))
+    monkeypatch.setattr(os, 'environ', {'PATH': str(prior_directory)})
     preflight.configure_process()
     assert all(os.environ[k] == '1' for k in setup_env.THREAD_VARIABLES)
-    assert os.environ['PATH'] == '/example/cli'+os.pathsep+'/prior/bin'
+    assert os.environ['PATH'] == str(git_directory)+os.pathsep+str(prior_directory)
 
 
 def test_windows_manifest_keys_match_without_weakening_byte_hashes():
