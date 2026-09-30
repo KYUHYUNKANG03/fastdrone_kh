@@ -3,12 +3,13 @@
 Status: development candidate, 2026-09-30. The team controller gains, aircraft
 model, allocation rules, and original truth-feedback configurations are unchanged.
 
-The saved 93-task development plan is now running. Its integration and GNSS
-processes survived the connection interruption, and their existing results are
-retained. Read [the startup study guide](SENSOR_STARTUP_STUDY.md) for the separate
-execution folders, guarded merge and final analysis; the study is not yet complete.
-The [pre-run workflow](SENSOR_PRE_RUN.md) records the plan and checks. Runtime
-sources remain unchanged during execution and final tuning has not started.
+The 93-task development plan is complete. All trials finish 12 seconds, with
+56 full passes, 34 model-domain failures and three pre-gust settling failures.
+All six nominal trajectory repeat checks agree exactly, and 36 tool tests pass.
+Read [the findings](../results/sensor_validation_v12/findings.md) and
+[startup study guide](SENSOR_STARTUP_STUDY.md) for the guarded merge, diagnostics
+and remaining pre-tuning decisions. Runtime sources stayed unchanged during
+execution, and final tuning has not started.
 
 The latest executed v10 checkpoint adds paired truth/fusion development screens across
 maneuvers, physical motor mismatch and isolated sensor faults. All controller

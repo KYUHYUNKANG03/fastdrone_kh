@@ -131,3 +131,24 @@ venv/
 !/results/sensor_preparation_v11/portable_final_tests.xml
 !/results/sensor_preparation_v11/package_receipt.json
 !/results/sensor_preparation_v11/package_check.json
+
+# Reviewed integration/GNSS study; raw campaign directories remain ignored.
+!/results/sensor_validation_v12/
+/results/sensor_validation_v12/*
+!/results/sensor_validation_v12/findings.md
+!/results/sensor_validation_v12/verification.json
+!/results/sensor_validation_v12/make_verification.py
+!/results/sensor_validation_v12/m17_settling_details.json
+!/results/sensor_validation_v12/report_tests.xml
+!/results/sensor_validation_v12/split_execution_tests.xml
+!/results/sensor_validation_v12/startup_analysis_final_tests.xml
+!/results/sensor_validation_v12/final_analysis/
+/results/sensor_validation_v12/final_analysis/*
+!/results/sensor_validation_v12/final_analysis/report.md
+!/results/sensor_validation_v12/final_analysis/diagnostics.json
+!/results/sensor_validation_v12/final_analysis/startup_rotor.png
+!/results/sensor_validation_v12/final_analysis/startup_rotor.svg
+!/results/sensor_validation_v12/final_analysis/validated/
+/results/sensor_validation_v12/final_analysis/validated/*
+!/results/sensor_validation_v12/final_analysis/validated/report.md
+!/results/sensor_validation_v12/final_analysis/validated/outcomes.json

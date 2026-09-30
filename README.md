@@ -13,12 +13,14 @@ model attribution and notices remain in `models/team_light/` and `external/`.
 
 ## Current status
 
-**The prepared 93-task development study is running.** It covers all five
-controllers and a GNSS noise/delay factorial, using the unchanged v9 runtime
-and development seeds. Both execution processes survived the connection
-interruption; saved trials are retained, including failures. Read the
-[execution and analysis guide](docs/SENSOR_STARTUP_STUDY.md). The study is not
-yet complete, and final sensor tuning remains pending.
+**V12 completes the 93-task controller-integration and GNSS startup study.**
+Every trial finishes 12 seconds: 56 full passes, 34 propeller-model-domain exits,
+and three pre-gust settling failures. All outcomes and the isolated optimizer
+failure remain recorded. The six nominal repeat checks are trajectory-bit-identical,
+and 36 analysis/execution tests pass. Read the
+[findings and limits](results/sensor_validation_v12/findings.md) and
+[complete diagnostic report](results/sensor_validation_v12/final_analysis/report.md).
+These are development results with fixed team gains; final tuning remains pending.
 
 The [v11 pre-run workflow](docs/SENSOR_PRE_RUN.md) provides static environment
 checks, source-bound plans and guarded resume/reporting. Local development
@@ -39,7 +41,10 @@ aircraft and controller gains remain unchanged. Its numerical reproduction
 fixtures remain source-compatible. The v10 full-profile low-speed repeat is
 trajectory-bit-identical to its paired control run with fused feedback.
 
-- [Latest paired envelope findings](results/sensor_readiness_v10/findings.md)
+- [Completed integration/GNSS findings](results/sensor_validation_v12/findings.md)
+- [Integration/GNSS verification](results/sensor_validation_v12/verification.json)
+- [Study execution and analysis commands](docs/SENSOR_STARTUP_STUDY.md)
+- [Earlier paired envelope findings](results/sensor_readiness_v10/findings.md)
 - [V11 preparation and validation](results/sensor_preparation_v11/verification.md)
 - [Paired outcomes and trace figures](results/sensor_readiness_v10/report.md)
 - [Envelope screen commands and interpretation](docs/SENSOR_ENVELOPE_SCREEN.md)

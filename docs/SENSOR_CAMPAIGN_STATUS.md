@@ -1,17 +1,18 @@
-# Sensor campaign status — 2026-09-30, development study in progress
+# Sensor campaign status — 2026-09-30, integration/GNSS study complete
 
 ## Current checkpoint
 
-The 93-task plan is now being executed: 45 controller-integration cases and 48
-additional GNSS noise/delay cases, using development seeds and fixed controller
-settings. Serial integration and one GNSS worker run in separate same-host
-folders with guarded merging planned after both finish. Both processes survived
-the connection interruption. The [study guide](SENSOR_STARTUP_STUDY.md) explains
-the resume, merge and provenance-checked analysis procedure. This is an ongoing
-study, not a completed result.
+The 93-task plan is complete: 45 controller-integration cases and 48 additional
+GNSS noise/delay cases, with development seeds and fixed controller settings.
+Every trial finishes 12 seconds. There are 56 full passes, 34 model-domain exits
+and three pre-gust settling failures. Source/configuration/trace checks pass for
+every record, and all six nominal trajectory repeat checks agree exactly.
+The [findings](../results/sensor_validation_v12/findings.md) retain failures and
+explain the 36 passing tool tests, three extra reference replays and the gap
+between acceptance checks and the inherited binary tuning penalty.
 
 The [v11 pre-run workflow](SENSOR_PRE_RUN.md) supplies the static checks and frozen
-plan. The runtime and v9 reproduction fixtures remain unchanged during execution.
+plan. The runtime and v9 reproduction fixtures remained unchanged during execution.
 Final paper readiness remains false; the old v6 paper candidate is not silently
 promoted or overwritten. A source-path portability patch is verified separately
 and will be integrated after the current study finishes.

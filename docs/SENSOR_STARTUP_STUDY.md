@@ -3,8 +3,12 @@
 This study executes the [v11 preparation plan](SENSOR_PRE_RUN.md) with fixed
 aircraft, controller gains and v9 sensor/observer runtime. Its 45 integration
 tasks and 48 additional GNSS tasks use development seeds only. The plan is
-currently being executed; the commands and analysis tools below do not imply
-that all results have passed or that tuning is ready.
+complete: all 93 tasks finish 12 seconds, with 56 full passes, 34 model-domain
+failures and three pre-gust settling failures. Read the
+[v12 findings](../results/sensor_validation_v12/findings.md) and
+[verification index](../results/sensor_validation_v12/verification.json).
+Successful execution does not imply that every controller case passed or that
+final tuning is ready.
 
 ## Serial integration, then optional two-worker GNSS execution
 

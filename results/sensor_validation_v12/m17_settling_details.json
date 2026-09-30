@@ -1,0 +1,77 @@
+[
+  {
+    "trial_id": "integration/M17/gust_lateral_p10_VH/truth/seed_0",
+    "pre_gust_window_s": [
+      2.5,
+      3.0
+    ],
+    "upper_endpoint_excluded": true,
+    "peak_velocity_error_m_s": 0.01101085312878403,
+    "peak_height_error_m": 0.011031115560957261,
+    "peak_body_rate_rad_s": 4.704612372854846e-06,
+    "velocity_limit_m_s": 0.5,
+    "height_limit_m": 0.5,
+    "body_rate_limit_rad_s": 1.0,
+    "pre_gust_ready": true
+  },
+  {
+    "trial_id": "integration/M17/gust_lateral_p10_VH/quiet_sampled/seed_0",
+    "pre_gust_window_s": [
+      2.5,
+      3.0
+    ],
+    "upper_endpoint_excluded": true,
+    "peak_velocity_error_m_s": 0.011012836203980301,
+    "peak_height_error_m": 0.011037266670779644,
+    "peak_body_rate_rad_s": 4.940772166400099e-06,
+    "velocity_limit_m_s": 0.5,
+    "height_limit_m": 0.5,
+    "body_rate_limit_rad_s": 1.0,
+    "pre_gust_ready": true
+  },
+  {
+    "trial_id": "integration/M17/gust_lateral_p10_VH/nominal/seed_3",
+    "pre_gust_window_s": [
+      2.5,
+      3.0
+    ],
+    "upper_endpoint_excluded": true,
+    "peak_velocity_error_m_s": 0.6881040651429753,
+    "peak_height_error_m": 0.05230136766723703,
+    "peak_body_rate_rad_s": 0.22866411711171505,
+    "velocity_limit_m_s": 0.5,
+    "height_limit_m": 0.5,
+    "body_rate_limit_rad_s": 1.0,
+    "pre_gust_ready": false
+  },
+  {
+    "trial_id": "integration/M17/gust_lateral_p10_VH/nominal/seed_4",
+    "pre_gust_window_s": [
+      2.5,
+      3.0
+    ],
+    "upper_endpoint_excluded": true,
+    "peak_velocity_error_m_s": 0.43773869904499885,
+    "peak_height_error_m": 0.058484066277269875,
+    "peak_body_rate_rad_s": 0.6041043588311521,
+    "velocity_limit_m_s": 0.5,
+    "height_limit_m": 0.5,
+    "body_rate_limit_rad_s": 1.0,
+    "pre_gust_ready": true
+  },
+  {
+    "trial_id": "integration/M17/gust_lateral_p10_VH/nominal/seed_5",
+    "pre_gust_window_s": [
+      2.5,
+      3.0
+    ],
+    "upper_endpoint_excluded": true,
+    "peak_velocity_error_m_s": 1.1099892228194652,
+    "peak_height_error_m": 0.06975301481963925,
+    "peak_body_rate_rad_s": 0.5326337806905758,
+    "velocity_limit_m_s": 0.5,
+    "height_limit_m": 0.5,
+    "body_rate_limit_rad_s": 1.0,
+    "pre_gust_ready": false
+  }
+]
