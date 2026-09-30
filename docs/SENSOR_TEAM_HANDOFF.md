@@ -16,7 +16,7 @@ numerical references; 89 targeted portability/tool tests pass on the Mac.
 Archive the completed study at `06dcb88b91e3330416ca18421dc486ce409e27fa` when
 reanalyzing it. New plans must use a new output directory and current hashes.
 See [source compatibility](SOURCE_PORTABILITY.md) and the
-[unexecuted Windows workflow draft](SENSOR_WINDOWS_CI.md).
+[Windows validation workflow](SENSOR_WINDOWS_CI.md).
 
 The earlier v10 checkpoint adds paired truth/fusion development screens across
 maneuvers, physical motor mismatch and isolated sensor faults. All controller

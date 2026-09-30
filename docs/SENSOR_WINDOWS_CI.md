@@ -1,14 +1,12 @@
-# Hosted Windows sensor check — prepared draft
+# Hosted Windows sensor check
 
-The reviewable [workflow draft](https://github.com/leo11dk/fast-drone-sensor-fusion/blob/main/docs/examples/windows-sensor-validation.yml) is saved
-under `docs/examples/` in Git and is **not active**. The portable source ZIP
-includes this guide but omits YAML files; retrieve the draft from GitHub when
-needed. No native Windows job has run.
-Publishing it to `.github/workflows/windows-sensor-validation.yml` requires the
-GitHub CLI `workflow` OAuth scope; the earlier device authorization expired.
-Do not treat the draft or Mac checks as Windows evidence.
+The [workflow](https://github.com/leo11dk/fast-drone-sensor-fusion/blob/main/.github/workflows/windows-sensor-validation.yml)
+is published after the user approved GitHub CLI's additional `workflow` scope.
+The first native Windows run is pending. A workflow file or passing Mac checks
+do not establish Windows verification. The portable source ZIP omits GitHub
+workflow files; run this check from the repository's Actions page.
 
-Once published with that permission, `Windows sensor development validation` checks
+`Windows sensor development validation` checks
 the portable runtime on a GitHub-hosted `windows-2022` x64 machine. The dedicated
 `validation/windows-sensors` branch also triggers it on push. It does not launch
 the 93-task study or final tuning. Official actions are pinned to commit hashes,
@@ -31,10 +29,10 @@ dependency setup, full tuning-record reproduction, forced-parent-exit/orphan
 worker procedure and compute-capacity checks still need to run there. Native
 hosted Windows numerical agreement and school-machine readiness are separate.
 
-The workflow is intentionally a documented draft while the additional GitHub
-permission is unavailable. Ordinary repository pushes remain authorized. After
-publishing the active workflow, dispatch it once and preserve the actual result
-before deciding whether it is suitable for the school-machine handoff.
+Use the manual dispatch on a reviewed source revision and preserve the actual
+result before deciding whether it is suitable for the school-machine handoff.
+The earlier draft and expired authorization recorded in the Mac package receipt
+describe that earlier checkpoint, not the current workflow status.
 
 Primary references: [GitHub's Python workflow guide](https://docs.github.com/en/actions/tutorials/build-and-test-code/python),
 [hosted runner definitions](https://docs.github.com/en/actions/reference/runners/github-hosted-runners),

@@ -18,8 +18,8 @@ promoted or overwritten. The separately verified source-path portability patch
 is now integrated, with fresh v13 references and 89 passing targeted tests.
 Flight equations and gains are unchanged. Old study plans remain tied to their
 original source; see [source portability](SOURCE_PORTABILITY.md). Windows
-validation has a [reviewable workflow draft](SENSOR_WINDOWS_CI.md), but no native
-Windows job has run.
+validation has a [published workflow](SENSOR_WINDOWS_CI.md); its first native
+Windows run is pending.
 
 ## Earlier v10 development evidence
 

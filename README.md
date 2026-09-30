@@ -47,7 +47,7 @@ still unverified. Historical plans and fixtures require their original source.
 - [Integration/GNSS verification](results/sensor_validation_v12/verification.json)
 - [Study execution and analysis commands](docs/SENSOR_STARTUP_STUDY.md)
 - [Portable source transition and archived-study revision](docs/SOURCE_PORTABILITY.md)
-- [Windows validation workflow draft](docs/SENSOR_WINDOWS_CI.md)
+- [Windows validation workflow](docs/SENSOR_WINDOWS_CI.md)
 - [Earlier paired envelope findings](results/sensor_readiness_v10/findings.md)
 - [V11 preparation and validation](results/sensor_preparation_v11/verification.md)
 - [Paired outcomes and trace figures](results/sensor_readiness_v10/report.md)
