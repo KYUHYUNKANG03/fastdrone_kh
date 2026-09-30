@@ -110,10 +110,12 @@ integration counterparts, including the effect of detailed update logging.
 ## Before final tuning
 
 The inherited tuning failure rule is `stop_reason or paper_failed`. It does
-not include model-domain validity. The report counts full-duration domain-only
-failures that this rule would not penalize; it does not run tuning or move these
-development cases into the tuning set. Declare the treatment of unsupported
-propeller operation before final tuning. A model-domain exit is not evidence
+not include model-domain validity or every tracking acceptance check, including
+pre-gust settling. The report counts acceptance failures that this rule would
+not penalize and separately reports the domain-failure subset. It does not run
+tuning or move these development cases into the tuning set. Declare the treatment
+of these criteria before final tuning. Avoiding the binary failure penalty does
+not remove the ordinary RMSE cost. A model-domain exit is not evidence
 that the real aircraft would fail, and a low RMSE outside that domain does not
 establish a supported simulation result.
 

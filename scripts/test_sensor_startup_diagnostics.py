@@ -69,3 +69,15 @@ def test_nominal_repeats_require_a_recorded_trajectory_and_matching_verdicts():
     assert not check['trajectory_bit_identical']
     check, = nominal_repeats([original, dict(repeat, execution_status='execution_incomplete')])
     assert not check['comparison_available'] and check['trajectory_bit_identical'] is None
+
+
+def test_unpenalized_tracking_failure_is_counted_separately_from_domain_subset():
+    common = dict(stage='integration',controller='M17',case='high',condition='nominal',
+        execution_status='recorded',passed=False,tracking_pass=False,model_domain_valid=True,
+        paper_failed=False,stop_reason=None,failure_reasons=['pre_gust_not_settled'])
+    rows = [common, dict(common,model_domain_valid=False),
+            dict(common,passed=True,tracking_pass=True),
+            dict(common,paper_failed=True),dict(common,execution_status='pending')]
+    group, = grouped_counts(rows)
+    assert group['acceptance_failures_not_penalized_by_legacy_rule'] == 2
+    assert group['domain_failures_not_penalized_by_legacy_rule'] == 1

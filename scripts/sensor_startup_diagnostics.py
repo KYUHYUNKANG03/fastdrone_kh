@@ -61,6 +61,9 @@ def grouped_counts(rows):
             tracking_pass=sum(r.get('tracking_pass') is True and r['execution_status'] == 'recorded' for r in members),
             domain_pass=sum(r.get('model_domain_valid') is True and r['execution_status'] == 'recorded' for r in members),
             full_pass=sum(r.get('passed') is True and r['execution_status'] == 'recorded' for r in members),
+            acceptance_failures_not_penalized_by_legacy_rule=sum(
+                r['execution_status'] == 'recorded' and r.get('passed') is False
+                and not r.get('stop_reason') and r.get('paper_failed') is False for r in members),
             domain_failures_not_penalized_by_legacy_rule=sum(
                 r['execution_status'] == 'recorded' and r.get('model_domain_valid') is False
                 and not r.get('stop_reason') and r.get('paper_failed') is False for r in members),
@@ -134,18 +137,22 @@ def write_report(summary, output):
         'Counts retain all planned cases and executed failures. Execution errors and early simulation '
         'stops are different outcomes. The detailed validated report keeps duration, partial RMSE, '
         'stop reasons, source hashes, estimation errors and model-domain diagnostics.', '',
-        '| Stage | Controller | Case | Condition | Recorded / planned | Track / domain / full pass | Early stops | Unique trajectories | Domain failures unpenalized by legacy rule |',
+        '| Stage | Controller | Case | Condition | Recorded / planned | Track / domain / full pass | Early stops | Unique trajectories | Acceptance / domain failures unpenalized by legacy rule |',
         '|---|---|---|---|---:|---|---:|---:|---:|']
     for g in summary['groups']:
         lines.append(f'| {g["stage"]} | {g["controller"]} | {g["case"]} | {g["condition"]} | '
             f'{g["recorded"]} / {g["planned"]} | {g["tracking_pass"]} / {g["domain_pass"]} / '
             f'{g["full_pass"]} | {g["early_stops"]} | {g["unique_trajectories"]} | '
+            f'{g["acceptance_failures_not_penalized_by_legacy_rule"]} / '
             f'{g["domain_failures_not_penalized_by_legacy_rule"]} |')
     lines += ['', 'The final column applies the current tuning failure rule '
         '`stop_reason or paper_failed` to these development records. It is not an actual '
-        'tuning evaluation, and these cases are not moved into the tuning set. Model-domain '
-        'validity is currently reported separately and is not part of that rule. The intended '
-        'treatment must be declared before final tuning; this report does not change the objective.', '']
+        'tuning evaluation, and these cases are not moved into the tuning set. Its first count '
+        'covers all failed acceptance verdicts; the second is the domain-failure subset and '
+        'must not be added to the first. These trials still incur their ordinary RMSE cost; '
+        'the counts concern the binary failure penalty only. Model-domain validity and some tracking acceptance '
+        'checks, such as pre-gust settling, are separate from the inherited paper-failure rule. '
+        'Declare their intended treatment before final tuning; this report does not change the objective.', '']
     lines += ['## Nominal repeat checks', '',
         'These full-context cells retain nominal noise, delay, covariance and controller settings, '
         'while enabling detailed update logging. Compare them with the corresponding serial '
