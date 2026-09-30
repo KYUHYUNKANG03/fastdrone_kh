@@ -152,3 +152,18 @@ venv/
 /results/sensor_validation_v12/final_analysis/validated/*
 !/results/sensor_validation_v12/final_analysis/validated/report.md
 !/results/sensor_validation_v12/final_analysis/validated/outcomes.json
+
+# Reviewed source-portability evidence; raw simulation traces remain local.
+!/results/source_portability_v13/
+/results/source_portability_v13/*
+!/results/source_portability_v13/capture_reference.py
+!/results/source_portability_v13/runtime_tests.xml
+!/results/source_portability_v13/tool_tests.xml
+!/results/source_portability_v13/verification.json
+!/results/source_portability_v13/verification.md
+!/results/source_portability_v13/projected/
+/results/source_portability_v13/projected/*
+!/results/source_portability_v13/projected/comparison.json
+!/results/source_portability_v13/legacy/
+/results/source_portability_v13/legacy/*
+!/results/source_portability_v13/legacy/comparison.json

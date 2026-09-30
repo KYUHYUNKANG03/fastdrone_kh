@@ -549,9 +549,10 @@ def git_state():
 
 
 def source_hashes():
+    from control.source_manifest import file_hashes
     files = [p for folder in ('control', 'models/team_light/control') for p in (ROOT/folder).glob('*.py')]
     files += list((ROOT/'configs').rglob('*.json'))
-    return {str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(files)}
+    return file_hashes(files, ROOT)
 
 
 def write_arena_report(out, manifest, rows):
@@ -776,8 +777,9 @@ def main(argv=None):
     out = args.output/('run_'+datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S%fZ'))
     out.mkdir(parents=True, exist_ok=False)
     params = baseline_params()
-    sources = {str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest()
-               for folder in ('control', 'models/team_light/control') for p in (ROOT/folder).glob('*.py')}
+    from control.source_manifest import file_hashes
+    sources = file_hashes([p for folder in ('control', 'models/team_light/control')
+                          for p in (ROOT/folder).glob('*.py')], ROOT)
     try:
         revision = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip()
     except (OSError, subprocess.CalledProcessError):

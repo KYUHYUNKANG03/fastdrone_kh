@@ -10,6 +10,7 @@ import json
 from pathlib import Path
 
 from control.arena_sensors import load_sensor_profile
+from control.source_manifest import file_hashes
 
 
 def nonnegative_seed(value):
@@ -92,7 +93,7 @@ def runtime_source_hashes():
     root = Path(__file__).resolve().parents[1]
     files = [p for folder in ('control', 'models/team_light/control')
              for p in (root/folder).glob('*.py') if not p.name.startswith('test_')]
-    return {str(p.relative_to(root)): hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(files)}
+    return file_hashes(files, root)
 
 
 def sensor_record_problems(record, config):

@@ -89,10 +89,10 @@ def audit(config=CONFIG, spec_path=SPEC):
     result['runtime_source_sha256'] = hashes
 
     def fixture():
-        reference = json.loads((ROOT/'scripts/data/sensor_reproduction_v9.json').read_text(encoding='utf-8'))
+        reference = json.loads((ROOT/'scripts/data/sensor_reproduction_v13.json').read_text(encoding='utf-8'))
         problems = []
         if hashes != canonical_source_hashes(reference['runtime_source_sha256']):
-            problems.append('runtime differs from active v9 reproduction fixture')
+            problems.append('runtime differs from active v13 reproduction fixture')
         if config_sha256(load_config(ROOT/reference['config'])) != reference['config_sha256']:
             problems.append('active reference configuration changed')
         return not problems, problems or ['Source compatibility only; no numerical replay executed.']
@@ -131,8 +131,8 @@ def audit(config=CONFIG, spec_path=SPEC):
         'Rotor stale-feedback policy and combined actuator mismatch/dropout envelope are not validated.',
         'Sensor policy, realistic initialization assumptions and hardware specification mapping are not frozen.',
         'Native Windows numerical reproduction and worker lifecycle checks are not verified.',
-        'Final cross-OS tuning-record source-key portability still needs an end-to-end check; '
-        'development scripts normalize separators, but the runtime tuning guards remain unchanged.',
+        'Runtime source keys now use portable relative paths, but final cross-OS tuning-record '
+        'loading still needs a native end-to-end check.',
         'Equal-budget final sensor tuning, design checks and validated record hashes are incomplete.',
         'Held-out sample count, uncertainty reporting and final source/configuration release are not frozen.',
     ])

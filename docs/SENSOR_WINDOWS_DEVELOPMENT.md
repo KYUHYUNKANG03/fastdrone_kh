@@ -1,4 +1,4 @@
-# Windows sensor development package — v11 preparation
+# Windows sensor development package — v13 source portability
 
 This package exercises the sensor path on the team aircraft. It is not the
 final tuning release. The new observer has bounded development checks only. A
@@ -7,21 +7,22 @@ flight performance. No existing checkout needs to be removed.
 
 ## Receive and check the package
 
-Copy `sensor-development-v11.zip` and its receipt to the school computer. Compare
+Copy `sensor-development-v13.zip` and its receipt to the school computer. Compare
 the ZIP SHA-256 with the receipt, then extract into a **new empty directory**.
 The ZIP has its repository files at the top level; open PowerShell there.
 It excludes Git metadata, credentials, Python environments, and result trees.
 Python 3.13 and the five packages in `requirements-lock.txt` are required.
-Use a short extraction root such as `C:\drone\v11` to leave room for generated
-trace paths. The v11 package manifest now selects the actual v9 development
+Use a short extraction root such as `C:\drone\v13` to leave room for generated
+trace paths. The package manifest selects the actual v9 development
 configuration, rather than identifying the historical v6 candidate.
-Portable development scripts normalize source-path separators when checking
-Windows manifests against Mac references, while retaining exact byte hashes.
-This does not prove final tuning-record transfer between operating systems:
-the unchanged runtime tuning guards still require that separate end-to-end check.
+Runtime, tuning and arena source manifests now use relative paths with `/`
+separators on both operating systems, while retaining exact byte hashes.
+Tests with Windows/Posix path objects verify that naming rule; native Windows
+numerical reproduction, worker lifecycle and tuning-record transfer still
+require separate end-to-end checks. See the [source transition](SOURCE_PORTABILITY.md).
 
 ```powershell
-Get-FileHash .\sensor-development-v11.zip -Algorithm SHA256
+Get-FileHash .\sensor-development-v13.zip -Algorithm SHA256
 ```
 
 After extraction, run one command at a time from the extracted directory:
@@ -63,13 +64,14 @@ solver counts, and numeric metrics within `rtol=1e-3`, `atol=1e-9`. Trajectory
 bit identity is recorded separately. Keep `comparison.json`, the run manifest,
 logs, and trace files. Each retry uses a new output folder.
 
-The default fixture is `scripts/data/sensor_reproduction_v9.json`. The source
+The default fixture is `scripts/data/sensor_reproduction_v13.json`. The source
 package check verifies the selected v9 configuration/model; this numerical
-replay additionally enforces the v9 development configuration and runtime hashes.
+replay additionally enforces that configuration and the v13 runtime hashes.
 To replay the separate legacy-observer regression at 20 m/s, pass
-`--reference scripts/data/sensor_legacy_reproduction_v9.json`. That recorded run
-retains its known propulsion-domain failure and is bit-identical to v8 on the
-reference Mac. Archived fixtures are not silently relabeled for newer code.
+`--reference scripts/data/sensor_legacy_reproduction_v13.json`. That recorded run
+retains its known propulsion-domain failure. Both references were freshly run
+after the source-manifest change and checked against their v9 counterparts.
+Archived fixtures are not silently relabeled for newer code.
 
 This checks one sensor-inclusive serial case. It does not replace the original
 full tuning-path reproduction or Windows orphan-worker check in
@@ -83,17 +85,17 @@ These commands only check and plan; they do not start a flight campaign:
 ```powershell
 .\.venv\Scripts\python.exe scripts\sensor_preflight.py --output results\preflight_windows.json
 if ($LASTEXITCODE -ne 0) { throw "Static preflight failed" }
-.\.venv\Scripts\python.exe scripts\sensor_preparation.py plan --output results\prepared_v11
-.\.venv\Scripts\python.exe scripts\sensor_preparation_report.py --source results\prepared_v11 --output results\prepared_status_before_run
+.\.venv\Scripts\python.exe scripts\sensor_preparation.py plan --output results\prepared_v13
+.\.venv\Scripts\python.exe scripts\sensor_preparation_report.py --source results\prepared_v13 --output results\prepared_status_before_run
 ```
 
 After the numerical replay succeeds and its artifacts have been reviewed, run
 one stage at a time. These commands **do start simulations**:
 
 ```powershell
-.\.venv\Scripts\python.exe scripts\sensor_preparation.py run --output results\prepared_v11 --stage integration
+.\.venv\Scripts\python.exe scripts\sensor_preparation.py run --output results\prepared_v13 --stage integration
 if ($LASTEXITCODE -ne 0) { throw "Integration stage interrupted; inspect retained logs" }
-.\.venv\Scripts\python.exe scripts\sensor_preparation.py run --output results\prepared_v11 --stage gnss_startup
+.\.venv\Scripts\python.exe scripts\sensor_preparation.py run --output results\prepared_v13 --stage gnss_startup
 ```
 
 The stages share truth controls and preserve failed trials. Read the
@@ -105,7 +107,7 @@ are explicitly unavailable where the Unix `resource` module is absent.
 To build an equivalent portable archive on the source machine:
 
 ```sh
-python scripts/sensor_workspace.py build --config configs/arena_rotor_projected_development_v9.json --output sensor-development-v11.zip
+python scripts/sensor_workspace.py build --config configs/arena_rotor_projected_development_v9.json --output sensor-development-v13.zip
 ```
 
 ## Resume development comparisons
