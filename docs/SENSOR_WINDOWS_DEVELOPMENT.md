@@ -7,7 +7,7 @@ flight performance. No existing checkout needs to be removed.
 
 ## Receive and check the package
 
-Copy `sensor-development-v13.zip` and its receipt to the school computer. Compare
+Copy `sensor-development-v13-windows.zip` and its receipt to the school computer. Compare
 the ZIP SHA-256 with the receipt, then extract into a **new empty directory**.
 The ZIP has its repository files at the top level; open PowerShell there.
 It excludes Git metadata, credentials, Python environments, and result trees.
@@ -17,12 +17,14 @@ trace paths. The package manifest selects the actual v9 development
 configuration, rather than identifying the historical v6 candidate.
 Runtime, tuning and arena source manifests now use relative paths with `/`
 separators on both operating systems, while retaining exact byte hashes.
-Tests with Windows/Posix path objects verify that naming rule; native Windows
-numerical reproduction, worker lifecycle and tuning-record transfer still
-require separate end-to-end checks. See the [source transition](SOURCE_PORTABILITY.md).
+Tests with Windows/Posix path objects verify that naming rule. A hosted Windows
+2022 x64 run now passes all 89 targeted tests and both numerical references;
+see the [native results](../results/windows_sensor_v13/findings.md). Each school
+computer still needs numerical reproduction, worker lifecycle and full
+tuning-record transfer checks. See the [source transition](SOURCE_PORTABILITY.md).
 
 ```powershell
-Get-FileHash .\sensor-development-v13.zip -Algorithm SHA256
+Get-FileHash .\sensor-development-v13-windows.zip -Algorithm SHA256
 ```
 
 After extraction, run one command at a time from the extracted directory:
@@ -75,8 +77,9 @@ Archived fixtures are not silently relabeled for newer code.
 
 This checks one sensor-inclusive serial case. It does not replace the original
 full tuning-path reproduction or Windows orphan-worker check in
-`DISTRIBUTED_RUN.md`. Native Windows execution of these new commands remains
-unverified until run on a school computer.
+`DISTRIBUTED_RUN.md`. Hosted Windows reproduces both reference outcomes within
+the unchanged tolerances, with non-identical trajectory hashes. That bounded
+check does not certify a school computer or its distributed tuning setup.
 
 ## Prepare the next stages without running them
 
@@ -107,7 +110,7 @@ are explicitly unavailable where the Unix `resource` module is absent.
 To build an equivalent portable archive on the source machine:
 
 ```sh
-python scripts/sensor_workspace.py build --config configs/arena_rotor_projected_development_v9.json --output sensor-development-v13.zip
+python scripts/sensor_workspace.py build --config configs/arena_rotor_projected_development_v9.json --output sensor-development-v13-windows.zip
 ```
 
 ## Resume development comparisons

@@ -1,0 +1,120 @@
+{
+  "conclusion": "success",
+  "createdAt": "2026-09-30T12:47:37Z",
+  "databaseId": 36717085838,
+  "event": "workflow_dispatch",
+  "headSha": "f2dc38be2be08a9bc0ee17c14161c682867670c9",
+  "jobs": [
+    {
+      "completedAt": "2026-09-30T12:56:14Z",
+      "conclusion": "success",
+      "databaseId": 109892554411,
+      "name": "windows",
+      "startedAt": "2026-09-30T12:47:43Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-09-30T12:47:46Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-09-30T12:47:44Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-30T12:47:53Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "number": 2,
+          "startedAt": "2026-09-30T12:47:46Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-30T12:48:40Z",
+          "conclusion": "success",
+          "name": "Run actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+          "number": 3,
+          "startedAt": "2026-09-30T12:47:53Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-30T12:49:13Z",
+          "conclusion": "success",
+          "name": "Install the recorded dependencies",
+          "number": 4,
+          "startedAt": "2026-09-30T12:48:40Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-30T12:50:58Z",
+          "conclusion": "success",
+          "name": "Verify source guards, preparation and short integration tests",
+          "number": 5,
+          "startedAt": "2026-09-30T12:49:13Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-30T12:51:04Z",
+          "conclusion": "success",
+          "name": "Audit development prerequisites",
+          "number": 6,
+          "startedAt": "2026-09-30T12:50:58Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-30T12:53:38Z",
+          "conclusion": "success",
+          "name": "Reproduce the projected-observer high-speed reference",
+          "number": 7,
+          "startedAt": "2026-09-30T12:51:04Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-30T12:56:10Z",
+          "conclusion": "success",
+          "name": "Reproduce the legacy-observer low-speed reference",
+          "number": 8,
+          "startedAt": "2026-09-30T12:53:38Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-30T12:56:11Z",
+          "conclusion": "success",
+          "name": "Preserve checks, failures, manifests and traces",
+          "number": 9,
+          "startedAt": "2026-09-30T12:56:10Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-30T12:56:11Z",
+          "conclusion": "success",
+          "name": "Post Run actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+          "number": 17,
+          "startedAt": "2026-09-30T12:56:11Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-30T12:56:13Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "number": 18,
+          "startedAt": "2026-09-30T12:56:11Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-30T12:56:13Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 19,
+          "startedAt": "2026-09-30T12:56:13Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/leo11dk/fast-drone-sensor-fusion/actions/runs/36717085838/job/109892554411"
+    }
+  ],
+  "status": "completed",
+  "updatedAt": "2026-09-30T12:56:15Z",
+  "url": "https://github.com/leo11dk/fast-drone-sensor-fusion/actions/runs/36717085838",
+  "workflowName": "Windows sensor development validation"
+}

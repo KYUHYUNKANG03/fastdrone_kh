@@ -1,0 +1,365 @@
+{
+  "stage": "DEVELOPMENT",
+  "reproduction_pass": true,
+  "problems": [],
+  "rtol": 0.001,
+  "atol": 1e-09,
+  "trajectory_bit_identical": false,
+  "reference": {
+    "profile": "rotor_projected_warm",
+    "sensor_seed": 3,
+    "feedback": "sensors",
+    "sweep": null,
+    "sweep_value": null,
+    "returncode": 0,
+    "campaign_timed_out": false,
+    "run_dir": "results/source_portability_v13/projected/run/runs/rotor_projected_warm/V13/arena_20260930T111503541523Z",
+    "case_id": "gust_lateral_p10_VH",
+    "factors": {},
+    "extra_params": {},
+    "gust_direction": "lateral",
+    "gust_peak": 10.0,
+    "wind_reference": "absolute",
+    "flow_angle_deg": 6.7098368077569335,
+    "scenario_id": "gust_lateral_p10_VH",
+    "scenario_type": "gust",
+    "controller": "V13",
+    "label": "SMOKE",
+    "rmse_z": 0.0697263344866491,
+    "rmse_vx": 0.03254452774430198,
+    "rmse_velocity": 0.33690486797346386,
+    "max_z_error": 0.12528054930585242,
+    "max_velocity_error": 1.2635095559788847,
+    "max_omega": 0.795221095081819,
+    "omega_sustained_seconds": 0.0,
+    "simulated_seconds": 12.0,
+    "phases": [
+      {
+        "name": "순항",
+        "samples": 1500,
+        "rmse_z": 0.03666498723327507,
+        "rmse_velocity": 0.15914654074686727
+      },
+      {
+        "name": "돌풍",
+        "samples": 1000,
+        "rmse_z": 0.10566359816530675,
+        "rmse_velocity": 0.7548516640105519
+      },
+      {
+        "name": "회복",
+        "samples": 3501,
+        "rmse_z": 0.06759033262204983,
+        "rmse_velocity": 0.14474551777260772
+      }
+    ],
+    "motor_saturation_fraction": 0.000125,
+    "pre_gust_ready": true,
+    "recovered": true,
+    "recovery_seconds": 0.0,
+    "gust_max_z_error": 0.12528054930585242,
+    "gust_max_velocity_error": 1.2635095559788847,
+    "passed": true,
+    "failure_reasons": [],
+    "tracking_pass": true,
+    "model_domain_valid": true,
+    "prop_domain_outside_fraction": 0.0,
+    "optimizer_calls": 600,
+    "optimizer_failures": 0,
+    "wall_seconds": 64.54896391695365,
+    "stop_reason": null,
+    "truth_parameter_sha256": "13a1dcc6332987eba93ea4653f4d6087741d1ac085701982ed94c22e6658c807",
+    "trajectory_sha256": "db4216a3fb4705ae3da69e1283e0bd3dca8fbf36071cb598cb6bc51b327d361a",
+    "sensor_profile": "rotor_projected_warm",
+    "sensor_profile_sha256": "1091868104c933deebc1abe04f7f64729a84450066eeab33dd82aea1a8779701",
+    "estimator_diagnostics": {
+      "updates": 319,
+      "replays": 6001,
+      "delayed_updates": 319,
+      "rejected_updates": 0,
+      "stale_measurements": 0,
+      "nis": {
+        "gnss": 2.706299803718819,
+        "barometer": 2.701455204466013,
+        "magnetometer": 1.6388208291651691
+      },
+      "barometer_bias_estimate": -0.02182353759062699,
+      "error_state_dimension": 16,
+      "barometer_bias_variance": 0.005831359715759673,
+      "filter_kind": "joint_baro",
+      "rotor_observer": {
+        "accepted": 6049,
+        "old_samples": 0,
+        "outside_history": 0,
+        "invalid_packets": 0,
+        "ready": true,
+        "sample_age_s": 0.0039999999999995595,
+        "history_intervals": 250,
+        "pending_packets": 2,
+        "motor_tau_s": 0.02
+      },
+      "rotor_prehistory_s": 0.1
+    },
+    "feedback_delay_s": {
+      "state": 0.0,
+      "rotor": 0.0
+    },
+    "nu_decomposition": {
+      "applicable": true,
+      "normalization": "D_nu = diag(m*g, 100, 100, 100)",
+      "scale": [
+        11.5176828132,
+        100.0,
+        100.0,
+        100.0
+      ],
+      "steps": 6000,
+      "steps_without_alloc": 1,
+      "allocation_residual": {
+        "components": [
+          "thrust",
+          "alpha_x",
+          "alpha_y",
+          "alpha_z"
+        ],
+        "integral": [
+          3.1771104904631734e-17,
+          2.8235195431713773e-16,
+          1.954299222450838e-16,
+          1.8990545681136004e-16
+        ],
+        "max": [
+          1.5422866458559111e-16,
+          2.242650509742816e-16,
+          1.5987211554602254e-16,
+          1.8485213360008857e-16
+        ],
+        "norm_integral": 4.79341266355315e-16,
+        "norm_max": 2.7506184009926556e-16
+      },
+      "realization_error": {
+        "components": [
+          "thrust",
+          "alpha_x",
+          "alpha_y",
+          "alpha_z"
+        ],
+        "integral": [
+          0.23832928970353076,
+          0.12946761165615733,
+          7.799813345761531,
+          0.7595309918796591
+        ],
+        "max": [
+          0.7140043327377323,
+          0.05590246457425532,
+          0.9382153521140338,
+          0.3077118258966468
+        ],
+        "norm_integral": 7.877593920090958,
+        "norm_max": 0.9402844914483721
+      }
+    },
+    "controller_model_sha256": "2582197db2546d329b62bee631beef5f89459c2c4b11a2131ab024240177956d",
+    "integrators": null,
+    "paper_failed": false,
+    "paper_reasons": [],
+    "paper_z_error_run_seconds": 0.0,
+    "paper_omega_run_seconds": 0.0,
+    "paper_cruise_velocity_run_seconds": 0.0,
+    "paper_max_consecutive_solver_failures": 0,
+    "window": [
+      0.0,
+      12.0
+    ],
+    "window_complete": true,
+    "window_rmse_velocity": 0.33690486797346386,
+    "window_rmse_z": 0.0697263344866491,
+    "window_max_velocity_error": 1.2635095559788847,
+    "window_max_z_error": 0.12528054930585242,
+    "window_p95_velocity_error": 0.9299588567319566,
+    "window_p95_z_error": 0.11875102951598038,
+    "window_max_omega": 0.795221095081819,
+    "command_total_variation": 316.3629781592092,
+    "paper_recovery_seconds": 0.0
+  },
+  "actual": {
+    "profile": "rotor_projected_warm",
+    "sensor_seed": 3,
+    "feedback": "sensors",
+    "sweep": null,
+    "sweep_value": null,
+    "returncode": 0,
+    "campaign_timed_out": false,
+    "run_dir": "D:\\a\\fast-drone-sensor-fusion\\fast-drone-sensor-fusion\\results\\windows_ci\\projected\\run\\runs\\rotor_projected_warm\\V13\\arena_20260930T125111560062Z",
+    "case_id": "gust_lateral_p10_VH",
+    "factors": {},
+    "extra_params": {},
+    "gust_direction": "lateral",
+    "gust_peak": 10.0,
+    "wind_reference": "absolute",
+    "flow_angle_deg": 6.7098368077569335,
+    "scenario_id": "gust_lateral_p10_VH",
+    "scenario_type": "gust",
+    "controller": "V13",
+    "label": "SMOKE",
+    "rmse_z": 0.06972633448658241,
+    "rmse_vx": 0.032544527744277255,
+    "rmse_velocity": 0.33690486797531416,
+    "max_z_error": 0.1252805493056428,
+    "max_velocity_error": 1.2635095559840857,
+    "max_omega": 0.795221095081798,
+    "omega_sustained_seconds": 0.0,
+    "simulated_seconds": 12.0,
+    "phases": [
+      {
+        "name": "순항",
+        "samples": 1500,
+        "rmse_z": 0.036664987233253656,
+        "rmse_velocity": 0.15914654075165854
+      },
+      {
+        "name": "돌풍",
+        "samples": 1000,
+        "rmse_z": 0.10566359816510926,
+        "rmse_velocity": 0.7548516640151033
+      },
+      {
+        "name": "회복",
+        "samples": 3501,
+        "rmse_z": 0.06759033262202507,
+        "rmse_velocity": 0.1447455177709531
+      }
+    ],
+    "motor_saturation_fraction": 0.000125,
+    "pre_gust_ready": true,
+    "recovered": true,
+    "recovery_seconds": 0.0,
+    "gust_max_z_error": 0.1252805493056428,
+    "gust_max_velocity_error": 1.2635095559840857,
+    "passed": true,
+    "failure_reasons": [],
+    "tracking_pass": true,
+    "model_domain_valid": true,
+    "prop_domain_outside_fraction": 0.0,
+    "optimizer_calls": 600,
+    "optimizer_failures": 0,
+    "wall_seconds": 140.49578410000004,
+    "stop_reason": null,
+    "truth_parameter_sha256": "13a1dcc6332987eba93ea4653f4d6087741d1ac085701982ed94c22e6658c807",
+    "trajectory_sha256": "6db97841b3c538cd6612c263c4b7a4873918f17ad5e504ed2463c7e055264708",
+    "sensor_profile": "rotor_projected_warm",
+    "sensor_profile_sha256": "1091868104c933deebc1abe04f7f64729a84450066eeab33dd82aea1a8779701",
+    "estimator_diagnostics": {
+      "updates": 319,
+      "replays": 6001,
+      "delayed_updates": 319,
+      "rejected_updates": 0,
+      "stale_measurements": 0,
+      "nis": {
+        "gnss": 2.706299803723867,
+        "barometer": 2.7014552044661984,
+        "magnetometer": 1.638820829164322
+      },
+      "barometer_bias_estimate": -0.021823537590635003,
+      "error_state_dimension": 16,
+      "barometer_bias_variance": 0.005831359715759666,
+      "filter_kind": "joint_baro",
+      "rotor_observer": {
+        "accepted": 6049,
+        "old_samples": 0,
+        "outside_history": 0,
+        "invalid_packets": 0,
+        "ready": true,
+        "sample_age_s": 0.0039999999999995595,
+        "history_intervals": 250,
+        "pending_packets": 2,
+        "motor_tau_s": 0.02
+      },
+      "rotor_prehistory_s": 0.1
+    },
+    "feedback_delay_s": {
+      "state": 0.0,
+      "rotor": 0.0
+    },
+    "nu_decomposition": {
+      "applicable": true,
+      "normalization": "D_nu = diag(m*g, 100, 100, 100)",
+      "scale": [
+        11.5176828132,
+        100.0,
+        100.0,
+        100.0
+      ],
+      "steps": 6000,
+      "steps_without_alloc": 1,
+      "allocation_residual": {
+        "components": [
+          "thrust",
+          "alpha_x",
+          "alpha_y",
+          "alpha_z"
+        ],
+        "integral": [
+          2.899498894209108e-17,
+          2.5778306572687785e-16,
+          1.9154303143587091e-16,
+          1.8463300333060617e-16
+        ],
+        "max": [
+          3.0845732917118223e-16,
+          2.3092638912203257e-16,
+          1.2434497875801754e-16,
+          1.0907941216942163e-16
+        ],
+        "norm_integral": 4.507780640772692e-16,
+        "norm_max": 3.1554472800114147e-16
+      },
+      "realization_error": {
+        "components": [
+          "thrust",
+          "alpha_x",
+          "alpha_y",
+          "alpha_z"
+        ],
+        "integral": [
+          0.23832928970431916,
+          0.1294676116561504,
+          7.799813345761826,
+          0.7595309918719764
+        ],
+        "max": [
+          0.7140043327377322,
+          0.05590246457425937,
+          0.9382153521140267,
+          0.3077118258953286
+        ],
+        "norm_integral": 7.87759392009009,
+        "norm_max": 0.9402844914483659
+      }
+    },
+    "controller_model_sha256": "e9fd9b1764bdb2c27f475782805817dd6478ecdab428221b5b26064545ee3cd9",
+    "integrators": null,
+    "paper_failed": false,
+    "paper_reasons": [],
+    "paper_z_error_run_seconds": 0.0,
+    "paper_omega_run_seconds": 0.0,
+    "paper_cruise_velocity_run_seconds": 0.0,
+    "paper_max_consecutive_solver_failures": 0,
+    "window": [
+      0.0,
+      12.0
+    ],
+    "window_complete": true,
+    "window_rmse_velocity": 0.33690486797531416,
+    "window_rmse_z": 0.06972633448658241,
+    "window_max_velocity_error": 1.2635095559840857,
+    "window_max_z_error": 0.1252805493056428,
+    "window_p95_velocity_error": 0.9299588567366409,
+    "window_p95_z_error": 0.11875102951573524,
+    "window_max_omega": 0.795221095081798,
+    "command_total_variation": 316.3629781592051,
+    "paper_recovery_seconds": 0.0
+  },
+  "note": "Reproduction agreement is separate from flight performance and tuning readiness."
+}

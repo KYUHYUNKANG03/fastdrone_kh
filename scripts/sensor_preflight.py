@@ -133,7 +133,8 @@ def audit(config=CONFIG, spec_path=SPEC):
         'Rotor stale-feedback policy and combined actuator mismatch/dropout envelope are not validated.',
         'Sensor policy, initialization, fixed-versus-matched estimator comparisons and controller '
         'interface variants are not frozen. Device-specific claims also need hardware specification mapping.',
-        'Native Windows numerical reproduction and worker lifecycle checks are not verified.',
+        'Hosted Windows has reproduced two V13 sensor references; each school machine still '
+        'needs numerical reproduction and worker lifecycle checks.',
         'Runtime source keys now use portable relative paths, but final cross-OS tuning-record '
         'loading still needs a native end-to-end check.',
         'Equal-budget final sensor tuning, design checks and validated record hashes are incomplete.',

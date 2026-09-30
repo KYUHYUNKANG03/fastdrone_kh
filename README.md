@@ -40,14 +40,17 @@ The v9 timestamp-aware rotor observer, steady-trim measurement-history startup,
 aircraft and controller gains remain unchanged. V13 makes source fingerprints
 portable across path conventions and supplies fresh numerical references.
 Both reference trajectories are bit-identical to their archived v9 counterparts
-on the pinned Mac; 89 portability/tool tests pass. Native Windows execution is
-still unverified. Historical plans and fixtures require their original source.
+on the pinned Mac; 89 portability/tool tests pass. Hosted Windows also passes
+all 89 tests and reproduces both references within the unchanged numerical
+tolerances; its trajectories are not bit-identical. School-machine and final
+tuning checks remain separate. Historical plans require their original source.
 
 - [Completed integration/GNSS findings](results/sensor_validation_v12/findings.md)
 - [Integration/GNSS verification](results/sensor_validation_v12/verification.json)
 - [Study execution and analysis commands](docs/SENSOR_STARTUP_STUDY.md)
 - [Portable source transition and archived-study revision](docs/SOURCE_PORTABILITY.md)
 - [Windows validation workflow](docs/SENSOR_WINDOWS_CI.md)
+- [Verified native Windows results](results/windows_sensor_v13/findings.md)
 - [Earlier paired envelope findings](results/sensor_readiness_v10/findings.md)
 - [V11 preparation and validation](results/sensor_preparation_v11/verification.md)
 - [Paired outcomes and trace figures](results/sensor_readiness_v10/report.md)
@@ -141,11 +144,12 @@ ARENA_QUICK=1 python -m pytest -q control/test_arena_sensor_fusion.py control/te
 For a portable Windows handoff, first create a source package:
 
 ```sh
-python scripts/sensor_workspace.py build --config configs/arena_rotor_projected_development_v9.json --output sensor-development-v13.zip
+python scripts/sensor_workspace.py build --config configs/arena_rotor_projected_development_v9.json --output sensor-development-v13-windows.zip
 ```
 
 Then follow [the Windows package instructions](docs/SENSOR_WINDOWS_DEVELOPMENT.md).
-Native Windows execution and worker checks still need verification. Final tuning
+Two reference cases have passed on hosted Windows; each school computer still
+needs its own reproduction and worker checks. Final tuning
 must satisfy the separate gates in the team's `DISTRIBUTED_RUN.md`; the old
 truth-only tuning records are not final sensor-inclusive tuning results.
 

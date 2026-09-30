@@ -1,0 +1,317 @@
+{
+  "schema": "sensor_preflight/1",
+  "stage": "DEVELOPMENT",
+  "config": "configs/arena_rotor_projected_development_v9.json",
+  "platform": "Windows-2022Server-10.0.20348-SP0",
+  "python": "3.13.7",
+  "git": {
+    "available": true,
+    "revision": "f2dc38be2be08a9bc0ee17c14161c682867670c9",
+    "tracked_dirty": false,
+    "executable": "C:\\Program Files\\Git\\bin\\git.EXE"
+  },
+  "checks": [
+    {
+      "name": "dependencies",
+      "passed": true,
+      "detail": [
+        [
+          "python",
+          "3.13.7",
+          "3.13.7",
+          "OK"
+        ],
+        [
+          "numpy",
+          "2.3.3",
+          "2.3.3",
+          "OK"
+        ],
+        [
+          "scipy",
+          "1.16.3",
+          "1.16.3",
+          "OK"
+        ],
+        [
+          "casadi",
+          "3.7.2",
+          "3.7.2",
+          "OK"
+        ],
+        [
+          "matplotlib",
+          "3.10.6",
+          "3.10.6",
+          "OK"
+        ],
+        [
+          "pytest",
+          "9.0.2",
+          "9.0.2",
+          "OK"
+        ]
+      ]
+    },
+    {
+      "name": "single_thread_environment",
+      "passed": true,
+      "detail": [
+        [
+          "OMP_NUM_THREADS",
+          "1",
+          "1",
+          "OK"
+        ],
+        [
+          "OPENBLAS_NUM_THREADS",
+          "1",
+          "1",
+          "OK"
+        ],
+        [
+          "VECLIB_MAXIMUM_THREADS",
+          "1",
+          "1",
+          "OK"
+        ],
+        [
+          "MKL_NUM_THREADS",
+          "1",
+          "1",
+          "OK"
+        ]
+      ]
+    },
+    {
+      "name": "arena_and_model",
+      "passed": true,
+      "detail": [
+        [
+          "config sha256",
+          "(not given, not checked)",
+          "9c1b18f412db20f9356e2b5e1ffbd3f28be966cfd3f305e16f6896cec05acf8f",
+          "OK"
+        ],
+        [
+          "model C_Na",
+          "맥 기준 ±rtol 1e-08",
+          "최대 상대오차 3.65e-16",
+          "OK"
+        ],
+        [
+          "model C_dc",
+          "맥 기준 ±rtol 1e-08",
+          "최대 상대오차 4.44e-16",
+          "OK"
+        ],
+        [
+          "model C_A0",
+          "맥 기준 ±rtol 1e-08",
+          "최대 상대오차 0.00e+00",
+          "OK"
+        ],
+        [
+          "model C_Aa2",
+          "맥 기준 ±rtol 1e-08",
+          "최대 상대오차 0.00e+00",
+          "OK"
+        ],
+        [
+          "model x_cp",
+          "맥 기준 ±rtol 1e-08",
+          "최대 상대오차 2.32e-16",
+          "OK"
+        ],
+        [
+          "model C_lp",
+          "맥 기준 ±rtol 1e-08",
+          "최대 상대오차 3.64e-14",
+          "OK"
+        ],
+        [
+          "model C_mq",
+          "맥 기준 ±rtol 1e-08",
+          "최대 상대오차 6.96e-15",
+          "OK"
+        ],
+        [
+          "model x_cp_poly",
+          "맥 기준 ±rtol 1e-08",
+          "최대 상대오차 5.85e-12",
+          "OK"
+        ],
+        [
+          "controller_model sha256(기록만)",
+          "2582197db2546d329b62bee631beef5f89459c2c4b11a2131ab024240177956d",
+          "e9fd9b1764bdb2c27f475782805817dd6478ecdab428221b5b26064545ee3cd9",
+          "INFO"
+        ]
+      ]
+    },
+    {
+      "name": "team_arena_invariants",
+      "passed": true,
+      "detail": []
+    },
+    {
+      "name": "active_reference_compatible",
+      "passed": true,
+      "detail": [
+        "Source compatibility only; no numerical replay executed."
+      ]
+    }
+  ],
+  "simulations_started": 0,
+  "development_ready": true,
+  "paper_ready": false,
+  "runtime_source_sha256": {
+    "control/__init__.py": "4442b0651dd775b6aed0b5216a778ed3bc19f2e98be79dd5fd525a963285cb9c",
+    "control/acados_fallback_mc.py": "844f72c9d6e76d7143fb2ad4eb95608c75c469f051958e0fa61677e267d982ae",
+    "control/arena.py": "bad57298c5d095d689ca036ade7c89c0cfee5970d5d253b2b0a911214f99ff25",
+    "control/arena_design_check.py": "9cbed9eb3c7a55fc3a85d20d20f032855b8c7cb9cde5ef9a11923376600644e7",
+    "control/arena_dt_convergence.py": "ad73e2738e48c59a038048c014e13f8aa69622416b1f4d1734cf4d188b9ba300",
+    "control/arena_estimator.py": "583201c781336d1150e87e970ca1b10b551ee912c235066ca2d573c301d3ec9b",
+    "control/arena_factory.py": "b2ae950cd1b17ca4afd7b6726ccb9ef4c20e3ae49680fe48cb0b1390321cc2de",
+    "control/arena_feedback.py": "2034ee659adabe72937e11a9bb5eb0c1cfbd1f3da20956eee32e16afce1cda32",
+    "control/arena_feedforward_check.py": "b427db6335002662194e10d0c8b30648856bcbffba45040bd36531af3bdb5c2c",
+    "control/arena_integrators.py": "8ce6980f69bcf6a0753a266a1894eb91cc5e1b0e377c12b6d8bc132d243b6cbb",
+    "control/arena_joint_estimator.py": "51357b402b21082785d47a2d0d7fe75a16d26c91a0bcd54a5923a06624466787",
+    "control/arena_m17_diagnosis.py": "91a6e8a1bd263529e011028dab41e8c841c8dc28061f3f3c3455121e287247e4",
+    "control/arena_m17_floor_variants.py": "096905fbaeb6d3966631cf5b661b5c209835f0a042522e75459892a5cb672f82",
+    "control/arena_m17_probe.py": "9fe2760261b8d2c42fe4909b9c06cfcbd3c515eb59d433d7ff96009c8dd8b63a",
+    "control/arena_mission_rho.py": "887617104097ef49a4eac69bbf0c9c9fc6f9191eff407acb4f86131e9113163c",
+    "control/arena_model_mismatch.py": "c5c3f63fed0c2f077bf3469c7e7979b1832fb8f6912f226f5302513e147a81cd",
+    "control/arena_observation_delay.py": "7fa1d405cee463f7187bb3b9e52141a2be4a77888ca294366f102df95a42ea2c",
+    "control/arena_plant_wrench.py": "14c15af56dd29c41f0bb6fb4aecff0e026a88a7ee85adbce7554515ede4d851f",
+    "control/arena_reference_merge.py": "ce038c9ecad2f852b9973cd3ae05aa9ca393f43e13abc18881a7cf1fb7371b61",
+    "control/arena_sensors.py": "d8474c0a2c56d814424ec987d6408496f5b22a4069dad7700175a82fc7653142",
+    "control/arena_smoke_summary.py": "0f0dc6fbe28cdb17fdfc7b1bb3be6c22dc6486b235d3603b5a69c56bcfb326d2",
+    "control/arena_suggest_workers.py": "19130f4b311a177b5bb55511dfdc99f05d537f02602a98cc2495e50677eb58b2",
+    "control/arena_trim.py": "85e5972b74b6994ea128e332add745e3af56b32cdcb505159a9c514b00f426e0",
+    "control/arena_tune.py": "1f9ef7923d98f23a6e8fd3bed1940959db9610e419b3fa6e5f67202afa5b8348",
+    "control/arena_tune_repro.py": "c3dfb87752b29f998108372ed19a843eead6dc9d5482271a80a0fd142d41a454",
+    "control/arena_tuning_candidates.py": "bcfc9d71090de3f9dfdda8ce44f97c07597aaadd0a26376c466d6aab27327b9e",
+    "control/arena_tuning_path_check.py": "e575c40617b9f2507d370094e673403697a5f768928305a927abd1ecb2c3f5bd",
+    "control/arena_tuning_report.py": "6e1568d0f6fc8be61ee8280c4a2093a72207ce0d4d35f9fdc649a23c22ca0a36",
+    "control/battery.py": "2cf4f4bed3f761f7c2cbc3d010a500970e260e2e7f539746628e2275784670ee",
+    "control/bench_acados.py": "5a62d0c11aaa21c708b950d814c340e5ede1ebd4e20def954fc12180c5dee1f6",
+    "control/bench_compute.py": "fbbd28df436cd9736d7727c7292d209ac0bbd48a945388ac8d3dc36b65a61499",
+    "control/controller.py": "a2d9bbc362414c49ad112ce0d2ed5dcc14faa3d64f8be0b2f64872cc2446c99b",
+    "control/derive_vl_vh.py": "2d28f20d81914486d22faaede44f59b56905ccb669e1bb9270de72d762d583f9",
+    "control/dynamics.py": "839054bce880491952e5fc112b2eda5ccb768cf57d980d695d2335e8f3b41794",
+    "control/dynamics_hifi.py": "a407ba9a8fbf88959e0d03e9c721db5f660ebaaba7dd761c93d642ac9bff27b2",
+    "control/ekf_comparison.py": "c8c36f85a608fcc171238e1d84fddc23faa4390df2b8a5e6153b2942c0edfecc",
+    "control/ekf_sim.py": "330ef15ce2f63b93edfc0ae6d05e04c3e7648a49ffec034ff53e62836bbf641d",
+    "control/estimator.py": "3db05205b6458af3c549822d785ed2cda4137097284971e7476e9d6866273752",
+    "control/fair_compare.py": "8b606cbdf1d5994114f18fe885e6ab1697376d5c1b347124b278ea18d6c4224a",
+    "control/fallback_controller.py": "33e13bfbcb1e5ed9e8caf5fa1b64eedf83d8bef59e2c6834994ae29d97282d55",
+    "control/final_config_mission.py": "0963c423d6e3085175c677553e2b8520b04bc7ae3b936ae0a5fa25a46602bac2",
+    "control/flight_envelope.py": "d4e914bc1ae65f0c4ec2eac21bf3c7d13304c304b22d18745101518c345ae06c",
+    "control/gindi.py": "8fabbdfc2e72175cbbe5daca72cc8b6f3e30afeb447ced79bb3e14cfb794c018",
+    "control/gust_comparison.py": "d828eaebff80f7ee8f62f3fa674f87ae2280e42296f046c340e268ee927a1f45",
+    "control/hybrid_comparison.py": "23a4ee7c6c96fc279e37f098f17c08494ddb554dc48a8dccbf3d8fb37a3b694b",
+    "control/joint_consistency_check.py": "8633bd38eb4ece99b63d3ca880e8b551a8e3280ebfa1e8c3826427f2fe3a045a",
+    "control/joint_fusion_experiment.py": "f046bf114e86e84bb286a010f5587e373635b9405463b1f4b90f6a9185a2a858",
+    "control/kh_adapter.py": "20c861f7d09a1eaf1635da369a29c72b60204e1459b9ab21c79b477a99ace8c8",
+    "control/kh_discriminate_scenario_vs_warmstart.py": "e87c7da6d87336c8ede19bf534cea5bb6901e7243496fae98c39724800c5f2b6",
+    "control/kh_mission_repro.py": "3013d33642d5e935cd14946e2a27a864cf0ffc40e2a8de96092e129e0f873d54",
+    "control/kh_repro.py": "999351cd9b1cd14f14325efef835dce0dab9ccef0ed22d65499863d39354d0dd",
+    "control/kh_timing_severity_compare.py": "2a4463ba4d1bbf998480749b03fccdb7d2b47ed4a590b4bb7c61c1ba59d2804b",
+    "control/main_distributed.py": "c40d390eba5c642ef438d6e8fd4fef042d54165ecea3a006b7fdc43659befd0e",
+    "control/main_experiment.py": "01733400dbb31322ee2fc8e6d9967d980fb44e9e646e67a3b15f5754529b8f9e",
+    "control/mission_profiles.py": "e281edb2fffbbd7410c18d154a275b08faaddaf5de9680fcb71474e3fbc1c3a2",
+    "control/mission_sim.py": "e969484f274f4593a60f07583f293627a97f42836de46bdf666cbe98cd8bd202",
+    "control/moment_correction.py": "c8ae5a3f35d1c73b95fe89526aafe81b43b55eedeee2111a696e5fb68999180f",
+    "control/navigation_grid_campaign.py": "3444c9e5568eff83c8900f5f23aa2b5b0d6dbef90df2c2dfe88cdc17936d935a",
+    "control/navigation_update_experiment.py": "0eba641aabe77e727c250141a9609af93d2bfaaa5fc3dbd2f0e4379daaf6f2ff",
+    "control/navigation_update_report.py": "4d51adff3906a1b6b941cb15e11f61e429ab61512152a967d77fbb189519c02e",
+    "control/night_current_diag.py": "6a299faa437d414ce43daf930a1fe146c9d2dd5ccf24066128a2bf124e9e033b",
+    "control/night_hifi_branch.py": "2e94abf4c6d37b71ddf2025f9692996f29c7c34a86b7af4baf0d0bcbe4a5cbc1",
+    "control/night_perturbation_robustness.py": "ee981a9df4510c59fd9383873bf1349147a3f544f90e4811ad8b12503a459fef",
+    "control/nmpc.py": "04f7b216f74fcb7203459b8cf6e94f0410986a88821163cb642226dff80b98f9",
+    "control/nmpc_common.py": "a91e518c390c9a9f41818b7ef6e148ee9eb3eae0b65d008d5b6a7996322981fe",
+    "control/nmpc_f13.py": "907cf4b3ca2f62561b11be5128ef94b43520cda078249c66fbfac6b56ae0788f",
+    "control/pilot_before_after.py": "7612a78de50d61799daf4f942253788333cee245029251eababb43c15e7198fc",
+    "control/plot_plant_validation.py": "9882944b68877844d6839f4fb06da15d91398e327dcf577e3b081af104310fab",
+    "control/plot_proposal_figures.py": "c60b40c4747c9da2d67b4c81bd29b27bf138c6084ebf69b5fccf35276d8f720e",
+    "control/preflight_calibration_experiment.py": "ba791484b297eb3aa4ef001cecc5db8e1b0772911b88028670c9460fc09b74f8",
+    "control/preflight_calibration_report.py": "42848eb9fbfb797601d85ae1698b1b17f9b0643372158cea677213cc593f2b8d",
+    "control/robustness_crosswind.py": "4d687a8f41e9c7989035fd4717d848e26122ce23ebf52771362afbfaf6f42e12",
+    "control/rotor_estimator.py": "21d8fea07ebf1d2a4c8577d5c572097fc6c6431493fbb5d000696e8d4ceae85b",
+    "control/sensor_binding.py": "8edfe61a8382a6eb11651556e47de9b3e53b485da9e0b5511b84b393178df570",
+    "control/sensor_campaign.py": "66df568e1582535dc7c139395290ce42f8d6a860e988769475cd7d7d6b51271b",
+    "control/sensor_campaign_report.py": "f79d814db6bdaf5553c005ba681297a386dd91465f554f5f797965c524037f5b",
+    "control/sensor_controller_screen.py": "83f68cc109e97577a2e9b260478628814251b2f85f88b4e7810209deb6f3552d",
+    "control/sensor_feedback_ablation.py": "5b018a5a6623cc8ee289fd6291ab23230a931dfcc5a7c25052199759360ef36a",
+    "control/sensor_feedback_diagnostics.py": "b1d392188cded2620c239af3fe05eb0a6d810ddc9570f0b4aee1043dd1ecfe37",
+    "control/sensor_filter_experiment.py": "181be054c08e41855925fa17b3141d3fc8124162889f84d008f4cf5ed355acca",
+    "control/sensor_filter_report.py": "e6e7751d1086fa0e69202904aa44d5042c820a14754ffd1dd00024244e62f568",
+    "control/sensor_matching_screen.py": "2f774fca530a294ec58a7419cc6113a2b28753f8c11eaab76046ee69cd6ed0fb",
+    "control/sensor_screen_report.py": "c4e2e3854aaed58543698fa0f4f0262183d6579b3dc6f8369e9f6859df6a3569",
+    "control/sensors.py": "099cacd00af5a465a674a3aba6dd37145c28d7e053cf176356516dffffbb8551",
+    "control/source_manifest.py": "4f213ed7fa8c9d28ebebd3ad6cd172c7d7b3e746f0c60cce1634f1fc79752561",
+    "control/timing_study.py": "7497fd527c4af2a01972cd920b41b1d303c0fd07157eac0eae1374b7aafd26a1",
+    "control/trim.py": "10f88429fb4929dae34a50eb6ad3502235d229da6039e28c3004acc80e4857eb",
+    "control/trim_hifi.py": "cb7657477e8699ac3afaf0fab7f241c6cc687f1323738d87714e19eca0217aad",
+    "control/tuning_analysis.py": "d12d35da604655efdcaad1f5044146abef1d81267c6a98f719f77324085ab5f9",
+    "control/tuning_carryover.py": "29ea9eacaa493b01bace0236b2dbbe7e4698c081249c2829b56775caf8638aa4",
+    "control/tuning_extension.py": "c430f8179644078ba7c49093dd7dee46059622c5b945fc443210069091e9da73",
+    "control/uncertainty.py": "18061ba57f3fd3bbf68387e74361bbc79ffe0b907daf4a342ed03b664a921569",
+    "control/validation_metrics.py": "3b084c2fc36586b7b17e1677e7a7c1dbf56c03af13bd46c15994d6d6bd53ec62",
+    "control/validation_suite.py": "8a8301ffb10c8a0c1b64ec9dede405cfa410ba892098ef166a8783cf41803df7",
+    "control/vehicle_params.py": "f4ee0e03e1b00d8e4751feb47c506987ad3370c49d8a1202a77f40c807c4ffde",
+    "control/vnmpc_acados.py": "606fe3731d1e4c32738983bd8d939067505091a885e28a6e82640479aa9bf2ae",
+    "models/team_light/control/__init__.py": "0448f8dad13aac955a70724ea443c4e60e5c32d83144e6c662f7bcf6cbfdd766",
+    "models/team_light/control/airframe.py": "52050c1c49d871a33a811ca34ea5678f809c23254251ee3ef190b50e2b9ae4f6",
+    "models/team_light/control/analyze_baseline_log.py": "0555e41776af1ff172849ed51ec48382993a4d2e4991c33937cbb159a54501c8",
+    "models/team_light/control/baseline_v2.py": "bd991756926583ad50413f0173480043a3489288721333abba83272b7abbdcbd",
+    "models/team_light/control/comparison_nmpc.py": "a9480449ba2deb9167610975d714c7c6d09d8c5f2a9b26b8cc68c6dd0e61e782",
+    "models/team_light/control/controller.py": "e2b9dac4a34fddfad35787dc26ad286de36ea54bd30b89a61203d95cf559209d",
+    "models/team_light/control/curve_authority.py": "e06ca891b0f4b25c25739e10955d94e4ebc9bea8e135fa6434ec290a7575a106",
+    "models/team_light/control/dynamics.py": "c7c63c389552f7299a666a34d6fa7db161480fde33bbe79c77f4cc3a06ca88e8",
+    "models/team_light/control/geometry.py": "564bc71a9a9e00c4254b4ba512cab6cfe6715a0aa7a0ee7222b7cfd9e6967a5a",
+    "models/team_light/control/hybrid_comparison.py": "80d5d594cf407a6ddf46acba47fa1d5abb10f9d0509fc7667f6cd159ddba8213",
+    "models/team_light/control/light_aero.py": "87914e522aed5e1ef13ad9591dc7a25366b0d970d1ee0cefcb29889b74da66ce",
+    "models/team_light/control/light_rocket_curve.py": "29a9f21673a7b625f6d36e2a307b2ff552aba56e33aebdbcb467972288680aa0",
+    "models/team_light/control/mission_sim.py": "c4407841f3ce38abe7d20d807a247280b6bef8518cd466a13fab389a4cb1b421",
+    "models/team_light/control/propeller_curve.py": "1e118de4a3713538d067cc3962830cfb7548d04d7045e861d2550f5ac8c2e228",
+    "models/team_light/control/run_baseline_comparison.py": "abfb5bd00a1a2332a8223588d65303a9b5850d20e027e99964a09ab66c1a41db",
+    "models/team_light/control/serialization.py": "cef1131c212c58aa00f1364afbf228d8ab9dc4bbc02c7356011a83d0a14448b6",
+    "models/team_light/control/trim.py": "01406db0ecdeb449458d8ad620906c564fbce5c3a15c408efbd7c648c2f58caa",
+    "models/team_light/control/validate_model.py": "a36593f9fcc5480b276271825ffe5b423bc5ae6faecf421d92f87942dfb4270a",
+    "models/team_light/control/vehicle_params.py": "06eff0a08f33c865c211f0db4ad3c6ef5cd2101141ba02c27313c0bb24c3ca77"
+  },
+  "config_sha256": "9c1b18f412db20f9356e2b5e1ffbd3f28be966cfd3f305e16f6896cec05acf8f",
+  "feedback": {
+    "feedback": "sensors",
+    "sensor_seed": 3,
+    "sensor_profile": "rotor_projected_warm",
+    "sensor_profile_sha256": "1091868104c933deebc1abe04f7f64729a84450066eeab33dd82aea1a8779701"
+  },
+  "paper_blockers": [
+    "V13: tuning record sha256 is empty",
+    "M17: tuning record sha256 is empty",
+    "F13: tuning record sha256 is empty",
+    "GSLQR: tuning record sha256 is empty",
+    "CPID: tuning record sha256 is empty",
+    "Paper specification still uses a different sensor/estimator policy.",
+    "The completed 93-task development study does not validate the broader operating envelope; startup sensitivity, low-RPM excursions and high-speed settling failures need follow-up.",
+    "The sensor-inclusive tuning failure policy must declare how model-domain validity and pre-gust settling relate to the inherited stop_reason/paper_failed penalty.",
+    "Rotor stale-feedback policy and combined actuator mismatch/dropout envelope are not validated.",
+    "Sensor policy, initialization, fixed-versus-matched estimator comparisons and controller interface variants are not frozen. Device-specific claims also need hardware specification mapping.",
+    "Native Windows numerical reproduction and worker lifecycle checks are not verified.",
+    "Runtime source keys now use portable relative paths, but final cross-OS tuning-record loading still needs a native end-to-end check.",
+    "Equal-budget final sensor tuning, design checks and validated record hashes are incomplete.",
+    "Held-out sample count, uncertainty reporting and final source/configuration release are not frozen."
+  ],
+  "not_checked": [
+    "closed-loop performance",
+    "full fairness suite",
+    "numerical replay",
+    "Windows execution",
+    "worker lifecycle",
+    "final tuning readiness"
+  ],
+  "audit_source_sha256": "15dfd94e38e92033ece6c7e2af2f5bc4b4154efece9b3687740105a66842a8a1"
+}

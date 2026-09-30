@@ -2,8 +2,10 @@
 
 The [workflow](https://github.com/leo11dk/fast-drone-sensor-fusion/blob/main/.github/workflows/windows-sensor-validation.yml)
 is published after the user approved GitHub CLI's additional `workflow` scope.
-The first native Windows run is pending. A workflow file or passing Mac checks
-do not establish Windows verification. The portable source ZIP omits GitHub
+The [verified native run](https://github.com/leo11dk/fast-drone-sensor-fusion/actions/runs/36717085838)
+passes all 89 targeted tests, static preflight and both numerical references.
+Read the [comparisons and retained failed attempts](../results/windows_sensor_v13/findings.md).
+The portable source ZIP omits GitHub
 workflow files; run this check from the repository's Actions page.
 
 `Windows sensor development validation` checks
@@ -21,8 +23,8 @@ trajectory-bit-identity field. Do not loosen tolerances to make a job green.
 
 Artifacts retain test XML, audit JSON, comparisons, logs and raw traces even
 when a step fails. Download them before the 30-day retention period expires.
-Record the actual run URL, source commit, environment and outcome before claiming
-Windows verification. A workflow file alone is not a passed check.
+The reviewed result records its actual run URL, source commit, environment and
+outcome. A workflow file alone is not a passed check.
 
 This hosted machine does not certify the four school computers. The school's
 dependency setup, full tuning-record reproduction, forced-parent-exit/orphan

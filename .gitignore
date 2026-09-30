@@ -174,3 +174,25 @@ venv/
 !/results/source_portability_v13/package_preflight.json
 !/results/source_portability_v13/finalization.json
 !/results/source_portability_v13/finalization.md
+
+# Reviewed native Windows evidence; full Actions artifacts and logs stay local.
+!/results/windows_sensor_v13/
+/results/windows_sensor_v13/*
+!/results/windows_sensor_v13/findings.md
+!/results/windows_sensor_v13/verification.json
+!/results/windows_sensor_v13/attempt_1.json
+!/results/windows_sensor_v13/attempt_2.json
+!/results/windows_sensor_v13/attempt_2_tests.xml
+!/results/windows_sensor_v13/attempt_3.json
+!/results/windows_sensor_v13/artifact_receipt.json
+!/results/windows_sensor_v13/windows_tests.xml
+!/results/windows_sensor_v13/mac_preflight_tests.xml
+!/results/windows_sensor_v13/preflight.json
+!/results/windows_sensor_v13/projected/
+/results/windows_sensor_v13/projected/*
+!/results/windows_sensor_v13/projected/comparison.json
+!/results/windows_sensor_v13/projected/manifest.json
+!/results/windows_sensor_v13/legacy/
+/results/windows_sensor_v13/legacy/*
+!/results/windows_sensor_v13/legacy/comparison.json
+!/results/windows_sensor_v13/legacy/manifest.json

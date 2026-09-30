@@ -1,0 +1,14 @@
+{
+  "conclusion": "failure",
+  "createdAt": "2026-09-30T12:39:01Z",
+  "databaseId": 36716122629,
+  "event": "push",
+  "headSha": "e9f0357dbe62d0313f648bdf5e42c8937dfe4547",
+  "jobs": [],
+  "status": "completed",
+  "updatedAt": "2026-09-30T12:39:01Z",
+  "url": "https://github.com/leo11dk/fast-drone-sensor-fusion/actions/runs/36716122629",
+  "workflowName": "Windows sensor development validation",
+  "observed_dispatch_error": "HTTP 422: (Line: 24, Col: 21): Unrecognized named-value: 'runner'. Located at position 1 within expression: runner.temp",
+  "interpretation": "Workflow parse failure before runner allocation; no tests or simulations executed."
+}

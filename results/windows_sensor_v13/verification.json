@@ -1,0 +1,186 @@
+{
+  "schema": "windows_sensor_validation/1",
+  "stage": "DEVELOPMENT",
+  "source_revision": "f2dc38be2be08a9bc0ee17c14161c682867670c9",
+  "run_url": "https://github.com/leo11dk/fast-drone-sensor-fusion/actions/runs/36717085838",
+  "platform": "Windows-2022Server-10.0.20348-SP0",
+  "python": "3.13.7",
+  "targeted_tests_passed": 89,
+  "tests_failed": 0,
+  "tests_skipped": 0,
+  "mac_test_repair_checks_passed": 7,
+  "runtime_source_files": 115,
+  "arena_source_and_config_files": 193,
+  "runtime_source_matches_current": true,
+  "downloaded_trajectory_hashes_verified": true,
+  "rtol": 0.001,
+  "atol": 1e-09,
+  "reproductions": [
+    {
+      "kind": "projected",
+      "fixture": "scripts/data/sensor_reproduction_v13.json",
+      "fixture_sha256": "c92d88fe0ef8f50cfdb55257180a297f373251c35e04c2759c61d18b4e5cc9e6",
+      "reproduction_pass": true,
+      "trajectory_bit_identical": false,
+      "tracking_pass": true,
+      "model_domain_valid": true,
+      "simulated_seconds": 12,
+      "optimizer_calls": 600,
+      "optimizer_failures": 0,
+      "actual_trajectory_sha256": "6db97841b3c538cd6612c263c4b7a4873918f17ad5e504ed2463c7e055264708",
+      "reference_trajectory_sha256": "db4216a3fb4705ae3da69e1283e0bd3dca8fbf36071cb598cb6bc51b327d361a",
+      "numeric_differences": {
+        "simulated_seconds": {
+          "reference": 12.0,
+          "windows": 12.0,
+          "absolute_difference": 0.0
+        },
+        "rmse_z": {
+          "reference": 0.0697263344866491,
+          "windows": 0.06972633448658241,
+          "absolute_difference": 6.668277041654846e-14
+        },
+        "rmse_velocity": {
+          "reference": 0.33690486797346386,
+          "windows": 0.33690486797531416,
+          "absolute_difference": 1.850297692840286e-12
+        },
+        "max_omega": {
+          "reference": 0.795221095081819,
+          "windows": 0.795221095081798,
+          "absolute_difference": 2.1094237467877974e-14
+        },
+        "prop_domain_outside_fraction": {
+          "reference": 0.0,
+          "windows": 0.0,
+          "absolute_difference": 0.0
+        },
+        "window_rmse_z": {
+          "reference": 0.0697263344866491,
+          "windows": 0.06972633448658241,
+          "absolute_difference": 6.668277041654846e-14
+        },
+        "window_rmse_velocity": {
+          "reference": 0.33690486797346386,
+          "windows": 0.33690486797531416,
+          "absolute_difference": 1.850297692840286e-12
+        },
+        "command_total_variation": {
+          "reference": 316.3629781592092,
+          "windows": 316.3629781592051,
+          "absolute_difference": 4.092726157978177e-12
+        }
+      }
+    },
+    {
+      "kind": "legacy",
+      "fixture": "scripts/data/sensor_legacy_reproduction_v13.json",
+      "fixture_sha256": "d1ef91ce67b0caacfcbb5c2300cf5120145efd2eb55a2a98ab02e282c1f8ff83",
+      "reproduction_pass": true,
+      "trajectory_bit_identical": false,
+      "tracking_pass": true,
+      "model_domain_valid": false,
+      "simulated_seconds": 12,
+      "optimizer_calls": 600,
+      "optimizer_failures": 0,
+      "actual_trajectory_sha256": "c0c07e79fa18adf77128b4aca03844759695347625751bc1b64d41d91110d4ab",
+      "reference_trajectory_sha256": "ea5c566b2d028745ce0165b0b25dfb955d8fa65d578f6397023ef6c47646b4c6",
+      "numeric_differences": {
+        "simulated_seconds": {
+          "reference": 12.0,
+          "windows": 12.0,
+          "absolute_difference": 0.0
+        },
+        "rmse_z": {
+          "reference": 0.045154074768978696,
+          "windows": 0.04515407476898569,
+          "absolute_difference": 6.994405055138486e-15
+        },
+        "rmse_velocity": {
+          "reference": 0.28258807043992784,
+          "windows": 0.28258807043980694,
+          "absolute_difference": 1.2090328738167955e-13
+        },
+        "max_omega": {
+          "reference": 0.41537344044868524,
+          "windows": 0.41537344044869384,
+          "absolute_difference": 8.604228440844963e-15
+        },
+        "prop_domain_outside_fraction": {
+          "reference": 0.014166666666666666,
+          "windows": 0.014166666666666666,
+          "absolute_difference": 0.0
+        },
+        "window_rmse_z": {
+          "reference": 0.045154074768978696,
+          "windows": 0.04515407476898569,
+          "absolute_difference": 6.994405055138486e-15
+        },
+        "window_rmse_velocity": {
+          "reference": 0.28258807043992784,
+          "windows": 0.28258807043980694,
+          "absolute_difference": 1.2090328738167955e-13
+        },
+        "command_total_variation": {
+          "reference": 1682.7740383913556,
+          "windows": 1682.7740383913576,
+          "absolute_difference": 2.0463630789890885e-12
+        }
+      }
+    }
+  ],
+  "evidence_files_sha256": {
+    "attempt_1.json": "2c74c6bfc34e8f81a59f44f517c13ba96a5ed0574922d537fe4f3e4716c0d934",
+    "attempt_2.json": "c76ce82fa628b47c8ad233370ad2d1a9246da143f060632aeeec367f94a43f61",
+    "attempt_2_tests.xml": "c236610394fc32dfa3dd9c287a5a6232642d7976ef800bf9e7d03c6154b7ed42",
+    "attempt_3.json": "cd8f0f606481cf4a9f6b1604b1a0576a5047c08a053e7e4608ebdff8197f6922",
+    "artifact_receipt.json": "288c8be71b776dfbc5babab2059ac69e0bf134db45e0458a578dfa90a623efd7",
+    "windows_tests.xml": "dd44f5f4e586cd4efbb382d9bb063bdcb715492585283bd875b2e558ea0fb2c4",
+    "preflight.json": "a2057fc2a1856d7553e07990c40f5fd522402fce6cc7724f4b0afad8c7fd4d05",
+    "mac_preflight_tests.xml": "79ebb9227728cef225d1337c6af9aa5d892874766427226c5707fd0fab648bc3",
+    "projected/comparison.json": "d1263a92fa46e88fdd620d70efecd6f9351a5a2da0454b4857c391f6edf499c2",
+    "projected/manifest.json": "6077135447e29247936db8edc7956adcd194ce610c5c76cde9fd3aa2a33fada4",
+    "legacy/comparison.json": "5e1c14f0b0241927a5429c5a6393ec2c8d52db5ef9eeb5b91af7a5f4d65bfacf",
+    "legacy/manifest.json": "5e9ce079042c1f81c0d5de3c354c38b168426eeab0a55503c44ee1e5127f5762"
+  },
+  "downloaded_artifact_files_sha256": {
+    "legacy/comparison.json": "5e1c14f0b0241927a5429c5a6393ec2c8d52db5ef9eeb5b91af7a5f4d65bfacf",
+    "legacy/run/campaign.json": "a50187b182ad9c21229ccd889c245600af45fc7ff27a002e82ab158d96dbe00f",
+    "legacy/run/profiles/nominal_joint_baro_candidate_v6.json": "99dedddb18b19830db4bb4abd1ac800b29175d9c9166ba347ed208eba2b941cd",
+    "legacy/run/runs/nominal_joint_baro_candidate_v6/V13/arena_20260930T125345185345Z/REPORT.md": "59e92a8b7a86c32192d9889684470bf1f84526f2ecefe28fe110fbc701324fd5",
+    "legacy/run/runs/nominal_joint_baro_candidate_v6/V13/arena_20260930T125345185345Z/arena_reference.json": "3d1ff94b8a3f7d6d7834135a4ac58542624579d3ee335b4216436ebd28e47994",
+    "legacy/run/runs/nominal_joint_baro_candidate_v6/V13/arena_20260930T125345185345Z/gust_lateral_p10_VL_V13.npz": "a3e271fb2161d10cda913f091f626c6c4ba30f1d17cd0cc9f95c97c89f55d515",
+    "legacy/run/runs/nominal_joint_baro_candidate_v6/V13/arena_20260930T125345185345Z/gust_lateral_p10_VL_V13.solver.json": "399d67389db7c023fd54143bce9eb7ef659b9d42617f619765a14722076588af",
+    "legacy/run/runs/nominal_joint_baro_candidate_v6/V13/arena_20260930T125345185345Z/manifest.json": "5e9ce079042c1f81c0d5de3c354c38b168426eeab0a55503c44ee1e5127f5762",
+    "legacy/run/runs/nominal_joint_baro_candidate_v6/V13/arena_20260930T125345185345Z/trials.jsonl": "898cc5f36efc64e154b7ecd6d57f37b4e2722bde55f21cd625cbb6383ea53b17",
+    "legacy/run/runs/nominal_joint_baro_candidate_v6/V13/campaign.log": "ee6c1d3952944aa428e07b4613baddc4d7676f18ce5ab3bf177a222ac3a2498a",
+    "legacy/sensors.json": "200ad4c780f69bc4f2a7d26ffc9c2e09265da9f370c045c28508f656af25aad3",
+    "preflight.json": "a2057fc2a1856d7553e07990c40f5fd522402fce6cc7724f4b0afad8c7fd4d05",
+    "projected/comparison.json": "d1263a92fa46e88fdd620d70efecd6f9351a5a2da0454b4857c391f6edf499c2",
+    "projected/run/campaign.json": "f96a6ce70b91695de76fa93dcdcacaaed8bb5241c01f8f1e68079fa841e7787a",
+    "projected/run/profiles/rotor_projected_warm.json": "751573a88bd502e8022e8e49d580f55465e74c79366afad5454ff494b4378f10",
+    "projected/run/runs/rotor_projected_warm/V13/arena_20260930T125111560062Z/REPORT.md": "42d726cfdf39591625a2f55df247c1fe8b03ed86f5364ad2aa919512a7235534",
+    "projected/run/runs/rotor_projected_warm/V13/arena_20260930T125111560062Z/arena_reference.json": "f60c9c84795dd82e84b96c975e8953b0eaa7e8fde62951c2f9a80c3146c90bd8",
+    "projected/run/runs/rotor_projected_warm/V13/arena_20260930T125111560062Z/gust_lateral_p10_VH_V13.npz": "045f6944a5a167bd74b5ea8ec0f7f5d400233f586fe94678e1c7dac9b884d352",
+    "projected/run/runs/rotor_projected_warm/V13/arena_20260930T125111560062Z/gust_lateral_p10_VH_V13.solver.json": "307b32251f26c666c4761c998aa91f4d25bb7df2b0d7aef9d7e6e1cd64af62c9",
+    "projected/run/runs/rotor_projected_warm/V13/arena_20260930T125111560062Z/manifest.json": "6077135447e29247936db8edc7956adcd194ce610c5c76cde9fd3aa2a33fada4",
+    "projected/run/runs/rotor_projected_warm/V13/arena_20260930T125111560062Z/trials.jsonl": "dccb1c1362aab17e0a51ab5975bc5cdf81fb8cd6052d672d07d9a0a44a006b4b",
+    "projected/run/runs/rotor_projected_warm/V13/campaign.log": "91d4cb7406dd9fe5c278a3fcebbb0e8e1074d25b84263b5281528b0f53289393",
+    "projected/sensors.json": "4d263037cdb4e2895447ae432ffe74a19ac2998e7659824faa6615aa0db954c4",
+    "tests.xml": "dd44f5f4e586cd4efbb382d9bb063bdcb715492585283bd875b2e558ea0fb2c4"
+  },
+  "native_windows_reference_reproduction_verified": true,
+  "school_machine_readiness_verified": false,
+  "paper_ready": false,
+  "final_tuning_started": false,
+  "prior_attempts": [
+    {
+      "run_id": 36716122629,
+      "reason": "Workflow parse error before runner; no simulations."
+    },
+    {
+      "run_id": 36716291781,
+      "reason": "88 passed, one Unix-only path expectation failed; replays skipped. Test fixed to use native temporary paths."
+    }
+  ]
+}

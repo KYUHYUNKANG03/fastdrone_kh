@@ -42,8 +42,10 @@ portable runtime; do not reuse the completed v11 plan directory.
 
 ## What this verifies
 
-Path-flavour tests exercise Windows and Posix path objects on the Mac, and the
-existing tuning/distributed tests check source mismatch rejection. These are
-software checks, not native Windows execution. The school machines still need
-the [Windows numerical and worker checks](SENSOR_WINDOWS_DEVELOPMENT.md) and the
-team's full tuning-record reproduction procedure before final tuning.
+Path-flavour tests exercise Windows and Posix path objects, and the existing
+tuning/distributed tests check source mismatch rejection. Native hosted Windows
+2022 x64 now passes the same 89 targeted tests and both 12-second V13 reference
+replays. Verdicts and checked metrics agree within the unchanged tolerances;
+trajectory hashes differ. See [the verified Windows evidence](../results/windows_sensor_v13/findings.md).
+The school machines still need the [numerical and worker checks](SENSOR_WINDOWS_DEVELOPMENT.md)
+and the team's full tuning-record reproduction procedure before final tuning.

@@ -17,6 +17,10 @@ Archive the completed study at `06dcb88b91e3330416ca18421dc486ce409e27fa` when
 reanalyzing it. New plans must use a new output directory and current hashes.
 See [source compatibility](SOURCE_PORTABILITY.md) and the
 [Windows validation workflow](SENSOR_WINDOWS_CI.md).
+Hosted Windows now passes all 89 targeted tests and both numerical reference
+replays. The [results](../results/windows_sensor_v13/findings.md) retain the
+two earlier failed setup/test attempts and distinguish numerical agreement
+from trajectory bit identity and school-machine readiness.
 
 The earlier v10 checkpoint adds paired truth/fusion development screens across
 maneuvers, physical motor mismatch and isolated sensor faults. All controller

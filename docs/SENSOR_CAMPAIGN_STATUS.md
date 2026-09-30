@@ -18,8 +18,10 @@ promoted or overwritten. The separately verified source-path portability patch
 is now integrated, with fresh v13 references and 89 passing targeted tests.
 Flight equations and gains are unchanged. Old study plans remain tied to their
 original source; see [source portability](SOURCE_PORTABILITY.md). Windows
-validation has a [published workflow](SENSOR_WINDOWS_CI.md); its first native
-Windows run is pending.
+validation now passes [89 targeted tests and both numerical references](../results/windows_sensor_v13/findings.md)
+on a hosted Windows 2022 x64 runner. The trajectories agree numerically within
+the existing tolerances but are not bit-identical. School-machine worker and
+full tuning-record checks remain pending.
 
 ## Earlier v10 development evidence
 
