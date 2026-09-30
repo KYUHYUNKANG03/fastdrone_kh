@@ -14,16 +14,24 @@ model attribution and notices remain in `models/team_light/` and `external/`.
 ## Current status
 
 **Development software, not validated flight hardware or final paper results.**
-The v9 checkpoint implements a timestamp-aware rotor observer and an explicit
-steady-trim measurement-history startup. It passed 277 distinct software tests,
-with eight long legacy tests skipped. Both V13/F13 now pass a full 85 m/s trial
-with nominal sensor noise and the original 4 ms rotor telemetry delay when using
-the declared nominal motor model and startup history. Cold starts and incorrect
-observer models are tested separately and retain their failures. These are
-development findings, not hardware limits or failure probabilities; wider
-validation and controller matching remain necessary.
+V10 records **38 development simulation trials**: 30 paired truth/fusion trials
+and eight adaptive V13 startup diagnostics. All 44 targeted software tests pass.
+Both controllers pass the high-speed vertical gust and an isolated 200 ms rotor
+telemetry outage with the nominal motor model. Broader maneuvers expose model-domain
+exits, and the low-speed ablations identify GNSS-related startup sensitivity.
+Physical motor mismatch also exposes failures with perfect state feedback.
+All failures remain reported separately from execution errors; this batch uses
+one development seed and does not estimate reliability or hardware limits.
 
-- [Latest report and comparison figure](results/sensor_readiness_v9/report.md)
+The v9 timestamp-aware rotor observer, steady-trim measurement-history startup,
+aircraft and controller gains remain unchanged. Its numerical reproduction
+fixtures remain source-compatible. The v10 full-profile low-speed repeat is
+trajectory-bit-identical to its paired control run with fused feedback.
+
+- [Latest paired envelope findings](results/sensor_readiness_v10/findings.md)
+- [Paired outcomes and trace figures](results/sensor_readiness_v10/report.md)
+- [Envelope screen commands and interpretation](docs/SENSOR_ENVELOPE_SCREEN.md)
+- [Historical v9 observer comparisons](results/sensor_readiness_v9/report.md)
 - [Rotor observer equations, startup assumptions and commands](docs/ROTOR_OBSERVER.md)
 - [Historical v8 diagnosis](docs/SENSOR_GROUP_DIAGNOSIS.md)
 - [Historical v7 report](results/sensor_readiness_v7/report.md)
@@ -124,7 +132,7 @@ truth-only tuning records are not final sensor-inclusive tuning results.
 
 `origin` is this repository. Future verified changes are committed and pushed
 here in coherent checkpoints. Python environments, credentials, caches, local
-backups, bulk traces, and generated archives are ignored. Selected v7/v8/v9 summaries
+backups, bulk traces, and generated archives are ignored. Selected v7/v8/v9/v10 summaries
 and reference fixtures are versioned; raw campaigns remain in the local Desktop
 checkout. Historical documentation can refer to those local-only artifacts.
 

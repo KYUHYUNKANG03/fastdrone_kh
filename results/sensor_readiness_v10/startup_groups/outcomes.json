@@ -1,0 +1,4595 @@
+{
+  "schema": "sensor_group_report/1",
+  "stage": "DEVELOPMENT",
+  "contracts": [
+    {
+      "source": "results/envelope_startup_groups_v10/experiment.json",
+      "schema": "sensor_matching_screen/1",
+      "stage": "DEVELOPMENT",
+      "base_config": {
+        "schema": "arena/1",
+        "purpose": "Fair, reproducible arena for V13/M17/F13/GSLQR/CPID on the pinned team aircraft. SMOKE/PILOT runs only; no superiority claims.",
+        "confirmed": {
+          "source": "kj work order 2026-09-25 section 1 + decisions in this session",
+          "vehicle_profile_id": "light_rocket_v2_pack_forward",
+          "vehicle_mass_kg": 1.17407572,
+          "repository": "protkjj/fast-drone",
+          "base_branch": "control",
+          "plant": "team distributed aero + APC Ct/Cp PCHIP (models.team_light)",
+          "controller_model": "lumped-parameter fit (control.kh_adapter.build_controller_params)",
+          "mission_phases_s": [
+            3.0,
+            15.0,
+            15.0,
+            15.0,
+            7.0
+          ],
+          "mission_takeoff": false,
+          "mission_disturbance": false,
+          "gust_wind_reference": "absolute",
+          "gust_start": "common_trim_cruise",
+          "V_L_m_s": 20.0,
+          "V_H_m_s": 85.0
+        },
+        "vehicle": {
+          "profile_id": "light_rocket_v2_pack_forward",
+          "mass_kg": 1.17407572,
+          "parameter_sha256": "13a1dcc6332987eba93ea4653f4d6087741d1ac085701982ed94c22e6658c807"
+        },
+        "plant": {
+          "class": "models.team_light.control.dynamics.AxialDronePlant",
+          "dt_s": 0.002
+        },
+        "controller_model": {
+          "builder": "control.kh_adapter.build_controller_params",
+          "hover_convention": "plant",
+          "moment_correction": {
+            "file": "configs/controller_moment_model.json",
+            "sha256": "a8f49d3f546ac6d0ba03127ddcb5d4524763718e1966dda8bbb74632e6b02ae6",
+            "applies_to": [
+              "M17",
+              "F13",
+              "GSLQR"
+            ],
+            "note": "\ud2b8\ub9bc \ubc16 \ud53c\uce58\u00b7\uc694 \ubaa8\uba58\ud2b8 \ubcf4\uc815(control/moment_correction.py, \ubcf4\uace0\uc11c 23\uc808). M17 \uc608\uce21, F13 \uc608\uce21\u00b7\ub0b4\ubd80 \ub8e8\ud504, GSLQR \uc120\ud615\ud654\uc5d0\ub9cc \uc801\uc6a9. \uba85\ubaa9 \ud2b8\ub9bc\u00b7\uac00\uc6a9 \uac00\uc18d\ub3c4(a_avail)\u00b7V13\u00b7CPID\ub294 \uae30\uc874 \ubaa8\ub378 \uadf8\ub300\ub85c \u2014 a_avail\uc740 \uae30\uc874 \ubaa8\ub378\ub85c \uacc4\uc0b0\ud558\ub294 \uace0\uc815\ub41c \uc815\uc758\ub2e4(\ud29c\ub2dd \uc2dc\ub098\ub9ac\uc624\uc640 \uac19\uc740 \uc815\uc758 \uc720\uc9c0). \uc774 \uc808 \ub9d0\uace0\ub294 arena.json\uacfc \uac19\uc544\uc57c \ud55c\ub2e4(\uc2dc\ud5d8)."
+          }
+        },
+        "speeds_m_s": {
+          "V_L": 20.0,
+          "V_H": 85.0
+        },
+        "altitude_m": 20.0,
+        "preview_horizon_s": 1.0,
+        "nmpc_common": {
+          "N": 20,
+          "dt_pred_s": 0.05,
+          "dt_ctrl_s": 0.02,
+          "max_iter": 30,
+          "tol": 0.0001,
+          "Q_z": 20.0,
+          "cost_spec": "paper",
+          "warm_start": "measured_state_and_controller_trim_input",
+          "soft_constraints": {}
+        },
+        "controllers": {
+          "V13": {
+            "kind": "V13",
+            "alloc_mode": "A1",
+            "alloc_feedback": true,
+            "time_align": "S1"
+          },
+          "M17": {
+            "kind": "M17",
+            "rotor_floor": "positive_thrust"
+          },
+          "F13": {
+            "kind": "F13",
+            "alloc_mode": "A0",
+            "time_align": "S0"
+          },
+          "GSLQR": {
+            "kind": "GSLQR",
+            "gains": "configs/gains/gslqr.json",
+            "V_table_m_s": [
+              0,
+              5,
+              10,
+              15,
+              20,
+              25,
+              30,
+              35,
+              40,
+              45,
+              50,
+              55,
+              60,
+              65,
+              70,
+              75,
+              80,
+              85
+            ],
+            "trim_substep_m_s": 1.0,
+            "reference_feedforward": "window_acceleration"
+          },
+          "CPID": {
+            "kind": "CPID",
+            "gains": "configs/gains/cpid.json",
+            "design_region_m_s": [
+              0,
+              20
+            ],
+            "integrator_preload": "controller_model_trim",
+            "reference_feedforward": "window_acceleration"
+          }
+        },
+        "seeds": {
+          "main": [
+            1000,
+            1999
+          ],
+          "tuning": [
+            2000,
+            2999
+          ]
+        },
+        "tuning": {
+          "label": "PILOT",
+          "budget": 120,
+          "search": {
+            "method": "compass_log_multiplier",
+            "initial_step": 2.0,
+            "min_step": 1.05
+          },
+          "objective": {
+            "metric": "window_rmse_velocity + window_rmse_z",
+            "failure": "stop_reason or paper_failed",
+            "failure_penalty": 1000.0
+          },
+          "parameters": {
+            "NMPC": [
+              "w_v",
+              "Q_z",
+              "w_omega",
+              "r_dev",
+              "r_rate",
+              "terminal"
+            ],
+            "GSLQR": [
+              "q_z",
+              "q_v_h",
+              "q_v_z",
+              "q_phi",
+              "q_omega",
+              "q_n",
+              "r",
+              "q_iz",
+              "q_ivx"
+            ],
+            "CPID": [
+              "Kp_vel",
+              "Ki_vel",
+              "Kp_z",
+              "Kd_z",
+              "Ki_z",
+              "Kp_att",
+              "Kd_att"
+            ]
+          },
+          "scenario_design_note": "kj \uacb0\uc815(2026-09-27): \uc61b \uc9d1\ud569(\uc704 \uc774\ub825)\uc740 \uc81c\uc5b4\uae30 \uacb0\uacfc\ub85c \uc800\uc18d \uc0ac\ub840\ub97c \uace8\ub77c \ubcf8\uc2dc\ud5d8\ubcf4\ub2e4 \uc57d\ud55c \ucabd\uc73c\ub85c \uce58\uc6b0\ucce4\ub2e4(ARENA_STATUS 12\uc808, \uc7ac\ubc1c \uc0ac\ub840 tuning-set-must-match-test-severity). \uc774 \uc9d1\ud569\uc740 \uc81c\uc5b4\uae30 \uacb0\uacfc\ub97c \ubcf4\uc9c0 \uc54a\uace0 \ubcf8\uc2dc\ud5d8 \uc2dc\ub098\ub9ac\uc624(\uc544\ub798 scenarios)\uc758 \ud06c\uae30\u00b7\uc18d\ub3c4\u00b7\u03c1\ub9cc\uc73c\ub85c \uc815\ud588\ub2e4: \ub3cc\ud48d = \ubcf8\uc2dc\ud5d8 \ud53c\ud06c\uc758 0.7\ubc30\u00b71.3\ubc30 \uc591\ucabd \ubc29\ud5a5(\uce21\ud48d \u00b110 -> \u00b17/\u00b113, \uc218\uc9c1\ud48d \u22135 -> \u22133.5/\u22136.5), \uc18d\ub3c4 = V_L\u00b7V_H \uadfc\ucc98\uc9c0\ub9cc \uac19\uc9c0 \uc54a\uc740 \uac12(14\u00b726\u00b775\u00b782), \uae30\ub3d9 = \uc81c\ub3d9 1\uac1c + \u03c1 0.8\u00b71.2. \ubcf8\uc2dc\ud5d8 id\u00b7\uc18d\ub3c4\u00b7\u03c1\uc640 \uacb9\uce58\uc9c0 \uc54a\ub294\ub2e4(I-4). \uc81c\ub3d9 \ub05d\uc810(25, \ub2e4\uc12f\uc758 \ubc30\uc218)\uc740 \uba85\ubaa9 \uc81c\uc5b4\uae30 \ubaa8\ub378\uc758 available_acceleration\uc774 \uac10\uc18d \ubc29\ud5a5\uc5d0\uc11c\ub9cc 28\u00b732 m/s \uadfc\ucc98 \uc881\uc740 \uad6c\uac04\uc5d0\uc11c SLSQP \uc218\ub834\uc5d0 \uc2e4\ud328\ud558\ub294 \uac83\uc744 \ud53c\ud558\ub824\uace0 \uace0\ub978 \uac12\uc774\ub2e4(\uac00\uc18d \ubc29\ud5a5\uc740 0~85 \uc804 \uad6c\uac04 \uc2e4\ud328 \uc5c6\uc74c) \u2014 \ubb3c\ub9ac\uc801 \ud2b8\ub9bc \ubd88\uac00\uac00 \uc544\ub2c8\ub77c \uadf8 \uc9c0\uc810\ub4e4\ub9cc\uc758 \uad6d\uc18c \uc218\uce58 \ucde8\uc57d\uc810\uc73c\ub85c \ubcf4\uc774\ub098 \ud655\uc778\uc740 \ud558\uc9c0 \uc54a\uc558\ub2e4.",
+          "scenarios": [
+            {
+              "id": "tune2_gust_lateral_p7_V14",
+              "type": "gust",
+              "speed": 14.0,
+              "direction": "lateral",
+              "peak_m_s": 7.0,
+              "times_s": [
+                1.0,
+                1.0,
+                2.0
+              ]
+            },
+            {
+              "id": "tune2_gust_lateral_m13_V26",
+              "type": "gust",
+              "speed": 26.0,
+              "direction": "lateral",
+              "peak_m_s": -13.0,
+              "times_s": [
+                1.0,
+                1.0,
+                2.0
+              ]
+            },
+            {
+              "id": "tune2_gust_lateral_m7_V75",
+              "type": "gust",
+              "speed": 75.0,
+              "direction": "lateral",
+              "peak_m_s": -7.0,
+              "times_s": [
+                1.0,
+                1.0,
+                2.0
+              ]
+            },
+            {
+              "id": "tune2_gust_lateral_p13_V82",
+              "type": "gust",
+              "speed": 82.0,
+              "direction": "lateral",
+              "peak_m_s": 13.0,
+              "times_s": [
+                1.0,
+                1.0,
+                2.0
+              ]
+            },
+            {
+              "id": "tune2_gust_vertical_m3.5_V75",
+              "type": "gust",
+              "speed": 75.0,
+              "direction": "vertical",
+              "peak_m_s": -3.5,
+              "times_s": [
+                1.0,
+                1.0,
+                2.0
+              ]
+            },
+            {
+              "id": "tune2_gust_vertical_p6.5_V82",
+              "type": "gust",
+              "speed": 82.0,
+              "direction": "vertical",
+              "peak_m_s": 6.5,
+              "times_s": [
+                1.0,
+                1.0,
+                2.0
+              ]
+            },
+            {
+              "id": "tune2_gust_vertical_p3.5_V14",
+              "type": "gust",
+              "speed": 14.0,
+              "direction": "vertical",
+              "peak_m_s": 3.5,
+              "times_s": [
+                1.0,
+                1.0,
+                2.0
+              ]
+            },
+            {
+              "id": "tune2_gust_vertical_m6.5_V26",
+              "type": "gust",
+              "speed": 26.0,
+              "direction": "vertical",
+              "peak_m_s": -6.5,
+              "times_s": [
+                1.0,
+                1.0,
+                2.0
+              ]
+            },
+            {
+              "id": "tune2_ramp_accel_V17_70_rho0.8",
+              "type": "reference",
+              "from": 17.0,
+              "to": 70.0,
+              "rho": 0.8,
+              "lead_s": 0.5,
+              "tail_s": 1.0
+            },
+            {
+              "id": "tune2_ramp_brake_V80_25_rho1.2",
+              "type": "reference",
+              "from": 80.0,
+              "to": 25.0,
+              "rho": 1.2,
+              "lead_s": 0.5,
+              "tail_s": 1.0
+            },
+            {
+              "id": "tune3_step_altitude_p0.7_V0",
+              "type": "step",
+              "speed": 0.0,
+              "axis": "altitude",
+              "size": 0.7,
+              "durations_s": [
+                8.0
+              ]
+            },
+            {
+              "id": "tune3_step_altitude_p1.3_V0",
+              "type": "step",
+              "speed": 0.0,
+              "axis": "altitude",
+              "size": 1.3,
+              "durations_s": [
+                8.0
+              ]
+            },
+            {
+              "id": "tune3_step_altitude_p0.7_V14",
+              "type": "step",
+              "speed": 14.0,
+              "axis": "altitude",
+              "size": 0.7,
+              "durations_s": [
+                8.0
+              ]
+            },
+            {
+              "id": "tune3_step_altitude_p1.3_V14",
+              "type": "step",
+              "speed": 14.0,
+              "axis": "altitude",
+              "size": 1.3,
+              "durations_s": [
+                8.0
+              ]
+            },
+            {
+              "id": "tune3_step_speed_p0.7_V0",
+              "type": "step",
+              "speed": 0.0,
+              "axis": "speed",
+              "size": 0.7,
+              "durations_s": [
+                8.0
+              ]
+            },
+            {
+              "id": "tune3_step_speed_p1.3_V0",
+              "type": "step",
+              "speed": 0.0,
+              "axis": "speed",
+              "size": 1.3,
+              "durations_s": [
+                8.0
+              ]
+            },
+            {
+              "id": "tune3_step_speed_p0.7_V14",
+              "type": "step",
+              "speed": 14.0,
+              "axis": "speed",
+              "size": 0.7,
+              "durations_s": [
+                8.0
+              ]
+            },
+            {
+              "id": "tune3_step_speed_p1.3_V14",
+              "type": "step",
+              "speed": 14.0,
+              "axis": "speed",
+              "size": 1.3,
+              "durations_s": [
+                8.0
+              ]
+            }
+          ],
+          "scenario_design_note_2": "kj \uacb0\uc815(2026-09-27 \uc800\ub141): \uaddc\uce59\uc744 '\ubcf8\uc2dc\ud5d8\uc744 \uac10\uc2fc\ub2e4'\uc5d0\uc11c '\ubaa8\ub4e0 \ud3c9\uac00 \ucd95(\ubcf8\uc2dc\ud5d8 + \uc124\uacc4\uc810\uac80)\uc744 \uac10\uc2fc\ub2e4'\ub85c \ub113\ud78c\ub2e4. CPID \uace0\ub3c4-\uacc4\ub2e8\uc774 \uc124\uacc4 \uc601\uc5ed 0\u00b710\u00b720 m/s \uc804\ubd80 \uc815\ucc29 \uc2e4\ud328(Kd_z 2\u219264)\ud588\ub294\ub370, tune2_* 10\uac1c \uc911 \uc21c\uc218 \uace0\ub3c4-\ucd94\uc885(\uc0c8 z \ubaa9\ud45c\ub85c \uc774\ub3d9) \uc2e0\ud638\uac00 \ud558\ub098\ub3c4 \uc5c6\uc5b4\uc11c\uc600\ub2e4(\uc218\uc9c1\ud48d\uc740 \ud2b8\ub9bc \ubcf5\uadc0 \uc2e0\ud638\ub77c \ubc18\ub300 \uc555\ub825\uc744 \uc900\ub2e4). tune3_step_* 8\uac1c\ub97c \ucd94\uac00: \uc124\uacc4\uc810\uac80\uc758 \ub9e4\ub044\ub7ec\uc6b4 \uace0\ub3c4\u00b7\uc18d\ub3c4 \uacc4\ub2e8\uc744 \ud06c\uae30 0.7\ubc30\u00b71.3\ubc30\ub85c, \ud638\ubc84(V0)\uc640 V_L \uadfc\ucc98(V14, \uc774\ubbf8 tune2\uc5d0\uc11c \uc4f0\ub294 \uc810)\uc5d0\uc11c. \uc124\uacc4\uc810\uac80 \uc790\uccb4\uc758 \uc815\ud655\ud55c \uc870\uac74(\uc18d\ub3c4 0\u00b710\u00b720\u00b740\u00b760\u00b785, \ud06c\uae30 \u00b11)\uacfc\ub294 \uc548 \uacb9\uce5c\ub2e4. \uc81c\uc5b4\uae30 \uacb0\uacfc\ub97c \uc548 \ubcf4\uace0 \uc815\ud588\ub2e4(\uc18d\ub3c4\u00b7\ud06c\uae30\u00b7\uad00\ucc30\uc2dc\uac04 8s\ub9cc \uace0\ub984).",
+          "superseded_scenarios_2026-09-26": "\uc61b \uc9d1\ud569(tune_*, 8\uac1c, \uc800\uc18d 3\uac1c\ub294 8.3\uc808 '\uc2e4\ud328 \uc5c6\ub294 \uc0ac\ub840\ub9cc' \uaddc\uce59\uc73c\ub85c \uc120\uc815) \u2014 results/arena/tuning/main120 \uc804\uccb4\uc640 \ud568\uaed8 superseded. tune_gust_vertical_p3_V20\uc740 \ubcf8\uc2dc\ud5d8 V_L=20\uc744 \uadf8\ub300\ub85c \uc7ac\uc0ac\uc6a9\ud55c \uacb0\ud568\ub3c4 \uc788\uc5c8\ub2e4."
+        },
+        "reporting": {
+          "integrator_at_limit_fraction": 0.01
+        },
+        "acceptance": {
+          "max_z_error": 10.0,
+          "max_velocity_error": 15.0,
+          "max_omega": 35.0,
+          "sustained_omega": 25.0,
+          "sustained_seconds": 0.2,
+          "recovery_z": 0.5,
+          "recovery_velocity": 0.5,
+          "recovery_omega": 1.0,
+          "recovery_hold": 0.5
+        },
+        "paper_criteria": {
+          "z_error": 5.0,
+          "z_error_seconds": 0.5,
+          "omega": 20.0,
+          "omega_seconds": 0.1,
+          "cruise_velocity_floor": 5.0,
+          "cruise_velocity_fraction": 0.25,
+          "cruise_velocity_seconds": 2.0,
+          "consecutive_solver_failures": 3,
+          "recovery_z": 0.5,
+          "recovery_velocity_floor": 0.5,
+          "recovery_velocity_fraction": 0.05,
+          "recovery_hold": 1.0
+        },
+        "scenarios": [
+          {
+            "id": "mission_VH",
+            "type": "mission",
+            "speed": "V_H",
+            "durations_s": [
+              3.0,
+              15.0,
+              15.0,
+              15.0,
+              7.0
+            ],
+            "evaluation_start_s": 3.0
+          },
+          {
+            "id": "gust_lateral_p10_VH",
+            "type": "gust",
+            "speed": "V_H",
+            "direction": "lateral",
+            "peak_m_s": 10.0,
+            "times_s": [
+              3.0,
+              2.0,
+              7.0
+            ]
+          },
+          {
+            "id": "gust_vertical_m5_VH",
+            "type": "gust",
+            "speed": "V_H",
+            "direction": "vertical",
+            "peak_m_s": -5.0,
+            "times_s": [
+              3.0,
+              2.0,
+              7.0
+            ]
+          },
+          {
+            "id": "ref_accel_0_VH_rho1",
+            "type": "reference",
+            "from": 0.0,
+            "to": "V_H",
+            "rho": 1.0,
+            "lead_s": 3.0,
+            "tail_s": 5.0
+          },
+          {
+            "id": "ref_brake_VH_VL_rho1",
+            "type": "reference",
+            "from": "V_H",
+            "to": "V_L",
+            "rho": 1.0,
+            "lead_s": 3.0,
+            "tail_s": 5.0
+          },
+          {
+            "id": "mission_VH_mass1.3",
+            "type": "mission",
+            "speed": "V_H",
+            "durations_s": [
+              3.0,
+              15.0,
+              15.0,
+              15.0,
+              7.0
+            ],
+            "evaluation_start_s": 3.0,
+            "perturbation": {
+              "mass": 1.3
+            }
+          },
+          {
+            "id": "mission_VH_tau2",
+            "type": "mission",
+            "speed": "V_H",
+            "durations_s": [
+              3.0,
+              15.0,
+              15.0,
+              15.0,
+              7.0
+            ],
+            "evaluation_start_s": 3.0,
+            "perturbation": {
+              "motor_tau": 2.0
+            }
+          },
+          {
+            "id": "gust_lateral_p10_VL",
+            "type": "gust",
+            "speed": "V_L",
+            "direction": "lateral",
+            "peak_m_s": 10.0,
+            "times_s": [
+              3.0,
+              2.0,
+              7.0
+            ]
+          },
+          {
+            "id": "gust_vertical_m5_VL",
+            "type": "gust",
+            "speed": "V_L",
+            "direction": "vertical",
+            "peak_m_s": -5.0,
+            "times_s": [
+              3.0,
+              2.0,
+              7.0
+            ]
+          }
+        ],
+        "sensor_feedback": {
+          "schema": "sensor_feedback/1",
+          "mode": "sensors",
+          "seed": 3,
+          "profile": {
+            "schema": "sensor/1",
+            "name": "rotor_projected_warm",
+            "imu": {
+              "rate_hz": 500.0,
+              "accel_noise_density": 0.03,
+              "gyro_noise_density": 0.002,
+              "accel_bias": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "gyro_bias": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "accel_bias_rw": 0.0002,
+              "gyro_bias_rw": 2e-05,
+              "latency_s": 0.0,
+              "dropout_prob": 0.0,
+              "accel_clip": 100.0,
+              "gyro_clip": 50.0
+            },
+            "gnss": {
+              "rate_hz": 10.0,
+              "pos_sigma": 0.8,
+              "vel_sigma": 0.15,
+              "pos_bias": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "vel_bias": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "latency_s": 0.12,
+              "dropout_prob": 0.0,
+              "outage_windows": []
+            },
+            "barometer": {
+              "enabled": true,
+              "rate_hz": 50.0,
+              "sigma": 0.25,
+              "bias": 0.0,
+              "latency_s": 0.02,
+              "dropout_prob": 0.0
+            },
+            "magnetometer": {
+              "enabled": true,
+              "rate_hz": 100.0,
+              "sigma": 0.04,
+              "world_field": [
+                20.0,
+                0.0,
+                40.0
+              ],
+              "bias": [
+                0,
+                0,
+                0
+              ],
+              "latency_s": 0.01,
+              "dropout_prob": 0.0
+            },
+            "rpm": {
+              "enabled": true,
+              "rate_hz": 500.0,
+              "sigma": 8.0,
+              "bias": [
+                0,
+                0,
+                0,
+                0
+              ],
+              "latency_s": 0.004,
+              "dropout_prob": 0.0
+            },
+            "estimator": {
+              "history_s": 2.0,
+              "gnss_pos_sigma": 0.8,
+              "gnss_vel_sigma": 0.15,
+              "baro_sigma": 0.25,
+              "mag_sigma": 0.04,
+              "initial_position_sigma": 0.5,
+              "initial_velocity_sigma": 0.2,
+              "initial_attitude_deg": 1.0,
+              "estimate_baro_bias": true,
+              "baro_bias_tau_s": 1.0,
+              "baro_gnss_max_age_s": 0.25,
+              "initialize_baro_bias": true,
+              "preflight_baro_samples": 100,
+              "trace_updates": false,
+              "preflight_baro_rng": "independent",
+              "kind": "joint_baro",
+              "baro_bias_rw_density_m_sqrt_s": 0.03
+            },
+            "rotor_observer": {
+              "source": "telemetry_predictor",
+              "tau_s": 0.02,
+              "motor_tau_s": 0.02,
+              "history_s": 0.5,
+              "max_age_s": 0.05,
+              "prehistory_s": 0.1
+            }
+          }
+        }
+      },
+      "base_config_sha256": "9c1b18f412db20f9356e2b5e1ffbd3f28be966cfd3f305e16f6896cec05acf8f",
+      "controllers": [
+        "V13"
+      ],
+      "seeds": [
+        3
+      ],
+      "variants": [
+        "quiet_sampled",
+        "imu_only",
+        "navigation_only",
+        "rotor_only",
+        "baseline"
+      ],
+      "faults": [
+        "nominal"
+      ],
+      "cases": [
+        "gust_lateral_p10_VL"
+      ],
+      "timeout_s": 900.0,
+      "runtime_source_sha256": {
+        "control/__init__.py": "4442b0651dd775b6aed0b5216a778ed3bc19f2e98be79dd5fd525a963285cb9c",
+        "control/acados_fallback_mc.py": "844f72c9d6e76d7143fb2ad4eb95608c75c469f051958e0fa61677e267d982ae",
+        "control/arena.py": "bad57298c5d095d689ca036ade7c89c0cfee5970d5d253b2b0a911214f99ff25",
+        "control/arena_design_check.py": "9cbed9eb3c7a55fc3a85d20d20f032855b8c7cb9cde5ef9a11923376600644e7",
+        "control/arena_dt_convergence.py": "ad73e2738e48c59a038048c014e13f8aa69622416b1f4d1734cf4d188b9ba300",
+        "control/arena_estimator.py": "583201c781336d1150e87e970ca1b10b551ee912c235066ca2d573c301d3ec9b",
+        "control/arena_factory.py": "b2ae950cd1b17ca4afd7b6726ccb9ef4c20e3ae49680fe48cb0b1390321cc2de",
+        "control/arena_feedback.py": "2034ee659adabe72937e11a9bb5eb0c1cfbd1f3da20956eee32e16afce1cda32",
+        "control/arena_feedforward_check.py": "b427db6335002662194e10d0c8b30648856bcbffba45040bd36531af3bdb5c2c",
+        "control/arena_integrators.py": "8ce6980f69bcf6a0753a266a1894eb91cc5e1b0e377c12b6d8bc132d243b6cbb",
+        "control/arena_joint_estimator.py": "51357b402b21082785d47a2d0d7fe75a16d26c91a0bcd54a5923a06624466787",
+        "control/arena_m17_diagnosis.py": "91a6e8a1bd263529e011028dab41e8c841c8dc28061f3f3c3455121e287247e4",
+        "control/arena_m17_floor_variants.py": "096905fbaeb6d3966631cf5b661b5c209835f0a042522e75459892a5cb672f82",
+        "control/arena_m17_probe.py": "9fe2760261b8d2c42fe4909b9c06cfcbd3c515eb59d433d7ff96009c8dd8b63a",
+        "control/arena_mission_rho.py": "887617104097ef49a4eac69bbf0c9c9fc6f9191eff407acb4f86131e9113163c",
+        "control/arena_model_mismatch.py": "c5c3f63fed0c2f077bf3469c7e7979b1832fb8f6912f226f5302513e147a81cd",
+        "control/arena_observation_delay.py": "7fa1d405cee463f7187bb3b9e52141a2be4a77888ca294366f102df95a42ea2c",
+        "control/arena_plant_wrench.py": "14c15af56dd29c41f0bb6fb4aecff0e026a88a7ee85adbce7554515ede4d851f",
+        "control/arena_reference_merge.py": "ce038c9ecad2f852b9973cd3ae05aa9ca393f43e13abc18881a7cf1fb7371b61",
+        "control/arena_sensors.py": "d8474c0a2c56d814424ec987d6408496f5b22a4069dad7700175a82fc7653142",
+        "control/arena_smoke_summary.py": "0f0dc6fbe28cdb17fdfc7b1bb3be6c22dc6486b235d3603b5a69c56bcfb326d2",
+        "control/arena_suggest_workers.py": "19130f4b311a177b5bb55511dfdc99f05d537f02602a98cc2495e50677eb58b2",
+        "control/arena_trim.py": "85e5972b74b6994ea128e332add745e3af56b32cdcb505159a9c514b00f426e0",
+        "control/arena_tune.py": "1f9ef7923d98f23a6e8fd3bed1940959db9610e419b3fa6e5f67202afa5b8348",
+        "control/arena_tune_repro.py": "c3dfb87752b29f998108372ed19a843eead6dc9d5482271a80a0fd142d41a454",
+        "control/arena_tuning_candidates.py": "bcfc9d71090de3f9dfdda8ce44f97c07597aaadd0a26376c466d6aab27327b9e",
+        "control/arena_tuning_path_check.py": "e575c40617b9f2507d370094e673403697a5f768928305a927abd1ecb2c3f5bd",
+        "control/arena_tuning_report.py": "6e1568d0f6fc8be61ee8280c4a2093a72207ce0d4d35f9fdc649a23c22ca0a36",
+        "control/battery.py": "2cf4f4bed3f761f7c2cbc3d010a500970e260e2e7f539746628e2275784670ee",
+        "control/bench_acados.py": "5a62d0c11aaa21c708b950d814c340e5ede1ebd4e20def954fc12180c5dee1f6",
+        "control/bench_compute.py": "fbbd28df436cd9736d7727c7292d209ac0bbd48a945388ac8d3dc36b65a61499",
+        "control/controller.py": "a2d9bbc362414c49ad112ce0d2ed5dcc14faa3d64f8be0b2f64872cc2446c99b",
+        "control/derive_vl_vh.py": "2d28f20d81914486d22faaede44f59b56905ccb669e1bb9270de72d762d583f9",
+        "control/dynamics.py": "839054bce880491952e5fc112b2eda5ccb768cf57d980d695d2335e8f3b41794",
+        "control/dynamics_hifi.py": "a407ba9a8fbf88959e0d03e9c721db5f660ebaaba7dd761c93d642ac9bff27b2",
+        "control/ekf_comparison.py": "c8c36f85a608fcc171238e1d84fddc23faa4390df2b8a5e6153b2942c0edfecc",
+        "control/ekf_sim.py": "330ef15ce2f63b93edfc0ae6d05e04c3e7648a49ffec034ff53e62836bbf641d",
+        "control/estimator.py": "3db05205b6458af3c549822d785ed2cda4137097284971e7476e9d6866273752",
+        "control/fair_compare.py": "8b606cbdf1d5994114f18fe885e6ab1697376d5c1b347124b278ea18d6c4224a",
+        "control/fallback_controller.py": "33e13bfbcb1e5ed9e8caf5fa1b64eedf83d8bef59e2c6834994ae29d97282d55",
+        "control/final_config_mission.py": "0963c423d6e3085175c677553e2b8520b04bc7ae3b936ae0a5fa25a46602bac2",
+        "control/flight_envelope.py": "d4e914bc1ae65f0c4ec2eac21bf3c7d13304c304b22d18745101518c345ae06c",
+        "control/gindi.py": "8fabbdfc2e72175cbbe5daca72cc8b6f3e30afeb447ced79bb3e14cfb794c018",
+        "control/gust_comparison.py": "d828eaebff80f7ee8f62f3fa674f87ae2280e42296f046c340e268ee927a1f45",
+        "control/hybrid_comparison.py": "23a4ee7c6c96fc279e37f098f17c08494ddb554dc48a8dccbf3d8fb37a3b694b",
+        "control/joint_consistency_check.py": "8633bd38eb4ece99b63d3ca880e8b551a8e3280ebfa1e8c3826427f2fe3a045a",
+        "control/joint_fusion_experiment.py": "f046bf114e86e84bb286a010f5587e373635b9405463b1f4b90f6a9185a2a858",
+        "control/kh_adapter.py": "20c861f7d09a1eaf1635da369a29c72b60204e1459b9ab21c79b477a99ace8c8",
+        "control/kh_discriminate_scenario_vs_warmstart.py": "e87c7da6d87336c8ede19bf534cea5bb6901e7243496fae98c39724800c5f2b6",
+        "control/kh_mission_repro.py": "3013d33642d5e935cd14946e2a27a864cf0ffc40e2a8de96092e129e0f873d54",
+        "control/kh_repro.py": "999351cd9b1cd14f14325efef835dce0dab9ccef0ed22d65499863d39354d0dd",
+        "control/kh_timing_severity_compare.py": "2a4463ba4d1bbf998480749b03fccdb7d2b47ed4a590b4bb7c61c1ba59d2804b",
+        "control/main_distributed.py": "c40d390eba5c642ef438d6e8fd4fef042d54165ecea3a006b7fdc43659befd0e",
+        "control/main_experiment.py": "01733400dbb31322ee2fc8e6d9967d980fb44e9e646e67a3b15f5754529b8f9e",
+        "control/mission_profiles.py": "e281edb2fffbbd7410c18d154a275b08faaddaf5de9680fcb71474e3fbc1c3a2",
+        "control/mission_sim.py": "e969484f274f4593a60f07583f293627a97f42836de46bdf666cbe98cd8bd202",
+        "control/moment_correction.py": "c8ae5a3f35d1c73b95fe89526aafe81b43b55eedeee2111a696e5fb68999180f",
+        "control/navigation_grid_campaign.py": "3444c9e5568eff83c8900f5f23aa2b5b0d6dbef90df2c2dfe88cdc17936d935a",
+        "control/navigation_update_experiment.py": "0eba641aabe77e727c250141a9609af93d2bfaaa5fc3dbd2f0e4379daaf6f2ff",
+        "control/navigation_update_report.py": "4d51adff3906a1b6b941cb15e11f61e429ab61512152a967d77fbb189519c02e",
+        "control/night_current_diag.py": "6a299faa437d414ce43daf930a1fe146c9d2dd5ccf24066128a2bf124e9e033b",
+        "control/night_hifi_branch.py": "2e94abf4c6d37b71ddf2025f9692996f29c7c34a86b7af4baf0d0bcbe4a5cbc1",
+        "control/night_perturbation_robustness.py": "ee981a9df4510c59fd9383873bf1349147a3f544f90e4811ad8b12503a459fef",
+        "control/nmpc.py": "04f7b216f74fcb7203459b8cf6e94f0410986a88821163cb642226dff80b98f9",
+        "control/nmpc_common.py": "a91e518c390c9a9f41818b7ef6e148ee9eb3eae0b65d008d5b6a7996322981fe",
+        "control/nmpc_f13.py": "907cf4b3ca2f62561b11be5128ef94b43520cda078249c66fbfac6b56ae0788f",
+        "control/pilot_before_after.py": "7612a78de50d61799daf4f942253788333cee245029251eababb43c15e7198fc",
+        "control/plot_plant_validation.py": "9882944b68877844d6839f4fb06da15d91398e327dcf577e3b081af104310fab",
+        "control/plot_proposal_figures.py": "c60b40c4747c9da2d67b4c81bd29b27bf138c6084ebf69b5fccf35276d8f720e",
+        "control/preflight_calibration_experiment.py": "ba791484b297eb3aa4ef001cecc5db8e1b0772911b88028670c9460fc09b74f8",
+        "control/preflight_calibration_report.py": "42848eb9fbfb797601d85ae1698b1b17f9b0643372158cea677213cc593f2b8d",
+        "control/robustness_crosswind.py": "4d687a8f41e9c7989035fd4717d848e26122ce23ebf52771362afbfaf6f42e12",
+        "control/rotor_estimator.py": "21d8fea07ebf1d2a4c8577d5c572097fc6c6431493fbb5d000696e8d4ceae85b",
+        "control/sensor_binding.py": "127919424449b66d315385b53c87b4e42889129ed8b75148bf5834efd69bca24",
+        "control/sensor_campaign.py": "66df568e1582535dc7c139395290ce42f8d6a860e988769475cd7d7d6b51271b",
+        "control/sensor_campaign_report.py": "f79d814db6bdaf5553c005ba681297a386dd91465f554f5f797965c524037f5b",
+        "control/sensor_controller_screen.py": "83f68cc109e97577a2e9b260478628814251b2f85f88b4e7810209deb6f3552d",
+        "control/sensor_feedback_ablation.py": "5b018a5a6623cc8ee289fd6291ab23230a931dfcc5a7c25052199759360ef36a",
+        "control/sensor_feedback_diagnostics.py": "b1d392188cded2620c239af3fe05eb0a6d810ddc9570f0b4aee1043dd1ecfe37",
+        "control/sensor_filter_experiment.py": "181be054c08e41855925fa17b3141d3fc8124162889f84d008f4cf5ed355acca",
+        "control/sensor_filter_report.py": "e6e7751d1086fa0e69202904aa44d5042c820a14754ffd1dd00024244e62f568",
+        "control/sensor_matching_screen.py": "2f774fca530a294ec58a7419cc6113a2b28753f8c11eaab76046ee69cd6ed0fb",
+        "control/sensor_screen_report.py": "c4e2e3854aaed58543698fa0f4f0262183d6579b3dc6f8369e9f6859df6a3569",
+        "control/sensors.py": "099cacd00af5a465a674a3aba6dd37145c28d7e053cf176356516dffffbb8551",
+        "control/timing_study.py": "7497fd527c4af2a01972cd920b41b1d303c0fd07157eac0eae1374b7aafd26a1",
+        "control/trim.py": "10f88429fb4929dae34a50eb6ad3502235d229da6039e28c3004acc80e4857eb",
+        "control/trim_hifi.py": "cb7657477e8699ac3afaf0fab7f241c6cc687f1323738d87714e19eca0217aad",
+        "control/tuning_analysis.py": "d12d35da604655efdcaad1f5044146abef1d81267c6a98f719f77324085ab5f9",
+        "control/tuning_carryover.py": "29ea9eacaa493b01bace0236b2dbbe7e4698c081249c2829b56775caf8638aa4",
+        "control/tuning_extension.py": "c430f8179644078ba7c49093dd7dee46059622c5b945fc443210069091e9da73",
+        "control/uncertainty.py": "18061ba57f3fd3bbf68387e74361bbc79ffe0b907daf4a342ed03b664a921569",
+        "control/validation_metrics.py": "3b084c2fc36586b7b17e1677e7a7c1dbf56c03af13bd46c15994d6d6bd53ec62",
+        "control/validation_suite.py": "3b8c101e1a76f83c48e1fcc52fc41e4acee7c84ee36f536f7a0d37176c872689",
+        "control/vehicle_params.py": "f4ee0e03e1b00d8e4751feb47c506987ad3370c49d8a1202a77f40c807c4ffde",
+        "control/vnmpc_acados.py": "606fe3731d1e4c32738983bd8d939067505091a885e28a6e82640479aa9bf2ae",
+        "models/team_light/control/__init__.py": "0448f8dad13aac955a70724ea443c4e60e5c32d83144e6c662f7bcf6cbfdd766",
+        "models/team_light/control/airframe.py": "52050c1c49d871a33a811ca34ea5678f809c23254251ee3ef190b50e2b9ae4f6",
+        "models/team_light/control/analyze_baseline_log.py": "0555e41776af1ff172849ed51ec48382993a4d2e4991c33937cbb159a54501c8",
+        "models/team_light/control/baseline_v2.py": "bd991756926583ad50413f0173480043a3489288721333abba83272b7abbdcbd",
+        "models/team_light/control/comparison_nmpc.py": "a9480449ba2deb9167610975d714c7c6d09d8c5f2a9b26b8cc68c6dd0e61e782",
+        "models/team_light/control/controller.py": "e2b9dac4a34fddfad35787dc26ad286de36ea54bd30b89a61203d95cf559209d",
+        "models/team_light/control/curve_authority.py": "e06ca891b0f4b25c25739e10955d94e4ebc9bea8e135fa6434ec290a7575a106",
+        "models/team_light/control/dynamics.py": "c7c63c389552f7299a666a34d6fa7db161480fde33bbe79c77f4cc3a06ca88e8",
+        "models/team_light/control/geometry.py": "564bc71a9a9e00c4254b4ba512cab6cfe6715a0aa7a0ee7222b7cfd9e6967a5a",
+        "models/team_light/control/hybrid_comparison.py": "80d5d594cf407a6ddf46acba47fa1d5abb10f9d0509fc7667f6cd159ddba8213",
+        "models/team_light/control/light_aero.py": "87914e522aed5e1ef13ad9591dc7a25366b0d970d1ee0cefcb29889b74da66ce",
+        "models/team_light/control/light_rocket_curve.py": "29a9f21673a7b625f6d36e2a307b2ff552aba56e33aebdbcb467972288680aa0",
+        "models/team_light/control/mission_sim.py": "c4407841f3ce38abe7d20d807a247280b6bef8518cd466a13fab389a4cb1b421",
+        "models/team_light/control/propeller_curve.py": "1e118de4a3713538d067cc3962830cfb7548d04d7045e861d2550f5ac8c2e228",
+        "models/team_light/control/run_baseline_comparison.py": "abfb5bd00a1a2332a8223588d65303a9b5850d20e027e99964a09ab66c1a41db",
+        "models/team_light/control/serialization.py": "cef1131c212c58aa00f1364afbf228d8ab9dc4bbc02c7356011a83d0a14448b6",
+        "models/team_light/control/trim.py": "01406db0ecdeb449458d8ad620906c564fbce5c3a15c408efbd7c648c2f58caa",
+        "models/team_light/control/validate_model.py": "a36593f9fcc5480b276271825ffe5b423bc5ae6faecf421d92f87942dfb4270a",
+        "models/team_light/control/vehicle_params.py": "06eff0a08f33c865c211f0db4ad3c6ef5cd2101141ba02c27313c0bb24c3ca77"
+      }
+    },
+    {
+      "source": "results/navigation_startup_v10/gnss/experiment.json",
+      "schema": "sensor_matching_screen/1",
+      "stage": "DEVELOPMENT",
+      "base_config": {
+        "schema": "arena/1",
+        "purpose": "Fair, reproducible arena for V13/M17/F13/GSLQR/CPID on the pinned team aircraft. SMOKE/PILOT runs only; no superiority claims.",
+        "confirmed": {
+          "source": "kj work order 2026-09-25 section 1 + decisions in this session",
+          "vehicle_profile_id": "light_rocket_v2_pack_forward",
+          "vehicle_mass_kg": 1.17407572,
+          "repository": "protkjj/fast-drone",
+          "base_branch": "control",
+          "plant": "team distributed aero + APC Ct/Cp PCHIP (models.team_light)",
+          "controller_model": "lumped-parameter fit (control.kh_adapter.build_controller_params)",
+          "mission_phases_s": [
+            3.0,
+            15.0,
+            15.0,
+            15.0,
+            7.0
+          ],
+          "mission_takeoff": false,
+          "mission_disturbance": false,
+          "gust_wind_reference": "absolute",
+          "gust_start": "common_trim_cruise",
+          "V_L_m_s": 20.0,
+          "V_H_m_s": 85.0
+        },
+        "vehicle": {
+          "profile_id": "light_rocket_v2_pack_forward",
+          "mass_kg": 1.17407572,
+          "parameter_sha256": "13a1dcc6332987eba93ea4653f4d6087741d1ac085701982ed94c22e6658c807"
+        },
+        "plant": {
+          "class": "models.team_light.control.dynamics.AxialDronePlant",
+          "dt_s": 0.002
+        },
+        "controller_model": {
+          "builder": "control.kh_adapter.build_controller_params",
+          "hover_convention": "plant",
+          "moment_correction": {
+            "file": "configs/controller_moment_model.json",
+            "sha256": "a8f49d3f546ac6d0ba03127ddcb5d4524763718e1966dda8bbb74632e6b02ae6",
+            "applies_to": [
+              "M17",
+              "F13",
+              "GSLQR"
+            ],
+            "note": "\ud2b8\ub9bc \ubc16 \ud53c\uce58\u00b7\uc694 \ubaa8\uba58\ud2b8 \ubcf4\uc815(control/moment_correction.py, \ubcf4\uace0\uc11c 23\uc808). M17 \uc608\uce21, F13 \uc608\uce21\u00b7\ub0b4\ubd80 \ub8e8\ud504, GSLQR \uc120\ud615\ud654\uc5d0\ub9cc \uc801\uc6a9. \uba85\ubaa9 \ud2b8\ub9bc\u00b7\uac00\uc6a9 \uac00\uc18d\ub3c4(a_avail)\u00b7V13\u00b7CPID\ub294 \uae30\uc874 \ubaa8\ub378 \uadf8\ub300\ub85c \u2014 a_avail\uc740 \uae30\uc874 \ubaa8\ub378\ub85c \uacc4\uc0b0\ud558\ub294 \uace0\uc815\ub41c \uc815\uc758\ub2e4(\ud29c\ub2dd \uc2dc\ub098\ub9ac\uc624\uc640 \uac19\uc740 \uc815\uc758 \uc720\uc9c0). \uc774 \uc808 \ub9d0\uace0\ub294 arena.json\uacfc \uac19\uc544\uc57c \ud55c\ub2e4(\uc2dc\ud5d8)."
+          }
+        },
+        "speeds_m_s": {
+          "V_L": 20.0,
+          "V_H": 85.0
+        },
+        "altitude_m": 20.0,
+        "preview_horizon_s": 1.0,
+        "nmpc_common": {
+          "N": 20,
+          "dt_pred_s": 0.05,
+          "dt_ctrl_s": 0.02,
+          "max_iter": 30,
+          "tol": 0.0001,
+          "Q_z": 20.0,
+          "cost_spec": "paper",
+          "warm_start": "measured_state_and_controller_trim_input",
+          "soft_constraints": {}
+        },
+        "controllers": {
+          "V13": {
+            "kind": "V13",
+            "alloc_mode": "A1",
+            "alloc_feedback": true,
+            "time_align": "S1"
+          },
+          "M17": {
+            "kind": "M17",
+            "rotor_floor": "positive_thrust"
+          },
+          "F13": {
+            "kind": "F13",
+            "alloc_mode": "A0",
+            "time_align": "S0"
+          },
+          "GSLQR": {
+            "kind": "GSLQR",
+            "gains": "configs/gains/gslqr.json",
+            "V_table_m_s": [
+              0,
+              5,
+              10,
+              15,
+              20,
+              25,
+              30,
+              35,
+              40,
+              45,
+              50,
+              55,
+              60,
+              65,
+              70,
+              75,
+              80,
+              85
+            ],
+            "trim_substep_m_s": 1.0,
+            "reference_feedforward": "window_acceleration"
+          },
+          "CPID": {
+            "kind": "CPID",
+            "gains": "configs/gains/cpid.json",
+            "design_region_m_s": [
+              0,
+              20
+            ],
+            "integrator_preload": "controller_model_trim",
+            "reference_feedforward": "window_acceleration"
+          }
+        },
+        "seeds": {
+          "main": [
+            1000,
+            1999
+          ],
+          "tuning": [
+            2000,
+            2999
+          ]
+        },
+        "tuning": {
+          "label": "PILOT",
+          "budget": 120,
+          "search": {
+            "method": "compass_log_multiplier",
+            "initial_step": 2.0,
+            "min_step": 1.05
+          },
+          "objective": {
+            "metric": "window_rmse_velocity + window_rmse_z",
+            "failure": "stop_reason or paper_failed",
+            "failure_penalty": 1000.0
+          },
+          "parameters": {
+            "NMPC": [
+              "w_v",
+              "Q_z",
+              "w_omega",
+              "r_dev",
+              "r_rate",
+              "terminal"
+            ],
+            "GSLQR": [
+              "q_z",
+              "q_v_h",
+              "q_v_z",
+              "q_phi",
+              "q_omega",
+              "q_n",
+              "r",
+              "q_iz",
+              "q_ivx"
+            ],
+            "CPID": [
+              "Kp_vel",
+              "Ki_vel",
+              "Kp_z",
+              "Kd_z",
+              "Ki_z",
+              "Kp_att",
+              "Kd_att"
+            ]
+          },
+          "scenario_design_note": "kj \uacb0\uc815(2026-09-27): \uc61b \uc9d1\ud569(\uc704 \uc774\ub825)\uc740 \uc81c\uc5b4\uae30 \uacb0\uacfc\ub85c \uc800\uc18d \uc0ac\ub840\ub97c \uace8\ub77c \ubcf8\uc2dc\ud5d8\ubcf4\ub2e4 \uc57d\ud55c \ucabd\uc73c\ub85c \uce58\uc6b0\ucce4\ub2e4(ARENA_STATUS 12\uc808, \uc7ac\ubc1c \uc0ac\ub840 tuning-set-must-match-test-severity). \uc774 \uc9d1\ud569\uc740 \uc81c\uc5b4\uae30 \uacb0\uacfc\ub97c \ubcf4\uc9c0 \uc54a\uace0 \ubcf8\uc2dc\ud5d8 \uc2dc\ub098\ub9ac\uc624(\uc544\ub798 scenarios)\uc758 \ud06c\uae30\u00b7\uc18d\ub3c4\u00b7\u03c1\ub9cc\uc73c\ub85c \uc815\ud588\ub2e4: \ub3cc\ud48d = \ubcf8\uc2dc\ud5d8 \ud53c\ud06c\uc758 0.7\ubc30\u00b71.3\ubc30 \uc591\ucabd \ubc29\ud5a5(\uce21\ud48d \u00b110 -> \u00b17/\u00b113, \uc218\uc9c1\ud48d \u22135 -> \u22133.5/\u22136.5), \uc18d\ub3c4 = V_L\u00b7V_H \uadfc\ucc98\uc9c0\ub9cc \uac19\uc9c0 \uc54a\uc740 \uac12(14\u00b726\u00b775\u00b782), \uae30\ub3d9 = \uc81c\ub3d9 1\uac1c + \u03c1 0.8\u00b71.2. \ubcf8\uc2dc\ud5d8 id\u00b7\uc18d\ub3c4\u00b7\u03c1\uc640 \uacb9\uce58\uc9c0 \uc54a\ub294\ub2e4(I-4). \uc81c\ub3d9 \ub05d\uc810(25, \ub2e4\uc12f\uc758 \ubc30\uc218)\uc740 \uba85\ubaa9 \uc81c\uc5b4\uae30 \ubaa8\ub378\uc758 available_acceleration\uc774 \uac10\uc18d \ubc29\ud5a5\uc5d0\uc11c\ub9cc 28\u00b732 m/s \uadfc\ucc98 \uc881\uc740 \uad6c\uac04\uc5d0\uc11c SLSQP \uc218\ub834\uc5d0 \uc2e4\ud328\ud558\ub294 \uac83\uc744 \ud53c\ud558\ub824\uace0 \uace0\ub978 \uac12\uc774\ub2e4(\uac00\uc18d \ubc29\ud5a5\uc740 0~85 \uc804 \uad6c\uac04 \uc2e4\ud328 \uc5c6\uc74c) \u2014 \ubb3c\ub9ac\uc801 \ud2b8\ub9bc \ubd88\uac00\uac00 \uc544\ub2c8\ub77c \uadf8 \uc9c0\uc810\ub4e4\ub9cc\uc758 \uad6d\uc18c \uc218\uce58 \ucde8\uc57d\uc810\uc73c\ub85c \ubcf4\uc774\ub098 \ud655\uc778\uc740 \ud558\uc9c0 \uc54a\uc558\ub2e4.",
+          "scenarios": [
+            {
+              "id": "tune2_gust_lateral_p7_V14",
+              "type": "gust",
+              "speed": 14.0,
+              "direction": "lateral",
+              "peak_m_s": 7.0,
+              "times_s": [
+                1.0,
+                1.0,
+                2.0
+              ]
+            },
+            {
+              "id": "tune2_gust_lateral_m13_V26",
+              "type": "gust",
+              "speed": 26.0,
+              "direction": "lateral",
+              "peak_m_s": -13.0,
+              "times_s": [
+                1.0,
+                1.0,
+                2.0
+              ]
+            },
+            {
+              "id": "tune2_gust_lateral_m7_V75",
+              "type": "gust",
+              "speed": 75.0,
+              "direction": "lateral",
+              "peak_m_s": -7.0,
+              "times_s": [
+                1.0,
+                1.0,
+                2.0
+              ]
+            },
+            {
+              "id": "tune2_gust_lateral_p13_V82",
+              "type": "gust",
+              "speed": 82.0,
+              "direction": "lateral",
+              "peak_m_s": 13.0,
+              "times_s": [
+                1.0,
+                1.0,
+                2.0
+              ]
+            },
+            {
+              "id": "tune2_gust_vertical_m3.5_V75",
+              "type": "gust",
+              "speed": 75.0,
+              "direction": "vertical",
+              "peak_m_s": -3.5,
+              "times_s": [
+                1.0,
+                1.0,
+                2.0
+              ]
+            },
+            {
+              "id": "tune2_gust_vertical_p6.5_V82",
+              "type": "gust",
+              "speed": 82.0,
+              "direction": "vertical",
+              "peak_m_s": 6.5,
+              "times_s": [
+                1.0,
+                1.0,
+                2.0
+              ]
+            },
+            {
+              "id": "tune2_gust_vertical_p3.5_V14",
+              "type": "gust",
+              "speed": 14.0,
+              "direction": "vertical",
+              "peak_m_s": 3.5,
+              "times_s": [
+                1.0,
+                1.0,
+                2.0
+              ]
+            },
+            {
+              "id": "tune2_gust_vertical_m6.5_V26",
+              "type": "gust",
+              "speed": 26.0,
+              "direction": "vertical",
+              "peak_m_s": -6.5,
+              "times_s": [
+                1.0,
+                1.0,
+                2.0
+              ]
+            },
+            {
+              "id": "tune2_ramp_accel_V17_70_rho0.8",
+              "type": "reference",
+              "from": 17.0,
+              "to": 70.0,
+              "rho": 0.8,
+              "lead_s": 0.5,
+              "tail_s": 1.0
+            },
+            {
+              "id": "tune2_ramp_brake_V80_25_rho1.2",
+              "type": "reference",
+              "from": 80.0,
+              "to": 25.0,
+              "rho": 1.2,
+              "lead_s": 0.5,
+              "tail_s": 1.0
+            },
+            {
+              "id": "tune3_step_altitude_p0.7_V0",
+              "type": "step",
+              "speed": 0.0,
+              "axis": "altitude",
+              "size": 0.7,
+              "durations_s": [
+                8.0
+              ]
+            },
+            {
+              "id": "tune3_step_altitude_p1.3_V0",
+              "type": "step",
+              "speed": 0.0,
+              "axis": "altitude",
+              "size": 1.3,
+              "durations_s": [
+                8.0
+              ]
+            },
+            {
+              "id": "tune3_step_altitude_p0.7_V14",
+              "type": "step",
+              "speed": 14.0,
+              "axis": "altitude",
+              "size": 0.7,
+              "durations_s": [
+                8.0
+              ]
+            },
+            {
+              "id": "tune3_step_altitude_p1.3_V14",
+              "type": "step",
+              "speed": 14.0,
+              "axis": "altitude",
+              "size": 1.3,
+              "durations_s": [
+                8.0
+              ]
+            },
+            {
+              "id": "tune3_step_speed_p0.7_V0",
+              "type": "step",
+              "speed": 0.0,
+              "axis": "speed",
+              "size": 0.7,
+              "durations_s": [
+                8.0
+              ]
+            },
+            {
+              "id": "tune3_step_speed_p1.3_V0",
+              "type": "step",
+              "speed": 0.0,
+              "axis": "speed",
+              "size": 1.3,
+              "durations_s": [
+                8.0
+              ]
+            },
+            {
+              "id": "tune3_step_speed_p0.7_V14",
+              "type": "step",
+              "speed": 14.0,
+              "axis": "speed",
+              "size": 0.7,
+              "durations_s": [
+                8.0
+              ]
+            },
+            {
+              "id": "tune3_step_speed_p1.3_V14",
+              "type": "step",
+              "speed": 14.0,
+              "axis": "speed",
+              "size": 1.3,
+              "durations_s": [
+                8.0
+              ]
+            }
+          ],
+          "scenario_design_note_2": "kj \uacb0\uc815(2026-09-27 \uc800\ub141): \uaddc\uce59\uc744 '\ubcf8\uc2dc\ud5d8\uc744 \uac10\uc2fc\ub2e4'\uc5d0\uc11c '\ubaa8\ub4e0 \ud3c9\uac00 \ucd95(\ubcf8\uc2dc\ud5d8 + \uc124\uacc4\uc810\uac80)\uc744 \uac10\uc2fc\ub2e4'\ub85c \ub113\ud78c\ub2e4. CPID \uace0\ub3c4-\uacc4\ub2e8\uc774 \uc124\uacc4 \uc601\uc5ed 0\u00b710\u00b720 m/s \uc804\ubd80 \uc815\ucc29 \uc2e4\ud328(Kd_z 2\u219264)\ud588\ub294\ub370, tune2_* 10\uac1c \uc911 \uc21c\uc218 \uace0\ub3c4-\ucd94\uc885(\uc0c8 z \ubaa9\ud45c\ub85c \uc774\ub3d9) \uc2e0\ud638\uac00 \ud558\ub098\ub3c4 \uc5c6\uc5b4\uc11c\uc600\ub2e4(\uc218\uc9c1\ud48d\uc740 \ud2b8\ub9bc \ubcf5\uadc0 \uc2e0\ud638\ub77c \ubc18\ub300 \uc555\ub825\uc744 \uc900\ub2e4). tune3_step_* 8\uac1c\ub97c \ucd94\uac00: \uc124\uacc4\uc810\uac80\uc758 \ub9e4\ub044\ub7ec\uc6b4 \uace0\ub3c4\u00b7\uc18d\ub3c4 \uacc4\ub2e8\uc744 \ud06c\uae30 0.7\ubc30\u00b71.3\ubc30\ub85c, \ud638\ubc84(V0)\uc640 V_L \uadfc\ucc98(V14, \uc774\ubbf8 tune2\uc5d0\uc11c \uc4f0\ub294 \uc810)\uc5d0\uc11c. \uc124\uacc4\uc810\uac80 \uc790\uccb4\uc758 \uc815\ud655\ud55c \uc870\uac74(\uc18d\ub3c4 0\u00b710\u00b720\u00b740\u00b760\u00b785, \ud06c\uae30 \u00b11)\uacfc\ub294 \uc548 \uacb9\uce5c\ub2e4. \uc81c\uc5b4\uae30 \uacb0\uacfc\ub97c \uc548 \ubcf4\uace0 \uc815\ud588\ub2e4(\uc18d\ub3c4\u00b7\ud06c\uae30\u00b7\uad00\ucc30\uc2dc\uac04 8s\ub9cc \uace0\ub984).",
+          "superseded_scenarios_2026-09-26": "\uc61b \uc9d1\ud569(tune_*, 8\uac1c, \uc800\uc18d 3\uac1c\ub294 8.3\uc808 '\uc2e4\ud328 \uc5c6\ub294 \uc0ac\ub840\ub9cc' \uaddc\uce59\uc73c\ub85c \uc120\uc815) \u2014 results/arena/tuning/main120 \uc804\uccb4\uc640 \ud568\uaed8 superseded. tune_gust_vertical_p3_V20\uc740 \ubcf8\uc2dc\ud5d8 V_L=20\uc744 \uadf8\ub300\ub85c \uc7ac\uc0ac\uc6a9\ud55c \uacb0\ud568\ub3c4 \uc788\uc5c8\ub2e4."
+        },
+        "reporting": {
+          "integrator_at_limit_fraction": 0.01
+        },
+        "acceptance": {
+          "max_z_error": 10.0,
+          "max_velocity_error": 15.0,
+          "max_omega": 35.0,
+          "sustained_omega": 25.0,
+          "sustained_seconds": 0.2,
+          "recovery_z": 0.5,
+          "recovery_velocity": 0.5,
+          "recovery_omega": 1.0,
+          "recovery_hold": 0.5
+        },
+        "paper_criteria": {
+          "z_error": 5.0,
+          "z_error_seconds": 0.5,
+          "omega": 20.0,
+          "omega_seconds": 0.1,
+          "cruise_velocity_floor": 5.0,
+          "cruise_velocity_fraction": 0.25,
+          "cruise_velocity_seconds": 2.0,
+          "consecutive_solver_failures": 3,
+          "recovery_z": 0.5,
+          "recovery_velocity_floor": 0.5,
+          "recovery_velocity_fraction": 0.05,
+          "recovery_hold": 1.0
+        },
+        "scenarios": [
+          {
+            "id": "mission_VH",
+            "type": "mission",
+            "speed": "V_H",
+            "durations_s": [
+              3.0,
+              15.0,
+              15.0,
+              15.0,
+              7.0
+            ],
+            "evaluation_start_s": 3.0
+          },
+          {
+            "id": "gust_lateral_p10_VH",
+            "type": "gust",
+            "speed": "V_H",
+            "direction": "lateral",
+            "peak_m_s": 10.0,
+            "times_s": [
+              3.0,
+              2.0,
+              7.0
+            ]
+          },
+          {
+            "id": "gust_vertical_m5_VH",
+            "type": "gust",
+            "speed": "V_H",
+            "direction": "vertical",
+            "peak_m_s": -5.0,
+            "times_s": [
+              3.0,
+              2.0,
+              7.0
+            ]
+          },
+          {
+            "id": "ref_accel_0_VH_rho1",
+            "type": "reference",
+            "from": 0.0,
+            "to": "V_H",
+            "rho": 1.0,
+            "lead_s": 3.0,
+            "tail_s": 5.0
+          },
+          {
+            "id": "ref_brake_VH_VL_rho1",
+            "type": "reference",
+            "from": "V_H",
+            "to": "V_L",
+            "rho": 1.0,
+            "lead_s": 3.0,
+            "tail_s": 5.0
+          },
+          {
+            "id": "mission_VH_mass1.3",
+            "type": "mission",
+            "speed": "V_H",
+            "durations_s": [
+              3.0,
+              15.0,
+              15.0,
+              15.0,
+              7.0
+            ],
+            "evaluation_start_s": 3.0,
+            "perturbation": {
+              "mass": 1.3
+            }
+          },
+          {
+            "id": "mission_VH_tau2",
+            "type": "mission",
+            "speed": "V_H",
+            "durations_s": [
+              3.0,
+              15.0,
+              15.0,
+              15.0,
+              7.0
+            ],
+            "evaluation_start_s": 3.0,
+            "perturbation": {
+              "motor_tau": 2.0
+            }
+          },
+          {
+            "id": "gust_lateral_p10_VL",
+            "type": "gust",
+            "speed": "V_L",
+            "direction": "lateral",
+            "peak_m_s": 10.0,
+            "times_s": [
+              3.0,
+              2.0,
+              7.0
+            ]
+          },
+          {
+            "id": "gust_vertical_m5_VL",
+            "type": "gust",
+            "speed": "V_L",
+            "direction": "vertical",
+            "peak_m_s": -5.0,
+            "times_s": [
+              3.0,
+              2.0,
+              7.0
+            ]
+          }
+        ],
+        "sensor_feedback": {
+          "schema": "sensor_feedback/1",
+          "mode": "sensors",
+          "seed": 3,
+          "profile": {
+            "schema": "sensor/1",
+            "name": "nav_startup_gnss_only",
+            "imu": {
+              "rate_hz": 500.0,
+              "accel_noise_density": 0.0,
+              "gyro_noise_density": 0.0,
+              "accel_bias": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "gyro_bias": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "accel_bias_rw": 0.0,
+              "gyro_bias_rw": 0.0,
+              "latency_s": 0.0,
+              "dropout_prob": 0.0,
+              "accel_clip": 100.0,
+              "gyro_clip": 50.0
+            },
+            "gnss": {
+              "rate_hz": 10.0,
+              "pos_sigma": 0.8,
+              "vel_sigma": 0.15,
+              "pos_bias": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "vel_bias": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "latency_s": 0.12,
+              "dropout_prob": 0.0,
+              "outage_windows": []
+            },
+            "barometer": {
+              "enabled": true,
+              "rate_hz": 50.0,
+              "sigma": 0.0,
+              "bias": 0.0,
+              "latency_s": 0.0,
+              "dropout_prob": 0.0
+            },
+            "magnetometer": {
+              "enabled": true,
+              "rate_hz": 100.0,
+              "sigma": 0.0,
+              "world_field": [
+                20.0,
+                0.0,
+                40.0
+              ],
+              "bias": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "latency_s": 0.0,
+              "dropout_prob": 0.0
+            },
+            "rpm": {
+              "enabled": true,
+              "rate_hz": 500.0,
+              "sigma": 0.0,
+              "bias": [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "latency_s": 0.0,
+              "dropout_prob": 0.0
+            },
+            "estimator": {
+              "history_s": 2.0,
+              "gnss_pos_sigma": 0.8,
+              "gnss_vel_sigma": 0.15,
+              "baro_sigma": 0.25,
+              "mag_sigma": 0.04,
+              "initial_position_sigma": 0.5,
+              "initial_velocity_sigma": 0.2,
+              "initial_attitude_deg": 1.0,
+              "estimate_baro_bias": true,
+              "baro_bias_tau_s": 1.0,
+              "baro_gnss_max_age_s": 0.25,
+              "initialize_baro_bias": true,
+              "preflight_baro_samples": 100,
+              "trace_updates": false,
+              "preflight_baro_rng": "independent",
+              "kind": "joint_baro",
+              "baro_bias_rw_density_m_sqrt_s": 0.03,
+              "accel_noise_density": 0.03,
+              "gyro_noise_density": 0.002,
+              "accel_bias_rw_density": 0.0002,
+              "gyro_bias_rw_density": 2e-05,
+              "preflight_baro_sigma_m": 0.25
+            },
+            "rotor_observer": {
+              "source": "telemetry",
+              "tau_s": 1e-06
+            }
+          }
+        }
+      },
+      "base_config_sha256": "9dd830d611db479a4199a6049646f626fc14397471cb0bed70def9683f7ed767",
+      "controllers": [
+        "V13"
+      ],
+      "seeds": [
+        3
+      ],
+      "variants": [
+        "baseline"
+      ],
+      "faults": [
+        "nominal"
+      ],
+      "cases": [
+        "gust_lateral_p10_VL"
+      ],
+      "timeout_s": 900.0,
+      "runtime_source_sha256": {
+        "control/__init__.py": "4442b0651dd775b6aed0b5216a778ed3bc19f2e98be79dd5fd525a963285cb9c",
+        "control/acados_fallback_mc.py": "844f72c9d6e76d7143fb2ad4eb95608c75c469f051958e0fa61677e267d982ae",
+        "control/arena.py": "bad57298c5d095d689ca036ade7c89c0cfee5970d5d253b2b0a911214f99ff25",
+        "control/arena_design_check.py": "9cbed9eb3c7a55fc3a85d20d20f032855b8c7cb9cde5ef9a11923376600644e7",
+        "control/arena_dt_convergence.py": "ad73e2738e48c59a038048c014e13f8aa69622416b1f4d1734cf4d188b9ba300",
+        "control/arena_estimator.py": "583201c781336d1150e87e970ca1b10b551ee912c235066ca2d573c301d3ec9b",
+        "control/arena_factory.py": "b2ae950cd1b17ca4afd7b6726ccb9ef4c20e3ae49680fe48cb0b1390321cc2de",
+        "control/arena_feedback.py": "2034ee659adabe72937e11a9bb5eb0c1cfbd1f3da20956eee32e16afce1cda32",
+        "control/arena_feedforward_check.py": "b427db6335002662194e10d0c8b30648856bcbffba45040bd36531af3bdb5c2c",
+        "control/arena_integrators.py": "8ce6980f69bcf6a0753a266a1894eb91cc5e1b0e377c12b6d8bc132d243b6cbb",
+        "control/arena_joint_estimator.py": "51357b402b21082785d47a2d0d7fe75a16d26c91a0bcd54a5923a06624466787",
+        "control/arena_m17_diagnosis.py": "91a6e8a1bd263529e011028dab41e8c841c8dc28061f3f3c3455121e287247e4",
+        "control/arena_m17_floor_variants.py": "096905fbaeb6d3966631cf5b661b5c209835f0a042522e75459892a5cb672f82",
+        "control/arena_m17_probe.py": "9fe2760261b8d2c42fe4909b9c06cfcbd3c515eb59d433d7ff96009c8dd8b63a",
+        "control/arena_mission_rho.py": "887617104097ef49a4eac69bbf0c9c9fc6f9191eff407acb4f86131e9113163c",
+        "control/arena_model_mismatch.py": "c5c3f63fed0c2f077bf3469c7e7979b1832fb8f6912f226f5302513e147a81cd",
+        "control/arena_observation_delay.py": "7fa1d405cee463f7187bb3b9e52141a2be4a77888ca294366f102df95a42ea2c",
+        "control/arena_plant_wrench.py": "14c15af56dd29c41f0bb6fb4aecff0e026a88a7ee85adbce7554515ede4d851f",
+        "control/arena_reference_merge.py": "ce038c9ecad2f852b9973cd3ae05aa9ca393f43e13abc18881a7cf1fb7371b61",
+        "control/arena_sensors.py": "d8474c0a2c56d814424ec987d6408496f5b22a4069dad7700175a82fc7653142",
+        "control/arena_smoke_summary.py": "0f0dc6fbe28cdb17fdfc7b1bb3be6c22dc6486b235d3603b5a69c56bcfb326d2",
+        "control/arena_suggest_workers.py": "19130f4b311a177b5bb55511dfdc99f05d537f02602a98cc2495e50677eb58b2",
+        "control/arena_trim.py": "85e5972b74b6994ea128e332add745e3af56b32cdcb505159a9c514b00f426e0",
+        "control/arena_tune.py": "1f9ef7923d98f23a6e8fd3bed1940959db9610e419b3fa6e5f67202afa5b8348",
+        "control/arena_tune_repro.py": "c3dfb87752b29f998108372ed19a843eead6dc9d5482271a80a0fd142d41a454",
+        "control/arena_tuning_candidates.py": "bcfc9d71090de3f9dfdda8ce44f97c07597aaadd0a26376c466d6aab27327b9e",
+        "control/arena_tuning_path_check.py": "e575c40617b9f2507d370094e673403697a5f768928305a927abd1ecb2c3f5bd",
+        "control/arena_tuning_report.py": "6e1568d0f6fc8be61ee8280c4a2093a72207ce0d4d35f9fdc649a23c22ca0a36",
+        "control/battery.py": "2cf4f4bed3f761f7c2cbc3d010a500970e260e2e7f539746628e2275784670ee",
+        "control/bench_acados.py": "5a62d0c11aaa21c708b950d814c340e5ede1ebd4e20def954fc12180c5dee1f6",
+        "control/bench_compute.py": "fbbd28df436cd9736d7727c7292d209ac0bbd48a945388ac8d3dc36b65a61499",
+        "control/controller.py": "a2d9bbc362414c49ad112ce0d2ed5dcc14faa3d64f8be0b2f64872cc2446c99b",
+        "control/derive_vl_vh.py": "2d28f20d81914486d22faaede44f59b56905ccb669e1bb9270de72d762d583f9",
+        "control/dynamics.py": "839054bce880491952e5fc112b2eda5ccb768cf57d980d695d2335e8f3b41794",
+        "control/dynamics_hifi.py": "a407ba9a8fbf88959e0d03e9c721db5f660ebaaba7dd761c93d642ac9bff27b2",
+        "control/ekf_comparison.py": "c8c36f85a608fcc171238e1d84fddc23faa4390df2b8a5e6153b2942c0edfecc",
+        "control/ekf_sim.py": "330ef15ce2f63b93edfc0ae6d05e04c3e7648a49ffec034ff53e62836bbf641d",
+        "control/estimator.py": "3db05205b6458af3c549822d785ed2cda4137097284971e7476e9d6866273752",
+        "control/fair_compare.py": "8b606cbdf1d5994114f18fe885e6ab1697376d5c1b347124b278ea18d6c4224a",
+        "control/fallback_controller.py": "33e13bfbcb1e5ed9e8caf5fa1b64eedf83d8bef59e2c6834994ae29d97282d55",
+        "control/final_config_mission.py": "0963c423d6e3085175c677553e2b8520b04bc7ae3b936ae0a5fa25a46602bac2",
+        "control/flight_envelope.py": "d4e914bc1ae65f0c4ec2eac21bf3c7d13304c304b22d18745101518c345ae06c",
+        "control/gindi.py": "8fabbdfc2e72175cbbe5daca72cc8b6f3e30afeb447ced79bb3e14cfb794c018",
+        "control/gust_comparison.py": "d828eaebff80f7ee8f62f3fa674f87ae2280e42296f046c340e268ee927a1f45",
+        "control/hybrid_comparison.py": "23a4ee7c6c96fc279e37f098f17c08494ddb554dc48a8dccbf3d8fb37a3b694b",
+        "control/joint_consistency_check.py": "8633bd38eb4ece99b63d3ca880e8b551a8e3280ebfa1e8c3826427f2fe3a045a",
+        "control/joint_fusion_experiment.py": "f046bf114e86e84bb286a010f5587e373635b9405463b1f4b90f6a9185a2a858",
+        "control/kh_adapter.py": "20c861f7d09a1eaf1635da369a29c72b60204e1459b9ab21c79b477a99ace8c8",
+        "control/kh_discriminate_scenario_vs_warmstart.py": "e87c7da6d87336c8ede19bf534cea5bb6901e7243496fae98c39724800c5f2b6",
+        "control/kh_mission_repro.py": "3013d33642d5e935cd14946e2a27a864cf0ffc40e2a8de96092e129e0f873d54",
+        "control/kh_repro.py": "999351cd9b1cd14f14325efef835dce0dab9ccef0ed22d65499863d39354d0dd",
+        "control/kh_timing_severity_compare.py": "2a4463ba4d1bbf998480749b03fccdb7d2b47ed4a590b4bb7c61c1ba59d2804b",
+        "control/main_distributed.py": "c40d390eba5c642ef438d6e8fd4fef042d54165ecea3a006b7fdc43659befd0e",
+        "control/main_experiment.py": "01733400dbb31322ee2fc8e6d9967d980fb44e9e646e67a3b15f5754529b8f9e",
+        "control/mission_profiles.py": "e281edb2fffbbd7410c18d154a275b08faaddaf5de9680fcb71474e3fbc1c3a2",
+        "control/mission_sim.py": "e969484f274f4593a60f07583f293627a97f42836de46bdf666cbe98cd8bd202",
+        "control/moment_correction.py": "c8ae5a3f35d1c73b95fe89526aafe81b43b55eedeee2111a696e5fb68999180f",
+        "control/navigation_grid_campaign.py": "3444c9e5568eff83c8900f5f23aa2b5b0d6dbef90df2c2dfe88cdc17936d935a",
+        "control/navigation_update_experiment.py": "0eba641aabe77e727c250141a9609af93d2bfaaa5fc3dbd2f0e4379daaf6f2ff",
+        "control/navigation_update_report.py": "4d51adff3906a1b6b941cb15e11f61e429ab61512152a967d77fbb189519c02e",
+        "control/night_current_diag.py": "6a299faa437d414ce43daf930a1fe146c9d2dd5ccf24066128a2bf124e9e033b",
+        "control/night_hifi_branch.py": "2e94abf4c6d37b71ddf2025f9692996f29c7c34a86b7af4baf0d0bcbe4a5cbc1",
+        "control/night_perturbation_robustness.py": "ee981a9df4510c59fd9383873bf1349147a3f544f90e4811ad8b12503a459fef",
+        "control/nmpc.py": "04f7b216f74fcb7203459b8cf6e94f0410986a88821163cb642226dff80b98f9",
+        "control/nmpc_common.py": "a91e518c390c9a9f41818b7ef6e148ee9eb3eae0b65d008d5b6a7996322981fe",
+        "control/nmpc_f13.py": "907cf4b3ca2f62561b11be5128ef94b43520cda078249c66fbfac6b56ae0788f",
+        "control/pilot_before_after.py": "7612a78de50d61799daf4f942253788333cee245029251eababb43c15e7198fc",
+        "control/plot_plant_validation.py": "9882944b68877844d6839f4fb06da15d91398e327dcf577e3b081af104310fab",
+        "control/plot_proposal_figures.py": "c60b40c4747c9da2d67b4c81bd29b27bf138c6084ebf69b5fccf35276d8f720e",
+        "control/preflight_calibration_experiment.py": "ba791484b297eb3aa4ef001cecc5db8e1b0772911b88028670c9460fc09b74f8",
+        "control/preflight_calibration_report.py": "42848eb9fbfb797601d85ae1698b1b17f9b0643372158cea677213cc593f2b8d",
+        "control/robustness_crosswind.py": "4d687a8f41e9c7989035fd4717d848e26122ce23ebf52771362afbfaf6f42e12",
+        "control/rotor_estimator.py": "21d8fea07ebf1d2a4c8577d5c572097fc6c6431493fbb5d000696e8d4ceae85b",
+        "control/sensor_binding.py": "127919424449b66d315385b53c87b4e42889129ed8b75148bf5834efd69bca24",
+        "control/sensor_campaign.py": "66df568e1582535dc7c139395290ce42f8d6a860e988769475cd7d7d6b51271b",
+        "control/sensor_campaign_report.py": "f79d814db6bdaf5553c005ba681297a386dd91465f554f5f797965c524037f5b",
+        "control/sensor_controller_screen.py": "83f68cc109e97577a2e9b260478628814251b2f85f88b4e7810209deb6f3552d",
+        "control/sensor_feedback_ablation.py": "5b018a5a6623cc8ee289fd6291ab23230a931dfcc5a7c25052199759360ef36a",
+        "control/sensor_feedback_diagnostics.py": "b1d392188cded2620c239af3fe05eb0a6d810ddc9570f0b4aee1043dd1ecfe37",
+        "control/sensor_filter_experiment.py": "181be054c08e41855925fa17b3141d3fc8124162889f84d008f4cf5ed355acca",
+        "control/sensor_filter_report.py": "e6e7751d1086fa0e69202904aa44d5042c820a14754ffd1dd00024244e62f568",
+        "control/sensor_matching_screen.py": "2f774fca530a294ec58a7419cc6113a2b28753f8c11eaab76046ee69cd6ed0fb",
+        "control/sensor_screen_report.py": "c4e2e3854aaed58543698fa0f4f0262183d6579b3dc6f8369e9f6859df6a3569",
+        "control/sensors.py": "099cacd00af5a465a674a3aba6dd37145c28d7e053cf176356516dffffbb8551",
+        "control/timing_study.py": "7497fd527c4af2a01972cd920b41b1d303c0fd07157eac0eae1374b7aafd26a1",
+        "control/trim.py": "10f88429fb4929dae34a50eb6ad3502235d229da6039e28c3004acc80e4857eb",
+        "control/trim_hifi.py": "cb7657477e8699ac3afaf0fab7f241c6cc687f1323738d87714e19eca0217aad",
+        "control/tuning_analysis.py": "d12d35da604655efdcaad1f5044146abef1d81267c6a98f719f77324085ab5f9",
+        "control/tuning_carryover.py": "29ea9eacaa493b01bace0236b2dbbe7e4698c081249c2829b56775caf8638aa4",
+        "control/tuning_extension.py": "c430f8179644078ba7c49093dd7dee46059622c5b945fc443210069091e9da73",
+        "control/uncertainty.py": "18061ba57f3fd3bbf68387e74361bbc79ffe0b907daf4a342ed03b664a921569",
+        "control/validation_metrics.py": "3b084c2fc36586b7b17e1677e7a7c1dbf56c03af13bd46c15994d6d6bd53ec62",
+        "control/validation_suite.py": "3b8c101e1a76f83c48e1fcc52fc41e4acee7c84ee36f536f7a0d37176c872689",
+        "control/vehicle_params.py": "f4ee0e03e1b00d8e4751feb47c506987ad3370c49d8a1202a77f40c807c4ffde",
+        "control/vnmpc_acados.py": "606fe3731d1e4c32738983bd8d939067505091a885e28a6e82640479aa9bf2ae",
+        "models/team_light/control/__init__.py": "0448f8dad13aac955a70724ea443c4e60e5c32d83144e6c662f7bcf6cbfdd766",
+        "models/team_light/control/airframe.py": "52050c1c49d871a33a811ca34ea5678f809c23254251ee3ef190b50e2b9ae4f6",
+        "models/team_light/control/analyze_baseline_log.py": "0555e41776af1ff172849ed51ec48382993a4d2e4991c33937cbb159a54501c8",
+        "models/team_light/control/baseline_v2.py": "bd991756926583ad50413f0173480043a3489288721333abba83272b7abbdcbd",
+        "models/team_light/control/comparison_nmpc.py": "a9480449ba2deb9167610975d714c7c6d09d8c5f2a9b26b8cc68c6dd0e61e782",
+        "models/team_light/control/controller.py": "e2b9dac4a34fddfad35787dc26ad286de36ea54bd30b89a61203d95cf559209d",
+        "models/team_light/control/curve_authority.py": "e06ca891b0f4b25c25739e10955d94e4ebc9bea8e135fa6434ec290a7575a106",
+        "models/team_light/control/dynamics.py": "c7c63c389552f7299a666a34d6fa7db161480fde33bbe79c77f4cc3a06ca88e8",
+        "models/team_light/control/geometry.py": "564bc71a9a9e00c4254b4ba512cab6cfe6715a0aa7a0ee7222b7cfd9e6967a5a",
+        "models/team_light/control/hybrid_comparison.py": "80d5d594cf407a6ddf46acba47fa1d5abb10f9d0509fc7667f6cd159ddba8213",
+        "models/team_light/control/light_aero.py": "87914e522aed5e1ef13ad9591dc7a25366b0d970d1ee0cefcb29889b74da66ce",
+        "models/team_light/control/light_rocket_curve.py": "29a9f21673a7b625f6d36e2a307b2ff552aba56e33aebdbcb467972288680aa0",
+        "models/team_light/control/mission_sim.py": "c4407841f3ce38abe7d20d807a247280b6bef8518cd466a13fab389a4cb1b421",
+        "models/team_light/control/propeller_curve.py": "1e118de4a3713538d067cc3962830cfb7548d04d7045e861d2550f5ac8c2e228",
+        "models/team_light/control/run_baseline_comparison.py": "abfb5bd00a1a2332a8223588d65303a9b5850d20e027e99964a09ab66c1a41db",
+        "models/team_light/control/serialization.py": "cef1131c212c58aa00f1364afbf228d8ab9dc4bbc02c7356011a83d0a14448b6",
+        "models/team_light/control/trim.py": "01406db0ecdeb449458d8ad620906c564fbce5c3a15c408efbd7c648c2f58caa",
+        "models/team_light/control/validate_model.py": "a36593f9fcc5480b276271825ffe5b423bc5ae6faecf421d92f87942dfb4270a",
+        "models/team_light/control/vehicle_params.py": "06eff0a08f33c865c211f0db4ad3c6ef5cd2101141ba02c27313c0bb24c3ca77"
+      }
+    },
+    {
+      "source": "results/navigation_startup_v10/barometer/experiment.json",
+      "schema": "sensor_matching_screen/1",
+      "stage": "DEVELOPMENT",
+      "base_config": {
+        "schema": "arena/1",
+        "purpose": "Fair, reproducible arena for V13/M17/F13/GSLQR/CPID on the pinned team aircraft. SMOKE/PILOT runs only; no superiority claims.",
+        "confirmed": {
+          "source": "kj work order 2026-09-25 section 1 + decisions in this session",
+          "vehicle_profile_id": "light_rocket_v2_pack_forward",
+          "vehicle_mass_kg": 1.17407572,
+          "repository": "protkjj/fast-drone",
+          "base_branch": "control",
+          "plant": "team distributed aero + APC Ct/Cp PCHIP (models.team_light)",
+          "controller_model": "lumped-parameter fit (control.kh_adapter.build_controller_params)",
+          "mission_phases_s": [
+            3.0,
+            15.0,
+            15.0,
+            15.0,
+            7.0
+          ],
+          "mission_takeoff": false,
+          "mission_disturbance": false,
+          "gust_wind_reference": "absolute",
+          "gust_start": "common_trim_cruise",
+          "V_L_m_s": 20.0,
+          "V_H_m_s": 85.0
+        },
+        "vehicle": {
+          "profile_id": "light_rocket_v2_pack_forward",
+          "mass_kg": 1.17407572,
+          "parameter_sha256": "13a1dcc6332987eba93ea4653f4d6087741d1ac085701982ed94c22e6658c807"
+        },
+        "plant": {
+          "class": "models.team_light.control.dynamics.AxialDronePlant",
+          "dt_s": 0.002
+        },
+        "controller_model": {
+          "builder": "control.kh_adapter.build_controller_params",
+          "hover_convention": "plant",
+          "moment_correction": {
+            "file": "configs/controller_moment_model.json",
+            "sha256": "a8f49d3f546ac6d0ba03127ddcb5d4524763718e1966dda8bbb74632e6b02ae6",
+            "applies_to": [
+              "M17",
+              "F13",
+              "GSLQR"
+            ],
+            "note": "\ud2b8\ub9bc \ubc16 \ud53c\uce58\u00b7\uc694 \ubaa8\uba58\ud2b8 \ubcf4\uc815(control/moment_correction.py, \ubcf4\uace0\uc11c 23\uc808). M17 \uc608\uce21, F13 \uc608\uce21\u00b7\ub0b4\ubd80 \ub8e8\ud504, GSLQR \uc120\ud615\ud654\uc5d0\ub9cc \uc801\uc6a9. \uba85\ubaa9 \ud2b8\ub9bc\u00b7\uac00\uc6a9 \uac00\uc18d\ub3c4(a_avail)\u00b7V13\u00b7CPID\ub294 \uae30\uc874 \ubaa8\ub378 \uadf8\ub300\ub85c \u2014 a_avail\uc740 \uae30\uc874 \ubaa8\ub378\ub85c \uacc4\uc0b0\ud558\ub294 \uace0\uc815\ub41c \uc815\uc758\ub2e4(\ud29c\ub2dd \uc2dc\ub098\ub9ac\uc624\uc640 \uac19\uc740 \uc815\uc758 \uc720\uc9c0). \uc774 \uc808 \ub9d0\uace0\ub294 arena.json\uacfc \uac19\uc544\uc57c \ud55c\ub2e4(\uc2dc\ud5d8)."
+          }
+        },
+        "speeds_m_s": {
+          "V_L": 20.0,
+          "V_H": 85.0
+        },
+        "altitude_m": 20.0,
+        "preview_horizon_s": 1.0,
+        "nmpc_common": {
+          "N": 20,
+          "dt_pred_s": 0.05,
+          "dt_ctrl_s": 0.02,
+          "max_iter": 30,
+          "tol": 0.0001,
+          "Q_z": 20.0,
+          "cost_spec": "paper",
+          "warm_start": "measured_state_and_controller_trim_input",
+          "soft_constraints": {}
+        },
+        "controllers": {
+          "V13": {
+            "kind": "V13",
+            "alloc_mode": "A1",
+            "alloc_feedback": true,
+            "time_align": "S1"
+          },
+          "M17": {
+            "kind": "M17",
+            "rotor_floor": "positive_thrust"
+          },
+          "F13": {
+            "kind": "F13",
+            "alloc_mode": "A0",
+            "time_align": "S0"
+          },
+          "GSLQR": {
+            "kind": "GSLQR",
+            "gains": "configs/gains/gslqr.json",
+            "V_table_m_s": [
+              0,
+              5,
+              10,
+              15,
+              20,
+              25,
+              30,
+              35,
+              40,
+              45,
+              50,
+              55,
+              60,
+              65,
+              70,
+              75,
+              80,
+              85
+            ],
+            "trim_substep_m_s": 1.0,
+            "reference_feedforward": "window_acceleration"
+          },
+          "CPID": {
+            "kind": "CPID",
+            "gains": "configs/gains/cpid.json",
+            "design_region_m_s": [
+              0,
+              20
+            ],
+            "integrator_preload": "controller_model_trim",
+            "reference_feedforward": "window_acceleration"
+          }
+        },
+        "seeds": {
+          "main": [
+            1000,
+            1999
+          ],
+          "tuning": [
+            2000,
+            2999
+          ]
+        },
+        "tuning": {
+          "label": "PILOT",
+          "budget": 120,
+          "search": {
+            "method": "compass_log_multiplier",
+            "initial_step": 2.0,
+            "min_step": 1.05
+          },
+          "objective": {
+            "metric": "window_rmse_velocity + window_rmse_z",
+            "failure": "stop_reason or paper_failed",
+            "failure_penalty": 1000.0
+          },
+          "parameters": {
+            "NMPC": [
+              "w_v",
+              "Q_z",
+              "w_omega",
+              "r_dev",
+              "r_rate",
+              "terminal"
+            ],
+            "GSLQR": [
+              "q_z",
+              "q_v_h",
+              "q_v_z",
+              "q_phi",
+              "q_omega",
+              "q_n",
+              "r",
+              "q_iz",
+              "q_ivx"
+            ],
+            "CPID": [
+              "Kp_vel",
+              "Ki_vel",
+              "Kp_z",
+              "Kd_z",
+              "Ki_z",
+              "Kp_att",
+              "Kd_att"
+            ]
+          },
+          "scenario_design_note": "kj \uacb0\uc815(2026-09-27): \uc61b \uc9d1\ud569(\uc704 \uc774\ub825)\uc740 \uc81c\uc5b4\uae30 \uacb0\uacfc\ub85c \uc800\uc18d \uc0ac\ub840\ub97c \uace8\ub77c \ubcf8\uc2dc\ud5d8\ubcf4\ub2e4 \uc57d\ud55c \ucabd\uc73c\ub85c \uce58\uc6b0\ucce4\ub2e4(ARENA_STATUS 12\uc808, \uc7ac\ubc1c \uc0ac\ub840 tuning-set-must-match-test-severity). \uc774 \uc9d1\ud569\uc740 \uc81c\uc5b4\uae30 \uacb0\uacfc\ub97c \ubcf4\uc9c0 \uc54a\uace0 \ubcf8\uc2dc\ud5d8 \uc2dc\ub098\ub9ac\uc624(\uc544\ub798 scenarios)\uc758 \ud06c\uae30\u00b7\uc18d\ub3c4\u00b7\u03c1\ub9cc\uc73c\ub85c \uc815\ud588\ub2e4: \ub3cc\ud48d = \ubcf8\uc2dc\ud5d8 \ud53c\ud06c\uc758 0.7\ubc30\u00b71.3\ubc30 \uc591\ucabd \ubc29\ud5a5(\uce21\ud48d \u00b110 -> \u00b17/\u00b113, \uc218\uc9c1\ud48d \u22135 -> \u22133.5/\u22136.5), \uc18d\ub3c4 = V_L\u00b7V_H \uadfc\ucc98\uc9c0\ub9cc \uac19\uc9c0 \uc54a\uc740 \uac12(14\u00b726\u00b775\u00b782), \uae30\ub3d9 = \uc81c\ub3d9 1\uac1c + \u03c1 0.8\u00b71.2. \ubcf8\uc2dc\ud5d8 id\u00b7\uc18d\ub3c4\u00b7\u03c1\uc640 \uacb9\uce58\uc9c0 \uc54a\ub294\ub2e4(I-4). \uc81c\ub3d9 \ub05d\uc810(25, \ub2e4\uc12f\uc758 \ubc30\uc218)\uc740 \uba85\ubaa9 \uc81c\uc5b4\uae30 \ubaa8\ub378\uc758 available_acceleration\uc774 \uac10\uc18d \ubc29\ud5a5\uc5d0\uc11c\ub9cc 28\u00b732 m/s \uadfc\ucc98 \uc881\uc740 \uad6c\uac04\uc5d0\uc11c SLSQP \uc218\ub834\uc5d0 \uc2e4\ud328\ud558\ub294 \uac83\uc744 \ud53c\ud558\ub824\uace0 \uace0\ub978 \uac12\uc774\ub2e4(\uac00\uc18d \ubc29\ud5a5\uc740 0~85 \uc804 \uad6c\uac04 \uc2e4\ud328 \uc5c6\uc74c) \u2014 \ubb3c\ub9ac\uc801 \ud2b8\ub9bc \ubd88\uac00\uac00 \uc544\ub2c8\ub77c \uadf8 \uc9c0\uc810\ub4e4\ub9cc\uc758 \uad6d\uc18c \uc218\uce58 \ucde8\uc57d\uc810\uc73c\ub85c \ubcf4\uc774\ub098 \ud655\uc778\uc740 \ud558\uc9c0 \uc54a\uc558\ub2e4.",
+          "scenarios": [
+            {
+              "id": "tune2_gust_lateral_p7_V14",
+              "type": "gust",
+              "speed": 14.0,
+              "direction": "lateral",
+              "peak_m_s": 7.0,
+              "times_s": [
+                1.0,
+                1.0,
+                2.0
+              ]
+            },
+            {
+              "id": "tune2_gust_lateral_m13_V26",
+              "type": "gust",
+              "speed": 26.0,
+              "direction": "lateral",
+              "peak_m_s": -13.0,
+              "times_s": [
+                1.0,
+                1.0,
+                2.0
+              ]
+            },
+            {
+              "id": "tune2_gust_lateral_m7_V75",
+              "type": "gust",
+              "speed": 75.0,
+              "direction": "lateral",
+              "peak_m_s": -7.0,
+              "times_s": [
+                1.0,
+                1.0,
+                2.0
+              ]
+            },
+            {
+              "id": "tune2_gust_lateral_p13_V82",
+              "type": "gust",
+              "speed": 82.0,
+              "direction": "lateral",
+              "peak_m_s": 13.0,
+              "times_s": [
+                1.0,
+                1.0,
+                2.0
+              ]
+            },
+            {
+              "id": "tune2_gust_vertical_m3.5_V75",
+              "type": "gust",
+              "speed": 75.0,
+              "direction": "vertical",
+              "peak_m_s": -3.5,
+              "times_s": [
+                1.0,
+                1.0,
+                2.0
+              ]
+            },
+            {
+              "id": "tune2_gust_vertical_p6.5_V82",
+              "type": "gust",
+              "speed": 82.0,
+              "direction": "vertical",
+              "peak_m_s": 6.5,
+              "times_s": [
+                1.0,
+                1.0,
+                2.0
+              ]
+            },
+            {
+              "id": "tune2_gust_vertical_p3.5_V14",
+              "type": "gust",
+              "speed": 14.0,
+              "direction": "vertical",
+              "peak_m_s": 3.5,
+              "times_s": [
+                1.0,
+                1.0,
+                2.0
+              ]
+            },
+            {
+              "id": "tune2_gust_vertical_m6.5_V26",
+              "type": "gust",
+              "speed": 26.0,
+              "direction": "vertical",
+              "peak_m_s": -6.5,
+              "times_s": [
+                1.0,
+                1.0,
+                2.0
+              ]
+            },
+            {
+              "id": "tune2_ramp_accel_V17_70_rho0.8",
+              "type": "reference",
+              "from": 17.0,
+              "to": 70.0,
+              "rho": 0.8,
+              "lead_s": 0.5,
+              "tail_s": 1.0
+            },
+            {
+              "id": "tune2_ramp_brake_V80_25_rho1.2",
+              "type": "reference",
+              "from": 80.0,
+              "to": 25.0,
+              "rho": 1.2,
+              "lead_s": 0.5,
+              "tail_s": 1.0
+            },
+            {
+              "id": "tune3_step_altitude_p0.7_V0",
+              "type": "step",
+              "speed": 0.0,
+              "axis": "altitude",
+              "size": 0.7,
+              "durations_s": [
+                8.0
+              ]
+            },
+            {
+              "id": "tune3_step_altitude_p1.3_V0",
+              "type": "step",
+              "speed": 0.0,
+              "axis": "altitude",
+              "size": 1.3,
+              "durations_s": [
+                8.0
+              ]
+            },
+            {
+              "id": "tune3_step_altitude_p0.7_V14",
+              "type": "step",
+              "speed": 14.0,
+              "axis": "altitude",
+              "size": 0.7,
+              "durations_s": [
+                8.0
+              ]
+            },
+            {
+              "id": "tune3_step_altitude_p1.3_V14",
+              "type": "step",
+              "speed": 14.0,
+              "axis": "altitude",
+              "size": 1.3,
+              "durations_s": [
+                8.0
+              ]
+            },
+            {
+              "id": "tune3_step_speed_p0.7_V0",
+              "type": "step",
+              "speed": 0.0,
+              "axis": "speed",
+              "size": 0.7,
+              "durations_s": [
+                8.0
+              ]
+            },
+            {
+              "id": "tune3_step_speed_p1.3_V0",
+              "type": "step",
+              "speed": 0.0,
+              "axis": "speed",
+              "size": 1.3,
+              "durations_s": [
+                8.0
+              ]
+            },
+            {
+              "id": "tune3_step_speed_p0.7_V14",
+              "type": "step",
+              "speed": 14.0,
+              "axis": "speed",
+              "size": 0.7,
+              "durations_s": [
+                8.0
+              ]
+            },
+            {
+              "id": "tune3_step_speed_p1.3_V14",
+              "type": "step",
+              "speed": 14.0,
+              "axis": "speed",
+              "size": 1.3,
+              "durations_s": [
+                8.0
+              ]
+            }
+          ],
+          "scenario_design_note_2": "kj \uacb0\uc815(2026-09-27 \uc800\ub141): \uaddc\uce59\uc744 '\ubcf8\uc2dc\ud5d8\uc744 \uac10\uc2fc\ub2e4'\uc5d0\uc11c '\ubaa8\ub4e0 \ud3c9\uac00 \ucd95(\ubcf8\uc2dc\ud5d8 + \uc124\uacc4\uc810\uac80)\uc744 \uac10\uc2fc\ub2e4'\ub85c \ub113\ud78c\ub2e4. CPID \uace0\ub3c4-\uacc4\ub2e8\uc774 \uc124\uacc4 \uc601\uc5ed 0\u00b710\u00b720 m/s \uc804\ubd80 \uc815\ucc29 \uc2e4\ud328(Kd_z 2\u219264)\ud588\ub294\ub370, tune2_* 10\uac1c \uc911 \uc21c\uc218 \uace0\ub3c4-\ucd94\uc885(\uc0c8 z \ubaa9\ud45c\ub85c \uc774\ub3d9) \uc2e0\ud638\uac00 \ud558\ub098\ub3c4 \uc5c6\uc5b4\uc11c\uc600\ub2e4(\uc218\uc9c1\ud48d\uc740 \ud2b8\ub9bc \ubcf5\uadc0 \uc2e0\ud638\ub77c \ubc18\ub300 \uc555\ub825\uc744 \uc900\ub2e4). tune3_step_* 8\uac1c\ub97c \ucd94\uac00: \uc124\uacc4\uc810\uac80\uc758 \ub9e4\ub044\ub7ec\uc6b4 \uace0\ub3c4\u00b7\uc18d\ub3c4 \uacc4\ub2e8\uc744 \ud06c\uae30 0.7\ubc30\u00b71.3\ubc30\ub85c, \ud638\ubc84(V0)\uc640 V_L \uadfc\ucc98(V14, \uc774\ubbf8 tune2\uc5d0\uc11c \uc4f0\ub294 \uc810)\uc5d0\uc11c. \uc124\uacc4\uc810\uac80 \uc790\uccb4\uc758 \uc815\ud655\ud55c \uc870\uac74(\uc18d\ub3c4 0\u00b710\u00b720\u00b740\u00b760\u00b785, \ud06c\uae30 \u00b11)\uacfc\ub294 \uc548 \uacb9\uce5c\ub2e4. \uc81c\uc5b4\uae30 \uacb0\uacfc\ub97c \uc548 \ubcf4\uace0 \uc815\ud588\ub2e4(\uc18d\ub3c4\u00b7\ud06c\uae30\u00b7\uad00\ucc30\uc2dc\uac04 8s\ub9cc \uace0\ub984).",
+          "superseded_scenarios_2026-09-26": "\uc61b \uc9d1\ud569(tune_*, 8\uac1c, \uc800\uc18d 3\uac1c\ub294 8.3\uc808 '\uc2e4\ud328 \uc5c6\ub294 \uc0ac\ub840\ub9cc' \uaddc\uce59\uc73c\ub85c \uc120\uc815) \u2014 results/arena/tuning/main120 \uc804\uccb4\uc640 \ud568\uaed8 superseded. tune_gust_vertical_p3_V20\uc740 \ubcf8\uc2dc\ud5d8 V_L=20\uc744 \uadf8\ub300\ub85c \uc7ac\uc0ac\uc6a9\ud55c \uacb0\ud568\ub3c4 \uc788\uc5c8\ub2e4."
+        },
+        "reporting": {
+          "integrator_at_limit_fraction": 0.01
+        },
+        "acceptance": {
+          "max_z_error": 10.0,
+          "max_velocity_error": 15.0,
+          "max_omega": 35.0,
+          "sustained_omega": 25.0,
+          "sustained_seconds": 0.2,
+          "recovery_z": 0.5,
+          "recovery_velocity": 0.5,
+          "recovery_omega": 1.0,
+          "recovery_hold": 0.5
+        },
+        "paper_criteria": {
+          "z_error": 5.0,
+          "z_error_seconds": 0.5,
+          "omega": 20.0,
+          "omega_seconds": 0.1,
+          "cruise_velocity_floor": 5.0,
+          "cruise_velocity_fraction": 0.25,
+          "cruise_velocity_seconds": 2.0,
+          "consecutive_solver_failures": 3,
+          "recovery_z": 0.5,
+          "recovery_velocity_floor": 0.5,
+          "recovery_velocity_fraction": 0.05,
+          "recovery_hold": 1.0
+        },
+        "scenarios": [
+          {
+            "id": "mission_VH",
+            "type": "mission",
+            "speed": "V_H",
+            "durations_s": [
+              3.0,
+              15.0,
+              15.0,
+              15.0,
+              7.0
+            ],
+            "evaluation_start_s": 3.0
+          },
+          {
+            "id": "gust_lateral_p10_VH",
+            "type": "gust",
+            "speed": "V_H",
+            "direction": "lateral",
+            "peak_m_s": 10.0,
+            "times_s": [
+              3.0,
+              2.0,
+              7.0
+            ]
+          },
+          {
+            "id": "gust_vertical_m5_VH",
+            "type": "gust",
+            "speed": "V_H",
+            "direction": "vertical",
+            "peak_m_s": -5.0,
+            "times_s": [
+              3.0,
+              2.0,
+              7.0
+            ]
+          },
+          {
+            "id": "ref_accel_0_VH_rho1",
+            "type": "reference",
+            "from": 0.0,
+            "to": "V_H",
+            "rho": 1.0,
+            "lead_s": 3.0,
+            "tail_s": 5.0
+          },
+          {
+            "id": "ref_brake_VH_VL_rho1",
+            "type": "reference",
+            "from": "V_H",
+            "to": "V_L",
+            "rho": 1.0,
+            "lead_s": 3.0,
+            "tail_s": 5.0
+          },
+          {
+            "id": "mission_VH_mass1.3",
+            "type": "mission",
+            "speed": "V_H",
+            "durations_s": [
+              3.0,
+              15.0,
+              15.0,
+              15.0,
+              7.0
+            ],
+            "evaluation_start_s": 3.0,
+            "perturbation": {
+              "mass": 1.3
+            }
+          },
+          {
+            "id": "mission_VH_tau2",
+            "type": "mission",
+            "speed": "V_H",
+            "durations_s": [
+              3.0,
+              15.0,
+              15.0,
+              15.0,
+              7.0
+            ],
+            "evaluation_start_s": 3.0,
+            "perturbation": {
+              "motor_tau": 2.0
+            }
+          },
+          {
+            "id": "gust_lateral_p10_VL",
+            "type": "gust",
+            "speed": "V_L",
+            "direction": "lateral",
+            "peak_m_s": 10.0,
+            "times_s": [
+              3.0,
+              2.0,
+              7.0
+            ]
+          },
+          {
+            "id": "gust_vertical_m5_VL",
+            "type": "gust",
+            "speed": "V_L",
+            "direction": "vertical",
+            "peak_m_s": -5.0,
+            "times_s": [
+              3.0,
+              2.0,
+              7.0
+            ]
+          }
+        ],
+        "sensor_feedback": {
+          "schema": "sensor_feedback/1",
+          "mode": "sensors",
+          "seed": 3,
+          "profile": {
+            "schema": "sensor/1",
+            "name": "nav_startup_barometer_only",
+            "imu": {
+              "rate_hz": 500.0,
+              "accel_noise_density": 0.0,
+              "gyro_noise_density": 0.0,
+              "accel_bias": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "gyro_bias": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "accel_bias_rw": 0.0,
+              "gyro_bias_rw": 0.0,
+              "latency_s": 0.0,
+              "dropout_prob": 0.0,
+              "accel_clip": 100.0,
+              "gyro_clip": 50.0
+            },
+            "gnss": {
+              "rate_hz": 10.0,
+              "pos_sigma": 0.0,
+              "vel_sigma": 0.0,
+              "pos_bias": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "vel_bias": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "latency_s": 0.0,
+              "dropout_prob": 0.0,
+              "outage_windows": []
+            },
+            "barometer": {
+              "enabled": true,
+              "rate_hz": 50.0,
+              "sigma": 0.25,
+              "bias": 0.0,
+              "latency_s": 0.02,
+              "dropout_prob": 0.0
+            },
+            "magnetometer": {
+              "enabled": true,
+              "rate_hz": 100.0,
+              "sigma": 0.0,
+              "world_field": [
+                20.0,
+                0.0,
+                40.0
+              ],
+              "bias": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "latency_s": 0.0,
+              "dropout_prob": 0.0
+            },
+            "rpm": {
+              "enabled": true,
+              "rate_hz": 500.0,
+              "sigma": 0.0,
+              "bias": [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "latency_s": 0.0,
+              "dropout_prob": 0.0
+            },
+            "estimator": {
+              "history_s": 2.0,
+              "gnss_pos_sigma": 0.8,
+              "gnss_vel_sigma": 0.15,
+              "baro_sigma": 0.25,
+              "mag_sigma": 0.04,
+              "initial_position_sigma": 0.5,
+              "initial_velocity_sigma": 0.2,
+              "initial_attitude_deg": 1.0,
+              "estimate_baro_bias": true,
+              "baro_bias_tau_s": 1.0,
+              "baro_gnss_max_age_s": 0.25,
+              "initialize_baro_bias": true,
+              "preflight_baro_samples": 100,
+              "trace_updates": false,
+              "preflight_baro_rng": "independent",
+              "kind": "joint_baro",
+              "baro_bias_rw_density_m_sqrt_s": 0.03,
+              "accel_noise_density": 0.03,
+              "gyro_noise_density": 0.002,
+              "accel_bias_rw_density": 0.0002,
+              "gyro_bias_rw_density": 2e-05,
+              "preflight_baro_sigma_m": 0.25
+            },
+            "rotor_observer": {
+              "source": "telemetry",
+              "tau_s": 1e-06
+            }
+          }
+        }
+      },
+      "base_config_sha256": "13fb909674a50fd1ab368ad1e9d5863ef1d903d7ba85bc421b5a4cb53de81ecc",
+      "controllers": [
+        "V13"
+      ],
+      "seeds": [
+        3
+      ],
+      "variants": [
+        "baseline"
+      ],
+      "faults": [
+        "nominal"
+      ],
+      "cases": [
+        "gust_lateral_p10_VL"
+      ],
+      "timeout_s": 900.0,
+      "runtime_source_sha256": {
+        "control/__init__.py": "4442b0651dd775b6aed0b5216a778ed3bc19f2e98be79dd5fd525a963285cb9c",
+        "control/acados_fallback_mc.py": "844f72c9d6e76d7143fb2ad4eb95608c75c469f051958e0fa61677e267d982ae",
+        "control/arena.py": "bad57298c5d095d689ca036ade7c89c0cfee5970d5d253b2b0a911214f99ff25",
+        "control/arena_design_check.py": "9cbed9eb3c7a55fc3a85d20d20f032855b8c7cb9cde5ef9a11923376600644e7",
+        "control/arena_dt_convergence.py": "ad73e2738e48c59a038048c014e13f8aa69622416b1f4d1734cf4d188b9ba300",
+        "control/arena_estimator.py": "583201c781336d1150e87e970ca1b10b551ee912c235066ca2d573c301d3ec9b",
+        "control/arena_factory.py": "b2ae950cd1b17ca4afd7b6726ccb9ef4c20e3ae49680fe48cb0b1390321cc2de",
+        "control/arena_feedback.py": "2034ee659adabe72937e11a9bb5eb0c1cfbd1f3da20956eee32e16afce1cda32",
+        "control/arena_feedforward_check.py": "b427db6335002662194e10d0c8b30648856bcbffba45040bd36531af3bdb5c2c",
+        "control/arena_integrators.py": "8ce6980f69bcf6a0753a266a1894eb91cc5e1b0e377c12b6d8bc132d243b6cbb",
+        "control/arena_joint_estimator.py": "51357b402b21082785d47a2d0d7fe75a16d26c91a0bcd54a5923a06624466787",
+        "control/arena_m17_diagnosis.py": "91a6e8a1bd263529e011028dab41e8c841c8dc28061f3f3c3455121e287247e4",
+        "control/arena_m17_floor_variants.py": "096905fbaeb6d3966631cf5b661b5c209835f0a042522e75459892a5cb672f82",
+        "control/arena_m17_probe.py": "9fe2760261b8d2c42fe4909b9c06cfcbd3c515eb59d433d7ff96009c8dd8b63a",
+        "control/arena_mission_rho.py": "887617104097ef49a4eac69bbf0c9c9fc6f9191eff407acb4f86131e9113163c",
+        "control/arena_model_mismatch.py": "c5c3f63fed0c2f077bf3469c7e7979b1832fb8f6912f226f5302513e147a81cd",
+        "control/arena_observation_delay.py": "7fa1d405cee463f7187bb3b9e52141a2be4a77888ca294366f102df95a42ea2c",
+        "control/arena_plant_wrench.py": "14c15af56dd29c41f0bb6fb4aecff0e026a88a7ee85adbce7554515ede4d851f",
+        "control/arena_reference_merge.py": "ce038c9ecad2f852b9973cd3ae05aa9ca393f43e13abc18881a7cf1fb7371b61",
+        "control/arena_sensors.py": "d8474c0a2c56d814424ec987d6408496f5b22a4069dad7700175a82fc7653142",
+        "control/arena_smoke_summary.py": "0f0dc6fbe28cdb17fdfc7b1bb3be6c22dc6486b235d3603b5a69c56bcfb326d2",
+        "control/arena_suggest_workers.py": "19130f4b311a177b5bb55511dfdc99f05d537f02602a98cc2495e50677eb58b2",
+        "control/arena_trim.py": "85e5972b74b6994ea128e332add745e3af56b32cdcb505159a9c514b00f426e0",
+        "control/arena_tune.py": "1f9ef7923d98f23a6e8fd3bed1940959db9610e419b3fa6e5f67202afa5b8348",
+        "control/arena_tune_repro.py": "c3dfb87752b29f998108372ed19a843eead6dc9d5482271a80a0fd142d41a454",
+        "control/arena_tuning_candidates.py": "bcfc9d71090de3f9dfdda8ce44f97c07597aaadd0a26376c466d6aab27327b9e",
+        "control/arena_tuning_path_check.py": "e575c40617b9f2507d370094e673403697a5f768928305a927abd1ecb2c3f5bd",
+        "control/arena_tuning_report.py": "6e1568d0f6fc8be61ee8280c4a2093a72207ce0d4d35f9fdc649a23c22ca0a36",
+        "control/battery.py": "2cf4f4bed3f761f7c2cbc3d010a500970e260e2e7f539746628e2275784670ee",
+        "control/bench_acados.py": "5a62d0c11aaa21c708b950d814c340e5ede1ebd4e20def954fc12180c5dee1f6",
+        "control/bench_compute.py": "fbbd28df436cd9736d7727c7292d209ac0bbd48a945388ac8d3dc36b65a61499",
+        "control/controller.py": "a2d9bbc362414c49ad112ce0d2ed5dcc14faa3d64f8be0b2f64872cc2446c99b",
+        "control/derive_vl_vh.py": "2d28f20d81914486d22faaede44f59b56905ccb669e1bb9270de72d762d583f9",
+        "control/dynamics.py": "839054bce880491952e5fc112b2eda5ccb768cf57d980d695d2335e8f3b41794",
+        "control/dynamics_hifi.py": "a407ba9a8fbf88959e0d03e9c721db5f660ebaaba7dd761c93d642ac9bff27b2",
+        "control/ekf_comparison.py": "c8c36f85a608fcc171238e1d84fddc23faa4390df2b8a5e6153b2942c0edfecc",
+        "control/ekf_sim.py": "330ef15ce2f63b93edfc0ae6d05e04c3e7648a49ffec034ff53e62836bbf641d",
+        "control/estimator.py": "3db05205b6458af3c549822d785ed2cda4137097284971e7476e9d6866273752",
+        "control/fair_compare.py": "8b606cbdf1d5994114f18fe885e6ab1697376d5c1b347124b278ea18d6c4224a",
+        "control/fallback_controller.py": "33e13bfbcb1e5ed9e8caf5fa1b64eedf83d8bef59e2c6834994ae29d97282d55",
+        "control/final_config_mission.py": "0963c423d6e3085175c677553e2b8520b04bc7ae3b936ae0a5fa25a46602bac2",
+        "control/flight_envelope.py": "d4e914bc1ae65f0c4ec2eac21bf3c7d13304c304b22d18745101518c345ae06c",
+        "control/gindi.py": "8fabbdfc2e72175cbbe5daca72cc8b6f3e30afeb447ced79bb3e14cfb794c018",
+        "control/gust_comparison.py": "d828eaebff80f7ee8f62f3fa674f87ae2280e42296f046c340e268ee927a1f45",
+        "control/hybrid_comparison.py": "23a4ee7c6c96fc279e37f098f17c08494ddb554dc48a8dccbf3d8fb37a3b694b",
+        "control/joint_consistency_check.py": "8633bd38eb4ece99b63d3ca880e8b551a8e3280ebfa1e8c3826427f2fe3a045a",
+        "control/joint_fusion_experiment.py": "f046bf114e86e84bb286a010f5587e373635b9405463b1f4b90f6a9185a2a858",
+        "control/kh_adapter.py": "20c861f7d09a1eaf1635da369a29c72b60204e1459b9ab21c79b477a99ace8c8",
+        "control/kh_discriminate_scenario_vs_warmstart.py": "e87c7da6d87336c8ede19bf534cea5bb6901e7243496fae98c39724800c5f2b6",
+        "control/kh_mission_repro.py": "3013d33642d5e935cd14946e2a27a864cf0ffc40e2a8de96092e129e0f873d54",
+        "control/kh_repro.py": "999351cd9b1cd14f14325efef835dce0dab9ccef0ed22d65499863d39354d0dd",
+        "control/kh_timing_severity_compare.py": "2a4463ba4d1bbf998480749b03fccdb7d2b47ed4a590b4bb7c61c1ba59d2804b",
+        "control/main_distributed.py": "c40d390eba5c642ef438d6e8fd4fef042d54165ecea3a006b7fdc43659befd0e",
+        "control/main_experiment.py": "01733400dbb31322ee2fc8e6d9967d980fb44e9e646e67a3b15f5754529b8f9e",
+        "control/mission_profiles.py": "e281edb2fffbbd7410c18d154a275b08faaddaf5de9680fcb71474e3fbc1c3a2",
+        "control/mission_sim.py": "e969484f274f4593a60f07583f293627a97f42836de46bdf666cbe98cd8bd202",
+        "control/moment_correction.py": "c8ae5a3f35d1c73b95fe89526aafe81b43b55eedeee2111a696e5fb68999180f",
+        "control/navigation_grid_campaign.py": "3444c9e5568eff83c8900f5f23aa2b5b0d6dbef90df2c2dfe88cdc17936d935a",
+        "control/navigation_update_experiment.py": "0eba641aabe77e727c250141a9609af93d2bfaaa5fc3dbd2f0e4379daaf6f2ff",
+        "control/navigation_update_report.py": "4d51adff3906a1b6b941cb15e11f61e429ab61512152a967d77fbb189519c02e",
+        "control/night_current_diag.py": "6a299faa437d414ce43daf930a1fe146c9d2dd5ccf24066128a2bf124e9e033b",
+        "control/night_hifi_branch.py": "2e94abf4c6d37b71ddf2025f9692996f29c7c34a86b7af4baf0d0bcbe4a5cbc1",
+        "control/night_perturbation_robustness.py": "ee981a9df4510c59fd9383873bf1349147a3f544f90e4811ad8b12503a459fef",
+        "control/nmpc.py": "04f7b216f74fcb7203459b8cf6e94f0410986a88821163cb642226dff80b98f9",
+        "control/nmpc_common.py": "a91e518c390c9a9f41818b7ef6e148ee9eb3eae0b65d008d5b6a7996322981fe",
+        "control/nmpc_f13.py": "907cf4b3ca2f62561b11be5128ef94b43520cda078249c66fbfac6b56ae0788f",
+        "control/pilot_before_after.py": "7612a78de50d61799daf4f942253788333cee245029251eababb43c15e7198fc",
+        "control/plot_plant_validation.py": "9882944b68877844d6839f4fb06da15d91398e327dcf577e3b081af104310fab",
+        "control/plot_proposal_figures.py": "c60b40c4747c9da2d67b4c81bd29b27bf138c6084ebf69b5fccf35276d8f720e",
+        "control/preflight_calibration_experiment.py": "ba791484b297eb3aa4ef001cecc5db8e1b0772911b88028670c9460fc09b74f8",
+        "control/preflight_calibration_report.py": "42848eb9fbfb797601d85ae1698b1b17f9b0643372158cea677213cc593f2b8d",
+        "control/robustness_crosswind.py": "4d687a8f41e9c7989035fd4717d848e26122ce23ebf52771362afbfaf6f42e12",
+        "control/rotor_estimator.py": "21d8fea07ebf1d2a4c8577d5c572097fc6c6431493fbb5d000696e8d4ceae85b",
+        "control/sensor_binding.py": "127919424449b66d315385b53c87b4e42889129ed8b75148bf5834efd69bca24",
+        "control/sensor_campaign.py": "66df568e1582535dc7c139395290ce42f8d6a860e988769475cd7d7d6b51271b",
+        "control/sensor_campaign_report.py": "f79d814db6bdaf5553c005ba681297a386dd91465f554f5f797965c524037f5b",
+        "control/sensor_controller_screen.py": "83f68cc109e97577a2e9b260478628814251b2f85f88b4e7810209deb6f3552d",
+        "control/sensor_feedback_ablation.py": "5b018a5a6623cc8ee289fd6291ab23230a931dfcc5a7c25052199759360ef36a",
+        "control/sensor_feedback_diagnostics.py": "b1d392188cded2620c239af3fe05eb0a6d810ddc9570f0b4aee1043dd1ecfe37",
+        "control/sensor_filter_experiment.py": "181be054c08e41855925fa17b3141d3fc8124162889f84d008f4cf5ed355acca",
+        "control/sensor_filter_report.py": "e6e7751d1086fa0e69202904aa44d5042c820a14754ffd1dd00024244e62f568",
+        "control/sensor_matching_screen.py": "2f774fca530a294ec58a7419cc6113a2b28753f8c11eaab76046ee69cd6ed0fb",
+        "control/sensor_screen_report.py": "c4e2e3854aaed58543698fa0f4f0262183d6579b3dc6f8369e9f6859df6a3569",
+        "control/sensors.py": "099cacd00af5a465a674a3aba6dd37145c28d7e053cf176356516dffffbb8551",
+        "control/timing_study.py": "7497fd527c4af2a01972cd920b41b1d303c0fd07157eac0eae1374b7aafd26a1",
+        "control/trim.py": "10f88429fb4929dae34a50eb6ad3502235d229da6039e28c3004acc80e4857eb",
+        "control/trim_hifi.py": "cb7657477e8699ac3afaf0fab7f241c6cc687f1323738d87714e19eca0217aad",
+        "control/tuning_analysis.py": "d12d35da604655efdcaad1f5044146abef1d81267c6a98f719f77324085ab5f9",
+        "control/tuning_carryover.py": "29ea9eacaa493b01bace0236b2dbbe7e4698c081249c2829b56775caf8638aa4",
+        "control/tuning_extension.py": "c430f8179644078ba7c49093dd7dee46059622c5b945fc443210069091e9da73",
+        "control/uncertainty.py": "18061ba57f3fd3bbf68387e74361bbc79ffe0b907daf4a342ed03b664a921569",
+        "control/validation_metrics.py": "3b084c2fc36586b7b17e1677e7a7c1dbf56c03af13bd46c15994d6d6bd53ec62",
+        "control/validation_suite.py": "3b8c101e1a76f83c48e1fcc52fc41e4acee7c84ee36f536f7a0d37176c872689",
+        "control/vehicle_params.py": "f4ee0e03e1b00d8e4751feb47c506987ad3370c49d8a1202a77f40c807c4ffde",
+        "control/vnmpc_acados.py": "606fe3731d1e4c32738983bd8d939067505091a885e28a6e82640479aa9bf2ae",
+        "models/team_light/control/__init__.py": "0448f8dad13aac955a70724ea443c4e60e5c32d83144e6c662f7bcf6cbfdd766",
+        "models/team_light/control/airframe.py": "52050c1c49d871a33a811ca34ea5678f809c23254251ee3ef190b50e2b9ae4f6",
+        "models/team_light/control/analyze_baseline_log.py": "0555e41776af1ff172849ed51ec48382993a4d2e4991c33937cbb159a54501c8",
+        "models/team_light/control/baseline_v2.py": "bd991756926583ad50413f0173480043a3489288721333abba83272b7abbdcbd",
+        "models/team_light/control/comparison_nmpc.py": "a9480449ba2deb9167610975d714c7c6d09d8c5f2a9b26b8cc68c6dd0e61e782",
+        "models/team_light/control/controller.py": "e2b9dac4a34fddfad35787dc26ad286de36ea54bd30b89a61203d95cf559209d",
+        "models/team_light/control/curve_authority.py": "e06ca891b0f4b25c25739e10955d94e4ebc9bea8e135fa6434ec290a7575a106",
+        "models/team_light/control/dynamics.py": "c7c63c389552f7299a666a34d6fa7db161480fde33bbe79c77f4cc3a06ca88e8",
+        "models/team_light/control/geometry.py": "564bc71a9a9e00c4254b4ba512cab6cfe6715a0aa7a0ee7222b7cfd9e6967a5a",
+        "models/team_light/control/hybrid_comparison.py": "80d5d594cf407a6ddf46acba47fa1d5abb10f9d0509fc7667f6cd159ddba8213",
+        "models/team_light/control/light_aero.py": "87914e522aed5e1ef13ad9591dc7a25366b0d970d1ee0cefcb29889b74da66ce",
+        "models/team_light/control/light_rocket_curve.py": "29a9f21673a7b625f6d36e2a307b2ff552aba56e33aebdbcb467972288680aa0",
+        "models/team_light/control/mission_sim.py": "c4407841f3ce38abe7d20d807a247280b6bef8518cd466a13fab389a4cb1b421",
+        "models/team_light/control/propeller_curve.py": "1e118de4a3713538d067cc3962830cfb7548d04d7045e861d2550f5ac8c2e228",
+        "models/team_light/control/run_baseline_comparison.py": "abfb5bd00a1a2332a8223588d65303a9b5850d20e027e99964a09ab66c1a41db",
+        "models/team_light/control/serialization.py": "cef1131c212c58aa00f1364afbf228d8ab9dc4bbc02c7356011a83d0a14448b6",
+        "models/team_light/control/trim.py": "01406db0ecdeb449458d8ad620906c564fbce5c3a15c408efbd7c648c2f58caa",
+        "models/team_light/control/validate_model.py": "a36593f9fcc5480b276271825ffe5b423bc5ae6faecf421d92f87942dfb4270a",
+        "models/team_light/control/vehicle_params.py": "06eff0a08f33c865c211f0db4ad3c6ef5cd2101141ba02c27313c0bb24c3ca77"
+      }
+    },
+    {
+      "source": "results/navigation_startup_v10/magnetometer/experiment.json",
+      "schema": "sensor_matching_screen/1",
+      "stage": "DEVELOPMENT",
+      "base_config": {
+        "schema": "arena/1",
+        "purpose": "Fair, reproducible arena for V13/M17/F13/GSLQR/CPID on the pinned team aircraft. SMOKE/PILOT runs only; no superiority claims.",
+        "confirmed": {
+          "source": "kj work order 2026-09-25 section 1 + decisions in this session",
+          "vehicle_profile_id": "light_rocket_v2_pack_forward",
+          "vehicle_mass_kg": 1.17407572,
+          "repository": "protkjj/fast-drone",
+          "base_branch": "control",
+          "plant": "team distributed aero + APC Ct/Cp PCHIP (models.team_light)",
+          "controller_model": "lumped-parameter fit (control.kh_adapter.build_controller_params)",
+          "mission_phases_s": [
+            3.0,
+            15.0,
+            15.0,
+            15.0,
+            7.0
+          ],
+          "mission_takeoff": false,
+          "mission_disturbance": false,
+          "gust_wind_reference": "absolute",
+          "gust_start": "common_trim_cruise",
+          "V_L_m_s": 20.0,
+          "V_H_m_s": 85.0
+        },
+        "vehicle": {
+          "profile_id": "light_rocket_v2_pack_forward",
+          "mass_kg": 1.17407572,
+          "parameter_sha256": "13a1dcc6332987eba93ea4653f4d6087741d1ac085701982ed94c22e6658c807"
+        },
+        "plant": {
+          "class": "models.team_light.control.dynamics.AxialDronePlant",
+          "dt_s": 0.002
+        },
+        "controller_model": {
+          "builder": "control.kh_adapter.build_controller_params",
+          "hover_convention": "plant",
+          "moment_correction": {
+            "file": "configs/controller_moment_model.json",
+            "sha256": "a8f49d3f546ac6d0ba03127ddcb5d4524763718e1966dda8bbb74632e6b02ae6",
+            "applies_to": [
+              "M17",
+              "F13",
+              "GSLQR"
+            ],
+            "note": "\ud2b8\ub9bc \ubc16 \ud53c\uce58\u00b7\uc694 \ubaa8\uba58\ud2b8 \ubcf4\uc815(control/moment_correction.py, \ubcf4\uace0\uc11c 23\uc808). M17 \uc608\uce21, F13 \uc608\uce21\u00b7\ub0b4\ubd80 \ub8e8\ud504, GSLQR \uc120\ud615\ud654\uc5d0\ub9cc \uc801\uc6a9. \uba85\ubaa9 \ud2b8\ub9bc\u00b7\uac00\uc6a9 \uac00\uc18d\ub3c4(a_avail)\u00b7V13\u00b7CPID\ub294 \uae30\uc874 \ubaa8\ub378 \uadf8\ub300\ub85c \u2014 a_avail\uc740 \uae30\uc874 \ubaa8\ub378\ub85c \uacc4\uc0b0\ud558\ub294 \uace0\uc815\ub41c \uc815\uc758\ub2e4(\ud29c\ub2dd \uc2dc\ub098\ub9ac\uc624\uc640 \uac19\uc740 \uc815\uc758 \uc720\uc9c0). \uc774 \uc808 \ub9d0\uace0\ub294 arena.json\uacfc \uac19\uc544\uc57c \ud55c\ub2e4(\uc2dc\ud5d8)."
+          }
+        },
+        "speeds_m_s": {
+          "V_L": 20.0,
+          "V_H": 85.0
+        },
+        "altitude_m": 20.0,
+        "preview_horizon_s": 1.0,
+        "nmpc_common": {
+          "N": 20,
+          "dt_pred_s": 0.05,
+          "dt_ctrl_s": 0.02,
+          "max_iter": 30,
+          "tol": 0.0001,
+          "Q_z": 20.0,
+          "cost_spec": "paper",
+          "warm_start": "measured_state_and_controller_trim_input",
+          "soft_constraints": {}
+        },
+        "controllers": {
+          "V13": {
+            "kind": "V13",
+            "alloc_mode": "A1",
+            "alloc_feedback": true,
+            "time_align": "S1"
+          },
+          "M17": {
+            "kind": "M17",
+            "rotor_floor": "positive_thrust"
+          },
+          "F13": {
+            "kind": "F13",
+            "alloc_mode": "A0",
+            "time_align": "S0"
+          },
+          "GSLQR": {
+            "kind": "GSLQR",
+            "gains": "configs/gains/gslqr.json",
+            "V_table_m_s": [
+              0,
+              5,
+              10,
+              15,
+              20,
+              25,
+              30,
+              35,
+              40,
+              45,
+              50,
+              55,
+              60,
+              65,
+              70,
+              75,
+              80,
+              85
+            ],
+            "trim_substep_m_s": 1.0,
+            "reference_feedforward": "window_acceleration"
+          },
+          "CPID": {
+            "kind": "CPID",
+            "gains": "configs/gains/cpid.json",
+            "design_region_m_s": [
+              0,
+              20
+            ],
+            "integrator_preload": "controller_model_trim",
+            "reference_feedforward": "window_acceleration"
+          }
+        },
+        "seeds": {
+          "main": [
+            1000,
+            1999
+          ],
+          "tuning": [
+            2000,
+            2999
+          ]
+        },
+        "tuning": {
+          "label": "PILOT",
+          "budget": 120,
+          "search": {
+            "method": "compass_log_multiplier",
+            "initial_step": 2.0,
+            "min_step": 1.05
+          },
+          "objective": {
+            "metric": "window_rmse_velocity + window_rmse_z",
+            "failure": "stop_reason or paper_failed",
+            "failure_penalty": 1000.0
+          },
+          "parameters": {
+            "NMPC": [
+              "w_v",
+              "Q_z",
+              "w_omega",
+              "r_dev",
+              "r_rate",
+              "terminal"
+            ],
+            "GSLQR": [
+              "q_z",
+              "q_v_h",
+              "q_v_z",
+              "q_phi",
+              "q_omega",
+              "q_n",
+              "r",
+              "q_iz",
+              "q_ivx"
+            ],
+            "CPID": [
+              "Kp_vel",
+              "Ki_vel",
+              "Kp_z",
+              "Kd_z",
+              "Ki_z",
+              "Kp_att",
+              "Kd_att"
+            ]
+          },
+          "scenario_design_note": "kj \uacb0\uc815(2026-09-27): \uc61b \uc9d1\ud569(\uc704 \uc774\ub825)\uc740 \uc81c\uc5b4\uae30 \uacb0\uacfc\ub85c \uc800\uc18d \uc0ac\ub840\ub97c \uace8\ub77c \ubcf8\uc2dc\ud5d8\ubcf4\ub2e4 \uc57d\ud55c \ucabd\uc73c\ub85c \uce58\uc6b0\ucce4\ub2e4(ARENA_STATUS 12\uc808, \uc7ac\ubc1c \uc0ac\ub840 tuning-set-must-match-test-severity). \uc774 \uc9d1\ud569\uc740 \uc81c\uc5b4\uae30 \uacb0\uacfc\ub97c \ubcf4\uc9c0 \uc54a\uace0 \ubcf8\uc2dc\ud5d8 \uc2dc\ub098\ub9ac\uc624(\uc544\ub798 scenarios)\uc758 \ud06c\uae30\u00b7\uc18d\ub3c4\u00b7\u03c1\ub9cc\uc73c\ub85c \uc815\ud588\ub2e4: \ub3cc\ud48d = \ubcf8\uc2dc\ud5d8 \ud53c\ud06c\uc758 0.7\ubc30\u00b71.3\ubc30 \uc591\ucabd \ubc29\ud5a5(\uce21\ud48d \u00b110 -> \u00b17/\u00b113, \uc218\uc9c1\ud48d \u22135 -> \u22133.5/\u22136.5), \uc18d\ub3c4 = V_L\u00b7V_H \uadfc\ucc98\uc9c0\ub9cc \uac19\uc9c0 \uc54a\uc740 \uac12(14\u00b726\u00b775\u00b782), \uae30\ub3d9 = \uc81c\ub3d9 1\uac1c + \u03c1 0.8\u00b71.2. \ubcf8\uc2dc\ud5d8 id\u00b7\uc18d\ub3c4\u00b7\u03c1\uc640 \uacb9\uce58\uc9c0 \uc54a\ub294\ub2e4(I-4). \uc81c\ub3d9 \ub05d\uc810(25, \ub2e4\uc12f\uc758 \ubc30\uc218)\uc740 \uba85\ubaa9 \uc81c\uc5b4\uae30 \ubaa8\ub378\uc758 available_acceleration\uc774 \uac10\uc18d \ubc29\ud5a5\uc5d0\uc11c\ub9cc 28\u00b732 m/s \uadfc\ucc98 \uc881\uc740 \uad6c\uac04\uc5d0\uc11c SLSQP \uc218\ub834\uc5d0 \uc2e4\ud328\ud558\ub294 \uac83\uc744 \ud53c\ud558\ub824\uace0 \uace0\ub978 \uac12\uc774\ub2e4(\uac00\uc18d \ubc29\ud5a5\uc740 0~85 \uc804 \uad6c\uac04 \uc2e4\ud328 \uc5c6\uc74c) \u2014 \ubb3c\ub9ac\uc801 \ud2b8\ub9bc \ubd88\uac00\uac00 \uc544\ub2c8\ub77c \uadf8 \uc9c0\uc810\ub4e4\ub9cc\uc758 \uad6d\uc18c \uc218\uce58 \ucde8\uc57d\uc810\uc73c\ub85c \ubcf4\uc774\ub098 \ud655\uc778\uc740 \ud558\uc9c0 \uc54a\uc558\ub2e4.",
+          "scenarios": [
+            {
+              "id": "tune2_gust_lateral_p7_V14",
+              "type": "gust",
+              "speed": 14.0,
+              "direction": "lateral",
+              "peak_m_s": 7.0,
+              "times_s": [
+                1.0,
+                1.0,
+                2.0
+              ]
+            },
+            {
+              "id": "tune2_gust_lateral_m13_V26",
+              "type": "gust",
+              "speed": 26.0,
+              "direction": "lateral",
+              "peak_m_s": -13.0,
+              "times_s": [
+                1.0,
+                1.0,
+                2.0
+              ]
+            },
+            {
+              "id": "tune2_gust_lateral_m7_V75",
+              "type": "gust",
+              "speed": 75.0,
+              "direction": "lateral",
+              "peak_m_s": -7.0,
+              "times_s": [
+                1.0,
+                1.0,
+                2.0
+              ]
+            },
+            {
+              "id": "tune2_gust_lateral_p13_V82",
+              "type": "gust",
+              "speed": 82.0,
+              "direction": "lateral",
+              "peak_m_s": 13.0,
+              "times_s": [
+                1.0,
+                1.0,
+                2.0
+              ]
+            },
+            {
+              "id": "tune2_gust_vertical_m3.5_V75",
+              "type": "gust",
+              "speed": 75.0,
+              "direction": "vertical",
+              "peak_m_s": -3.5,
+              "times_s": [
+                1.0,
+                1.0,
+                2.0
+              ]
+            },
+            {
+              "id": "tune2_gust_vertical_p6.5_V82",
+              "type": "gust",
+              "speed": 82.0,
+              "direction": "vertical",
+              "peak_m_s": 6.5,
+              "times_s": [
+                1.0,
+                1.0,
+                2.0
+              ]
+            },
+            {
+              "id": "tune2_gust_vertical_p3.5_V14",
+              "type": "gust",
+              "speed": 14.0,
+              "direction": "vertical",
+              "peak_m_s": 3.5,
+              "times_s": [
+                1.0,
+                1.0,
+                2.0
+              ]
+            },
+            {
+              "id": "tune2_gust_vertical_m6.5_V26",
+              "type": "gust",
+              "speed": 26.0,
+              "direction": "vertical",
+              "peak_m_s": -6.5,
+              "times_s": [
+                1.0,
+                1.0,
+                2.0
+              ]
+            },
+            {
+              "id": "tune2_ramp_accel_V17_70_rho0.8",
+              "type": "reference",
+              "from": 17.0,
+              "to": 70.0,
+              "rho": 0.8,
+              "lead_s": 0.5,
+              "tail_s": 1.0
+            },
+            {
+              "id": "tune2_ramp_brake_V80_25_rho1.2",
+              "type": "reference",
+              "from": 80.0,
+              "to": 25.0,
+              "rho": 1.2,
+              "lead_s": 0.5,
+              "tail_s": 1.0
+            },
+            {
+              "id": "tune3_step_altitude_p0.7_V0",
+              "type": "step",
+              "speed": 0.0,
+              "axis": "altitude",
+              "size": 0.7,
+              "durations_s": [
+                8.0
+              ]
+            },
+            {
+              "id": "tune3_step_altitude_p1.3_V0",
+              "type": "step",
+              "speed": 0.0,
+              "axis": "altitude",
+              "size": 1.3,
+              "durations_s": [
+                8.0
+              ]
+            },
+            {
+              "id": "tune3_step_altitude_p0.7_V14",
+              "type": "step",
+              "speed": 14.0,
+              "axis": "altitude",
+              "size": 0.7,
+              "durations_s": [
+                8.0
+              ]
+            },
+            {
+              "id": "tune3_step_altitude_p1.3_V14",
+              "type": "step",
+              "speed": 14.0,
+              "axis": "altitude",
+              "size": 1.3,
+              "durations_s": [
+                8.0
+              ]
+            },
+            {
+              "id": "tune3_step_speed_p0.7_V0",
+              "type": "step",
+              "speed": 0.0,
+              "axis": "speed",
+              "size": 0.7,
+              "durations_s": [
+                8.0
+              ]
+            },
+            {
+              "id": "tune3_step_speed_p1.3_V0",
+              "type": "step",
+              "speed": 0.0,
+              "axis": "speed",
+              "size": 1.3,
+              "durations_s": [
+                8.0
+              ]
+            },
+            {
+              "id": "tune3_step_speed_p0.7_V14",
+              "type": "step",
+              "speed": 14.0,
+              "axis": "speed",
+              "size": 0.7,
+              "durations_s": [
+                8.0
+              ]
+            },
+            {
+              "id": "tune3_step_speed_p1.3_V14",
+              "type": "step",
+              "speed": 14.0,
+              "axis": "speed",
+              "size": 1.3,
+              "durations_s": [
+                8.0
+              ]
+            }
+          ],
+          "scenario_design_note_2": "kj \uacb0\uc815(2026-09-27 \uc800\ub141): \uaddc\uce59\uc744 '\ubcf8\uc2dc\ud5d8\uc744 \uac10\uc2fc\ub2e4'\uc5d0\uc11c '\ubaa8\ub4e0 \ud3c9\uac00 \ucd95(\ubcf8\uc2dc\ud5d8 + \uc124\uacc4\uc810\uac80)\uc744 \uac10\uc2fc\ub2e4'\ub85c \ub113\ud78c\ub2e4. CPID \uace0\ub3c4-\uacc4\ub2e8\uc774 \uc124\uacc4 \uc601\uc5ed 0\u00b710\u00b720 m/s \uc804\ubd80 \uc815\ucc29 \uc2e4\ud328(Kd_z 2\u219264)\ud588\ub294\ub370, tune2_* 10\uac1c \uc911 \uc21c\uc218 \uace0\ub3c4-\ucd94\uc885(\uc0c8 z \ubaa9\ud45c\ub85c \uc774\ub3d9) \uc2e0\ud638\uac00 \ud558\ub098\ub3c4 \uc5c6\uc5b4\uc11c\uc600\ub2e4(\uc218\uc9c1\ud48d\uc740 \ud2b8\ub9bc \ubcf5\uadc0 \uc2e0\ud638\ub77c \ubc18\ub300 \uc555\ub825\uc744 \uc900\ub2e4). tune3_step_* 8\uac1c\ub97c \ucd94\uac00: \uc124\uacc4\uc810\uac80\uc758 \ub9e4\ub044\ub7ec\uc6b4 \uace0\ub3c4\u00b7\uc18d\ub3c4 \uacc4\ub2e8\uc744 \ud06c\uae30 0.7\ubc30\u00b71.3\ubc30\ub85c, \ud638\ubc84(V0)\uc640 V_L \uadfc\ucc98(V14, \uc774\ubbf8 tune2\uc5d0\uc11c \uc4f0\ub294 \uc810)\uc5d0\uc11c. \uc124\uacc4\uc810\uac80 \uc790\uccb4\uc758 \uc815\ud655\ud55c \uc870\uac74(\uc18d\ub3c4 0\u00b710\u00b720\u00b740\u00b760\u00b785, \ud06c\uae30 \u00b11)\uacfc\ub294 \uc548 \uacb9\uce5c\ub2e4. \uc81c\uc5b4\uae30 \uacb0\uacfc\ub97c \uc548 \ubcf4\uace0 \uc815\ud588\ub2e4(\uc18d\ub3c4\u00b7\ud06c\uae30\u00b7\uad00\ucc30\uc2dc\uac04 8s\ub9cc \uace0\ub984).",
+          "superseded_scenarios_2026-09-26": "\uc61b \uc9d1\ud569(tune_*, 8\uac1c, \uc800\uc18d 3\uac1c\ub294 8.3\uc808 '\uc2e4\ud328 \uc5c6\ub294 \uc0ac\ub840\ub9cc' \uaddc\uce59\uc73c\ub85c \uc120\uc815) \u2014 results/arena/tuning/main120 \uc804\uccb4\uc640 \ud568\uaed8 superseded. tune_gust_vertical_p3_V20\uc740 \ubcf8\uc2dc\ud5d8 V_L=20\uc744 \uadf8\ub300\ub85c \uc7ac\uc0ac\uc6a9\ud55c \uacb0\ud568\ub3c4 \uc788\uc5c8\ub2e4."
+        },
+        "reporting": {
+          "integrator_at_limit_fraction": 0.01
+        },
+        "acceptance": {
+          "max_z_error": 10.0,
+          "max_velocity_error": 15.0,
+          "max_omega": 35.0,
+          "sustained_omega": 25.0,
+          "sustained_seconds": 0.2,
+          "recovery_z": 0.5,
+          "recovery_velocity": 0.5,
+          "recovery_omega": 1.0,
+          "recovery_hold": 0.5
+        },
+        "paper_criteria": {
+          "z_error": 5.0,
+          "z_error_seconds": 0.5,
+          "omega": 20.0,
+          "omega_seconds": 0.1,
+          "cruise_velocity_floor": 5.0,
+          "cruise_velocity_fraction": 0.25,
+          "cruise_velocity_seconds": 2.0,
+          "consecutive_solver_failures": 3,
+          "recovery_z": 0.5,
+          "recovery_velocity_floor": 0.5,
+          "recovery_velocity_fraction": 0.05,
+          "recovery_hold": 1.0
+        },
+        "scenarios": [
+          {
+            "id": "mission_VH",
+            "type": "mission",
+            "speed": "V_H",
+            "durations_s": [
+              3.0,
+              15.0,
+              15.0,
+              15.0,
+              7.0
+            ],
+            "evaluation_start_s": 3.0
+          },
+          {
+            "id": "gust_lateral_p10_VH",
+            "type": "gust",
+            "speed": "V_H",
+            "direction": "lateral",
+            "peak_m_s": 10.0,
+            "times_s": [
+              3.0,
+              2.0,
+              7.0
+            ]
+          },
+          {
+            "id": "gust_vertical_m5_VH",
+            "type": "gust",
+            "speed": "V_H",
+            "direction": "vertical",
+            "peak_m_s": -5.0,
+            "times_s": [
+              3.0,
+              2.0,
+              7.0
+            ]
+          },
+          {
+            "id": "ref_accel_0_VH_rho1",
+            "type": "reference",
+            "from": 0.0,
+            "to": "V_H",
+            "rho": 1.0,
+            "lead_s": 3.0,
+            "tail_s": 5.0
+          },
+          {
+            "id": "ref_brake_VH_VL_rho1",
+            "type": "reference",
+            "from": "V_H",
+            "to": "V_L",
+            "rho": 1.0,
+            "lead_s": 3.0,
+            "tail_s": 5.0
+          },
+          {
+            "id": "mission_VH_mass1.3",
+            "type": "mission",
+            "speed": "V_H",
+            "durations_s": [
+              3.0,
+              15.0,
+              15.0,
+              15.0,
+              7.0
+            ],
+            "evaluation_start_s": 3.0,
+            "perturbation": {
+              "mass": 1.3
+            }
+          },
+          {
+            "id": "mission_VH_tau2",
+            "type": "mission",
+            "speed": "V_H",
+            "durations_s": [
+              3.0,
+              15.0,
+              15.0,
+              15.0,
+              7.0
+            ],
+            "evaluation_start_s": 3.0,
+            "perturbation": {
+              "motor_tau": 2.0
+            }
+          },
+          {
+            "id": "gust_lateral_p10_VL",
+            "type": "gust",
+            "speed": "V_L",
+            "direction": "lateral",
+            "peak_m_s": 10.0,
+            "times_s": [
+              3.0,
+              2.0,
+              7.0
+            ]
+          },
+          {
+            "id": "gust_vertical_m5_VL",
+            "type": "gust",
+            "speed": "V_L",
+            "direction": "vertical",
+            "peak_m_s": -5.0,
+            "times_s": [
+              3.0,
+              2.0,
+              7.0
+            ]
+          }
+        ],
+        "sensor_feedback": {
+          "schema": "sensor_feedback/1",
+          "mode": "sensors",
+          "seed": 3,
+          "profile": {
+            "schema": "sensor/1",
+            "name": "nav_startup_magnetometer_only",
+            "imu": {
+              "rate_hz": 500.0,
+              "accel_noise_density": 0.0,
+              "gyro_noise_density": 0.0,
+              "accel_bias": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "gyro_bias": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "accel_bias_rw": 0.0,
+              "gyro_bias_rw": 0.0,
+              "latency_s": 0.0,
+              "dropout_prob": 0.0,
+              "accel_clip": 100.0,
+              "gyro_clip": 50.0
+            },
+            "gnss": {
+              "rate_hz": 10.0,
+              "pos_sigma": 0.0,
+              "vel_sigma": 0.0,
+              "pos_bias": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "vel_bias": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "latency_s": 0.0,
+              "dropout_prob": 0.0,
+              "outage_windows": []
+            },
+            "barometer": {
+              "enabled": true,
+              "rate_hz": 50.0,
+              "sigma": 0.0,
+              "bias": 0.0,
+              "latency_s": 0.0,
+              "dropout_prob": 0.0
+            },
+            "magnetometer": {
+              "enabled": true,
+              "rate_hz": 100.0,
+              "sigma": 0.04,
+              "world_field": [
+                20.0,
+                0.0,
+                40.0
+              ],
+              "bias": [
+                0,
+                0,
+                0
+              ],
+              "latency_s": 0.01,
+              "dropout_prob": 0.0
+            },
+            "rpm": {
+              "enabled": true,
+              "rate_hz": 500.0,
+              "sigma": 0.0,
+              "bias": [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "latency_s": 0.0,
+              "dropout_prob": 0.0
+            },
+            "estimator": {
+              "history_s": 2.0,
+              "gnss_pos_sigma": 0.8,
+              "gnss_vel_sigma": 0.15,
+              "baro_sigma": 0.25,
+              "mag_sigma": 0.04,
+              "initial_position_sigma": 0.5,
+              "initial_velocity_sigma": 0.2,
+              "initial_attitude_deg": 1.0,
+              "estimate_baro_bias": true,
+              "baro_bias_tau_s": 1.0,
+              "baro_gnss_max_age_s": 0.25,
+              "initialize_baro_bias": true,
+              "preflight_baro_samples": 100,
+              "trace_updates": false,
+              "preflight_baro_rng": "independent",
+              "kind": "joint_baro",
+              "baro_bias_rw_density_m_sqrt_s": 0.03,
+              "accel_noise_density": 0.03,
+              "gyro_noise_density": 0.002,
+              "accel_bias_rw_density": 0.0002,
+              "gyro_bias_rw_density": 2e-05,
+              "preflight_baro_sigma_m": 0.25
+            },
+            "rotor_observer": {
+              "source": "telemetry",
+              "tau_s": 1e-06
+            }
+          }
+        }
+      },
+      "base_config_sha256": "ba03c6e65a314f98fb4638dfa4fcfd3186459ecbad30850ccf8016f5edc87664",
+      "controllers": [
+        "V13"
+      ],
+      "seeds": [
+        3
+      ],
+      "variants": [
+        "baseline"
+      ],
+      "faults": [
+        "nominal"
+      ],
+      "cases": [
+        "gust_lateral_p10_VL"
+      ],
+      "timeout_s": 900.0,
+      "runtime_source_sha256": {
+        "control/__init__.py": "4442b0651dd775b6aed0b5216a778ed3bc19f2e98be79dd5fd525a963285cb9c",
+        "control/acados_fallback_mc.py": "844f72c9d6e76d7143fb2ad4eb95608c75c469f051958e0fa61677e267d982ae",
+        "control/arena.py": "bad57298c5d095d689ca036ade7c89c0cfee5970d5d253b2b0a911214f99ff25",
+        "control/arena_design_check.py": "9cbed9eb3c7a55fc3a85d20d20f032855b8c7cb9cde5ef9a11923376600644e7",
+        "control/arena_dt_convergence.py": "ad73e2738e48c59a038048c014e13f8aa69622416b1f4d1734cf4d188b9ba300",
+        "control/arena_estimator.py": "583201c781336d1150e87e970ca1b10b551ee912c235066ca2d573c301d3ec9b",
+        "control/arena_factory.py": "b2ae950cd1b17ca4afd7b6726ccb9ef4c20e3ae49680fe48cb0b1390321cc2de",
+        "control/arena_feedback.py": "2034ee659adabe72937e11a9bb5eb0c1cfbd1f3da20956eee32e16afce1cda32",
+        "control/arena_feedforward_check.py": "b427db6335002662194e10d0c8b30648856bcbffba45040bd36531af3bdb5c2c",
+        "control/arena_integrators.py": "8ce6980f69bcf6a0753a266a1894eb91cc5e1b0e377c12b6d8bc132d243b6cbb",
+        "control/arena_joint_estimator.py": "51357b402b21082785d47a2d0d7fe75a16d26c91a0bcd54a5923a06624466787",
+        "control/arena_m17_diagnosis.py": "91a6e8a1bd263529e011028dab41e8c841c8dc28061f3f3c3455121e287247e4",
+        "control/arena_m17_floor_variants.py": "096905fbaeb6d3966631cf5b661b5c209835f0a042522e75459892a5cb672f82",
+        "control/arena_m17_probe.py": "9fe2760261b8d2c42fe4909b9c06cfcbd3c515eb59d433d7ff96009c8dd8b63a",
+        "control/arena_mission_rho.py": "887617104097ef49a4eac69bbf0c9c9fc6f9191eff407acb4f86131e9113163c",
+        "control/arena_model_mismatch.py": "c5c3f63fed0c2f077bf3469c7e7979b1832fb8f6912f226f5302513e147a81cd",
+        "control/arena_observation_delay.py": "7fa1d405cee463f7187bb3b9e52141a2be4a77888ca294366f102df95a42ea2c",
+        "control/arena_plant_wrench.py": "14c15af56dd29c41f0bb6fb4aecff0e026a88a7ee85adbce7554515ede4d851f",
+        "control/arena_reference_merge.py": "ce038c9ecad2f852b9973cd3ae05aa9ca393f43e13abc18881a7cf1fb7371b61",
+        "control/arena_sensors.py": "d8474c0a2c56d814424ec987d6408496f5b22a4069dad7700175a82fc7653142",
+        "control/arena_smoke_summary.py": "0f0dc6fbe28cdb17fdfc7b1bb3be6c22dc6486b235d3603b5a69c56bcfb326d2",
+        "control/arena_suggest_workers.py": "19130f4b311a177b5bb55511dfdc99f05d537f02602a98cc2495e50677eb58b2",
+        "control/arena_trim.py": "85e5972b74b6994ea128e332add745e3af56b32cdcb505159a9c514b00f426e0",
+        "control/arena_tune.py": "1f9ef7923d98f23a6e8fd3bed1940959db9610e419b3fa6e5f67202afa5b8348",
+        "control/arena_tune_repro.py": "c3dfb87752b29f998108372ed19a843eead6dc9d5482271a80a0fd142d41a454",
+        "control/arena_tuning_candidates.py": "bcfc9d71090de3f9dfdda8ce44f97c07597aaadd0a26376c466d6aab27327b9e",
+        "control/arena_tuning_path_check.py": "e575c40617b9f2507d370094e673403697a5f768928305a927abd1ecb2c3f5bd",
+        "control/arena_tuning_report.py": "6e1568d0f6fc8be61ee8280c4a2093a72207ce0d4d35f9fdc649a23c22ca0a36",
+        "control/battery.py": "2cf4f4bed3f761f7c2cbc3d010a500970e260e2e7f539746628e2275784670ee",
+        "control/bench_acados.py": "5a62d0c11aaa21c708b950d814c340e5ede1ebd4e20def954fc12180c5dee1f6",
+        "control/bench_compute.py": "fbbd28df436cd9736d7727c7292d209ac0bbd48a945388ac8d3dc36b65a61499",
+        "control/controller.py": "a2d9bbc362414c49ad112ce0d2ed5dcc14faa3d64f8be0b2f64872cc2446c99b",
+        "control/derive_vl_vh.py": "2d28f20d81914486d22faaede44f59b56905ccb669e1bb9270de72d762d583f9",
+        "control/dynamics.py": "839054bce880491952e5fc112b2eda5ccb768cf57d980d695d2335e8f3b41794",
+        "control/dynamics_hifi.py": "a407ba9a8fbf88959e0d03e9c721db5f660ebaaba7dd761c93d642ac9bff27b2",
+        "control/ekf_comparison.py": "c8c36f85a608fcc171238e1d84fddc23faa4390df2b8a5e6153b2942c0edfecc",
+        "control/ekf_sim.py": "330ef15ce2f63b93edfc0ae6d05e04c3e7648a49ffec034ff53e62836bbf641d",
+        "control/estimator.py": "3db05205b6458af3c549822d785ed2cda4137097284971e7476e9d6866273752",
+        "control/fair_compare.py": "8b606cbdf1d5994114f18fe885e6ab1697376d5c1b347124b278ea18d6c4224a",
+        "control/fallback_controller.py": "33e13bfbcb1e5ed9e8caf5fa1b64eedf83d8bef59e2c6834994ae29d97282d55",
+        "control/final_config_mission.py": "0963c423d6e3085175c677553e2b8520b04bc7ae3b936ae0a5fa25a46602bac2",
+        "control/flight_envelope.py": "d4e914bc1ae65f0c4ec2eac21bf3c7d13304c304b22d18745101518c345ae06c",
+        "control/gindi.py": "8fabbdfc2e72175cbbe5daca72cc8b6f3e30afeb447ced79bb3e14cfb794c018",
+        "control/gust_comparison.py": "d828eaebff80f7ee8f62f3fa674f87ae2280e42296f046c340e268ee927a1f45",
+        "control/hybrid_comparison.py": "23a4ee7c6c96fc279e37f098f17c08494ddb554dc48a8dccbf3d8fb37a3b694b",
+        "control/joint_consistency_check.py": "8633bd38eb4ece99b63d3ca880e8b551a8e3280ebfa1e8c3826427f2fe3a045a",
+        "control/joint_fusion_experiment.py": "f046bf114e86e84bb286a010f5587e373635b9405463b1f4b90f6a9185a2a858",
+        "control/kh_adapter.py": "20c861f7d09a1eaf1635da369a29c72b60204e1459b9ab21c79b477a99ace8c8",
+        "control/kh_discriminate_scenario_vs_warmstart.py": "e87c7da6d87336c8ede19bf534cea5bb6901e7243496fae98c39724800c5f2b6",
+        "control/kh_mission_repro.py": "3013d33642d5e935cd14946e2a27a864cf0ffc40e2a8de96092e129e0f873d54",
+        "control/kh_repro.py": "999351cd9b1cd14f14325efef835dce0dab9ccef0ed22d65499863d39354d0dd",
+        "control/kh_timing_severity_compare.py": "2a4463ba4d1bbf998480749b03fccdb7d2b47ed4a590b4bb7c61c1ba59d2804b",
+        "control/main_distributed.py": "c40d390eba5c642ef438d6e8fd4fef042d54165ecea3a006b7fdc43659befd0e",
+        "control/main_experiment.py": "01733400dbb31322ee2fc8e6d9967d980fb44e9e646e67a3b15f5754529b8f9e",
+        "control/mission_profiles.py": "e281edb2fffbbd7410c18d154a275b08faaddaf5de9680fcb71474e3fbc1c3a2",
+        "control/mission_sim.py": "e969484f274f4593a60f07583f293627a97f42836de46bdf666cbe98cd8bd202",
+        "control/moment_correction.py": "c8ae5a3f35d1c73b95fe89526aafe81b43b55eedeee2111a696e5fb68999180f",
+        "control/navigation_grid_campaign.py": "3444c9e5568eff83c8900f5f23aa2b5b0d6dbef90df2c2dfe88cdc17936d935a",
+        "control/navigation_update_experiment.py": "0eba641aabe77e727c250141a9609af93d2bfaaa5fc3dbd2f0e4379daaf6f2ff",
+        "control/navigation_update_report.py": "4d51adff3906a1b6b941cb15e11f61e429ab61512152a967d77fbb189519c02e",
+        "control/night_current_diag.py": "6a299faa437d414ce43daf930a1fe146c9d2dd5ccf24066128a2bf124e9e033b",
+        "control/night_hifi_branch.py": "2e94abf4c6d37b71ddf2025f9692996f29c7c34a86b7af4baf0d0bcbe4a5cbc1",
+        "control/night_perturbation_robustness.py": "ee981a9df4510c59fd9383873bf1349147a3f544f90e4811ad8b12503a459fef",
+        "control/nmpc.py": "04f7b216f74fcb7203459b8cf6e94f0410986a88821163cb642226dff80b98f9",
+        "control/nmpc_common.py": "a91e518c390c9a9f41818b7ef6e148ee9eb3eae0b65d008d5b6a7996322981fe",
+        "control/nmpc_f13.py": "907cf4b3ca2f62561b11be5128ef94b43520cda078249c66fbfac6b56ae0788f",
+        "control/pilot_before_after.py": "7612a78de50d61799daf4f942253788333cee245029251eababb43c15e7198fc",
+        "control/plot_plant_validation.py": "9882944b68877844d6839f4fb06da15d91398e327dcf577e3b081af104310fab",
+        "control/plot_proposal_figures.py": "c60b40c4747c9da2d67b4c81bd29b27bf138c6084ebf69b5fccf35276d8f720e",
+        "control/preflight_calibration_experiment.py": "ba791484b297eb3aa4ef001cecc5db8e1b0772911b88028670c9460fc09b74f8",
+        "control/preflight_calibration_report.py": "42848eb9fbfb797601d85ae1698b1b17f9b0643372158cea677213cc593f2b8d",
+        "control/robustness_crosswind.py": "4d687a8f41e9c7989035fd4717d848e26122ce23ebf52771362afbfaf6f42e12",
+        "control/rotor_estimator.py": "21d8fea07ebf1d2a4c8577d5c572097fc6c6431493fbb5d000696e8d4ceae85b",
+        "control/sensor_binding.py": "127919424449b66d315385b53c87b4e42889129ed8b75148bf5834efd69bca24",
+        "control/sensor_campaign.py": "66df568e1582535dc7c139395290ce42f8d6a860e988769475cd7d7d6b51271b",
+        "control/sensor_campaign_report.py": "f79d814db6bdaf5553c005ba681297a386dd91465f554f5f797965c524037f5b",
+        "control/sensor_controller_screen.py": "83f68cc109e97577a2e9b260478628814251b2f85f88b4e7810209deb6f3552d",
+        "control/sensor_feedback_ablation.py": "5b018a5a6623cc8ee289fd6291ab23230a931dfcc5a7c25052199759360ef36a",
+        "control/sensor_feedback_diagnostics.py": "b1d392188cded2620c239af3fe05eb0a6d810ddc9570f0b4aee1043dd1ecfe37",
+        "control/sensor_filter_experiment.py": "181be054c08e41855925fa17b3141d3fc8124162889f84d008f4cf5ed355acca",
+        "control/sensor_filter_report.py": "e6e7751d1086fa0e69202904aa44d5042c820a14754ffd1dd00024244e62f568",
+        "control/sensor_matching_screen.py": "2f774fca530a294ec58a7419cc6113a2b28753f8c11eaab76046ee69cd6ed0fb",
+        "control/sensor_screen_report.py": "c4e2e3854aaed58543698fa0f4f0262183d6579b3dc6f8369e9f6859df6a3569",
+        "control/sensors.py": "099cacd00af5a465a674a3aba6dd37145c28d7e053cf176356516dffffbb8551",
+        "control/timing_study.py": "7497fd527c4af2a01972cd920b41b1d303c0fd07157eac0eae1374b7aafd26a1",
+        "control/trim.py": "10f88429fb4929dae34a50eb6ad3502235d229da6039e28c3004acc80e4857eb",
+        "control/trim_hifi.py": "cb7657477e8699ac3afaf0fab7f241c6cc687f1323738d87714e19eca0217aad",
+        "control/tuning_analysis.py": "d12d35da604655efdcaad1f5044146abef1d81267c6a98f719f77324085ab5f9",
+        "control/tuning_carryover.py": "29ea9eacaa493b01bace0236b2dbbe7e4698c081249c2829b56775caf8638aa4",
+        "control/tuning_extension.py": "c430f8179644078ba7c49093dd7dee46059622c5b945fc443210069091e9da73",
+        "control/uncertainty.py": "18061ba57f3fd3bbf68387e74361bbc79ffe0b907daf4a342ed03b664a921569",
+        "control/validation_metrics.py": "3b084c2fc36586b7b17e1677e7a7c1dbf56c03af13bd46c15994d6d6bd53ec62",
+        "control/validation_suite.py": "3b8c101e1a76f83c48e1fcc52fc41e4acee7c84ee36f536f7a0d37176c872689",
+        "control/vehicle_params.py": "f4ee0e03e1b00d8e4751feb47c506987ad3370c49d8a1202a77f40c807c4ffde",
+        "control/vnmpc_acados.py": "606fe3731d1e4c32738983bd8d939067505091a885e28a6e82640479aa9bf2ae",
+        "models/team_light/control/__init__.py": "0448f8dad13aac955a70724ea443c4e60e5c32d83144e6c662f7bcf6cbfdd766",
+        "models/team_light/control/airframe.py": "52050c1c49d871a33a811ca34ea5678f809c23254251ee3ef190b50e2b9ae4f6",
+        "models/team_light/control/analyze_baseline_log.py": "0555e41776af1ff172849ed51ec48382993a4d2e4991c33937cbb159a54501c8",
+        "models/team_light/control/baseline_v2.py": "bd991756926583ad50413f0173480043a3489288721333abba83272b7abbdcbd",
+        "models/team_light/control/comparison_nmpc.py": "a9480449ba2deb9167610975d714c7c6d09d8c5f2a9b26b8cc68c6dd0e61e782",
+        "models/team_light/control/controller.py": "e2b9dac4a34fddfad35787dc26ad286de36ea54bd30b89a61203d95cf559209d",
+        "models/team_light/control/curve_authority.py": "e06ca891b0f4b25c25739e10955d94e4ebc9bea8e135fa6434ec290a7575a106",
+        "models/team_light/control/dynamics.py": "c7c63c389552f7299a666a34d6fa7db161480fde33bbe79c77f4cc3a06ca88e8",
+        "models/team_light/control/geometry.py": "564bc71a9a9e00c4254b4ba512cab6cfe6715a0aa7a0ee7222b7cfd9e6967a5a",
+        "models/team_light/control/hybrid_comparison.py": "80d5d594cf407a6ddf46acba47fa1d5abb10f9d0509fc7667f6cd159ddba8213",
+        "models/team_light/control/light_aero.py": "87914e522aed5e1ef13ad9591dc7a25366b0d970d1ee0cefcb29889b74da66ce",
+        "models/team_light/control/light_rocket_curve.py": "29a9f21673a7b625f6d36e2a307b2ff552aba56e33aebdbcb467972288680aa0",
+        "models/team_light/control/mission_sim.py": "c4407841f3ce38abe7d20d807a247280b6bef8518cd466a13fab389a4cb1b421",
+        "models/team_light/control/propeller_curve.py": "1e118de4a3713538d067cc3962830cfb7548d04d7045e861d2550f5ac8c2e228",
+        "models/team_light/control/run_baseline_comparison.py": "abfb5bd00a1a2332a8223588d65303a9b5850d20e027e99964a09ab66c1a41db",
+        "models/team_light/control/serialization.py": "cef1131c212c58aa00f1364afbf228d8ab9dc4bbc02c7356011a83d0a14448b6",
+        "models/team_light/control/trim.py": "01406db0ecdeb449458d8ad620906c564fbce5c3a15c408efbd7c648c2f58caa",
+        "models/team_light/control/validate_model.py": "a36593f9fcc5480b276271825ffe5b423bc5ae6faecf421d92f87942dfb4270a",
+        "models/team_light/control/vehicle_params.py": "06eff0a08f33c865c211f0db4ad3c6ef5cd2101141ba02c27313c0bb24c3ca77"
+      }
+    }
+  ],
+  "records": [
+    {
+      "trial_id": "quiet_sampled/nominal/V13/gust_lateral_p10_VL/seed_3",
+      "variant": "quiet_sampled",
+      "fault": "nominal",
+      "controller": "V13",
+      "scenario_id": "gust_lateral_p10_VL",
+      "sensor_seed": 3,
+      "sensor_profile": "quiet_sampled_nominal",
+      "sensor_profile_sha256": "8cd58a2cceaeb3c1029ad8b78db06291ebae4fd044edeb8ade88cf2dc5b2d40b",
+      "config_sha256": "63f7db76b5d6740d816b3cd9540df31cdda8a229454400b451f6b7852336114f",
+      "truth_parameter_sha256": "13a1dcc6332987eba93ea4653f4d6087741d1ac085701982ed94c22e6658c807",
+      "controller_model_sha256": "2582197db2546d329b62bee631beef5f89459c2c4b11a2131ab024240177956d",
+      "trajectory_sha256": "92f4755ef0e8f249094e3de648e255a0129c558147ea30cf0cd2c1c98a52f8ca",
+      "simulated_seconds": 12.0,
+      "tracking_pass": true,
+      "model_domain_valid": true,
+      "passed": true,
+      "failure_reasons": [],
+      "campaign_timed_out": false,
+      "stop_reason": null,
+      "paper_failed": false,
+      "paper_reasons": [],
+      "rmse_z": 0.026433655456988614,
+      "rmse_velocity": 0.2655589860797194,
+      "max_omega": 0.3899395149946483,
+      "prop_domain_outside_fraction": 0.0,
+      "optimizer_calls": 600,
+      "optimizer_failures": 0,
+      "command_total_variation": 0.20121017782697076,
+      "estimator_diagnostics": {
+        "updates": 323,
+        "replays": 6001,
+        "delayed_updates": 320,
+        "rejected_updates": 0,
+        "stale_measurements": 0,
+        "nis": {
+          "gnss": 2.7146991077210053e-06,
+          "barometer": 5.4579565512520845e-09,
+          "magnetometer": 2.242373376601912e-09
+        },
+        "barometer_bias_estimate": -3.2667051452714727e-06,
+        "error_state_dimension": 16,
+        "barometer_bias_variance": 0.005724830226210424,
+        "filter_kind": "joint_baro"
+      },
+      "condition": "quiet_sampled",
+      "source": "results/envelope_startup_groups_v10/experiment.json",
+      "trace": "results/envelope_startup_groups_v10/runs/quiet_sampled/nominal/V13/gust_lateral_p10_VL/seed_3/runs/quiet_sampled_nominal/V13/arena_20260930T055242682853Z/gust_lateral_p10_VL_V13.npz",
+      "diagnostics": {
+        "scenario_id": "gust_lateral_p10_VL",
+        "profile": "quiet_sampled_nominal",
+        "variant": "quiet_sampled",
+        "controller": "V13",
+        "sensor_seed": 3,
+        "tracking_pass": true,
+        "model_domain_valid": true,
+        "passed": true,
+        "failure_reasons": [],
+        "rmse_velocity": 0.2655589860797194,
+        "rmse_z": 0.026433655456988614,
+        "prop_domain_outside_fraction": 0.0,
+        "optimizer_failures": 0,
+        "campaign_timed_out": false,
+        "diagnostic_start_s": 0.5,
+        "minimum_rotor_rpm": 11070.938923844662,
+        "assumed_minimum_rpm": 10000,
+        "below_minimum_rpm_samples": 0,
+        "above_maximum_rpm_samples": 0,
+        "above_advance_ratio_limit_samples": 0,
+        "reverse_flow_samples": 0,
+        "below_minimum_rpm_after_settle_samples": 0,
+        "domain_first_s": null,
+        "domain_last_s": null,
+        "command_slew_rms_rad_s2": 141.01758193698626,
+        "indi_cutoff_hz": 50.0,
+        "time_align": "S1",
+        "rotor_startup_guard": false,
+        "angular_accel_error_raw_rms_rad_s2": 0.0007041787324715856,
+        "angular_accel_error_filtered_rms_rad_s2": 0.00039128288682802373
+      },
+      "controller_settings": {
+        "V13": {
+          "kind": "V13",
+          "warm_start": "measured_state_and_controller_trim_input",
+          "N": 20,
+          "dt_pred_s": 0.05,
+          "dt_ctrl_s": 0.02,
+          "ipopt_options": {
+            "ipopt.print_level": 0,
+            "ipopt.sb": "yes",
+            "print_time": 0,
+            "ipopt.max_iter": 30,
+            "ipopt.warm_start_init_point": "yes",
+            "ipopt.tol": 0.0001
+          },
+          "cost_spec": "paper",
+          "cost_weights": {
+            "w_v": 5.0,
+            "w_omega": 1.0,
+            "r_dev": 0.02,
+            "r_rate": 0.1,
+            "terminal": 10.0
+          },
+          "Q_z": 20.0,
+          "preview": true,
+          "soft_constraints": {},
+          "alloc_mode": "A1",
+          "time_align": "S1",
+          "indi_cutoff_hz": 50.0,
+          "rotor_startup_guard": false,
+          "alloc_feedback": true
+        }
+      },
+      "startup": {
+        "first_rotor_ready_s": 0.0,
+        "allocation_before_rotor_ready": 0,
+        "all_zero_commands_before_rotor_ready": 0,
+        "minimum_startup_command_rpm": 11334.70981666419,
+        "minimum_startup_actual_rpm": 11340.592350416833,
+        "first_paths": [
+          "fallback_init",
+          "A1",
+          "A1",
+          "A1"
+        ],
+        "first_commands_rad_s": [
+          [
+            1220.1291814019621,
+            1220.1291814019621,
+            1207.3182940805864,
+            1207.318294080586
+          ],
+          [
+            1237.5004801683167,
+            1237.500480168317,
+            1194.5861770408096,
+            1194.5861770408096
+          ],
+          [
+            1239.0575922167627,
+            1239.057592216763,
+            1194.589337107413,
+            1194.5893371074128
+          ],
+          [
+            1239.8707826110085,
+            1239.8707826110087,
+            1194.5609132809595,
+            1194.5609132809595
+          ]
+        ],
+        "first_estimated_rotors_rad_s": [
+          [
+            1220.050428871057,
+            1220.050428871057,
+            1188.3946571337137,
+            1188.3946571337137
+          ],
+          [
+            1220.0579231652102,
+            1220.0579231652102,
+            1190.195479280037,
+            1190.195479280037
+          ],
+          [
+            1221.717801920435,
+            1221.717801920435,
+            1190.6133094142554,
+            1190.6133094142554
+          ],
+          [
+            1223.3679011305337,
+            1223.3679011305337,
+            1190.9916784743011,
+            1190.9916784743011
+          ]
+        ]
+      },
+      "estimation_rms": {
+        "position_m": 5.05596929110944e-05,
+        "velocity_m_s": 0.0008749045242908458,
+        "body_rate_rad_s": 9.693443074309908e-05,
+        "rotor_rad_s": 0.0,
+        "attitude_deg": 0.011640143728044205
+      }
+    },
+    {
+      "trial_id": "imu_only/nominal/V13/gust_lateral_p10_VL/seed_3",
+      "variant": "imu_only",
+      "fault": "nominal",
+      "controller": "V13",
+      "scenario_id": "gust_lateral_p10_VL",
+      "sensor_seed": 3,
+      "sensor_profile": "imu_only_nominal",
+      "sensor_profile_sha256": "c9b116a2fde0b9c49a2c92912342ba3652d9c81cececc578d268287ae1591464",
+      "config_sha256": "7d5d1ff2300a113b3ed9f69e6e9f382b00647e2ef50acf78d0ac44ed79c85d06",
+      "truth_parameter_sha256": "13a1dcc6332987eba93ea4653f4d6087741d1ac085701982ed94c22e6658c807",
+      "controller_model_sha256": "2582197db2546d329b62bee631beef5f89459c2c4b11a2131ab024240177956d",
+      "trajectory_sha256": "343bad6c5223234a723f7ee9e5ef81be312cfd7acd3507eb83f5419958bc2d73",
+      "simulated_seconds": 12.0,
+      "tracking_pass": true,
+      "model_domain_valid": true,
+      "passed": true,
+      "failure_reasons": [],
+      "campaign_timed_out": false,
+      "stop_reason": null,
+      "paper_failed": false,
+      "paper_reasons": [],
+      "rmse_z": 0.035215978269120866,
+      "rmse_velocity": 0.26592982524137176,
+      "max_omega": 0.4631361320485998,
+      "prop_domain_outside_fraction": 0.0,
+      "optimizer_calls": 600,
+      "optimizer_failures": 0,
+      "command_total_variation": 1538.6426240277829,
+      "estimator_diagnostics": {
+        "updates": 323,
+        "replays": 6001,
+        "delayed_updates": 320,
+        "rejected_updates": 0,
+        "stale_measurements": 0,
+        "nis": {
+          "gnss": 0.22621135499886236,
+          "barometer": 2.1449867282834565e-06,
+          "magnetometer": 0.7045133524493028
+        },
+        "barometer_bias_estimate": 0.00020575403133990216,
+        "error_state_dimension": 16,
+        "barometer_bias_variance": 0.005724858965574224,
+        "filter_kind": "joint_baro"
+      },
+      "condition": "imu_only",
+      "source": "results/envelope_startup_groups_v10/experiment.json",
+      "trace": "results/envelope_startup_groups_v10/runs/imu_only/nominal/V13/gust_lateral_p10_VL/seed_3/runs/imu_only_nominal/V13/arena_20260930T055335371131Z/gust_lateral_p10_VL_V13.npz",
+      "diagnostics": {
+        "scenario_id": "gust_lateral_p10_VL",
+        "profile": "imu_only_nominal",
+        "variant": "imu_only",
+        "controller": "V13",
+        "sensor_seed": 3,
+        "tracking_pass": true,
+        "model_domain_valid": true,
+        "passed": true,
+        "failure_reasons": [],
+        "rmse_velocity": 0.26592982524137176,
+        "rmse_z": 0.035215978269120866,
+        "prop_domain_outside_fraction": 0.0,
+        "optimizer_failures": 0,
+        "campaign_timed_out": false,
+        "diagnostic_start_s": 0.5,
+        "minimum_rotor_rpm": 10475.095933018432,
+        "assumed_minimum_rpm": 10000,
+        "below_minimum_rpm_samples": 0,
+        "above_maximum_rpm_samples": 0,
+        "above_advance_ratio_limit_samples": 0,
+        "reverse_flow_samples": 0,
+        "below_minimum_rpm_after_settle_samples": 0,
+        "domain_first_s": null,
+        "domain_last_s": null,
+        "command_slew_rms_rad_s2": 276797.9048246545,
+        "indi_cutoff_hz": 50.0,
+        "time_align": "S1",
+        "rotor_startup_guard": false,
+        "angular_accel_error_raw_rms_rad_s2": 54.50983858515652,
+        "angular_accel_error_filtered_rms_rad_s2": 20.612738044336155
+      },
+      "controller_settings": {
+        "V13": {
+          "kind": "V13",
+          "warm_start": "measured_state_and_controller_trim_input",
+          "N": 20,
+          "dt_pred_s": 0.05,
+          "dt_ctrl_s": 0.02,
+          "ipopt_options": {
+            "ipopt.print_level": 0,
+            "ipopt.sb": "yes",
+            "print_time": 0,
+            "ipopt.max_iter": 30,
+            "ipopt.warm_start_init_point": "yes",
+            "ipopt.tol": 0.0001
+          },
+          "cost_spec": "paper",
+          "cost_weights": {
+            "w_v": 5.0,
+            "w_omega": 1.0,
+            "r_dev": 0.02,
+            "r_rate": 0.1,
+            "terminal": 10.0
+          },
+          "Q_z": 20.0,
+          "preview": true,
+          "soft_constraints": {},
+          "alloc_mode": "A1",
+          "time_align": "S1",
+          "indi_cutoff_hz": 50.0,
+          "rotor_startup_guard": false,
+          "alloc_feedback": true
+        }
+      },
+      "startup": {
+        "first_rotor_ready_s": 0.0,
+        "allocation_before_rotor_ready": 0,
+        "all_zero_commands_before_rotor_ready": 0,
+        "minimum_startup_command_rpm": 5756.329537010586,
+        "minimum_startup_actual_rpm": 10572.298817592606,
+        "first_paths": [
+          "fallback_init",
+          "A1",
+          "A1",
+          "A1"
+        ],
+        "first_commands_rad_s": [
+          [
+            1204.0245011330599,
+            1221.0364591787297,
+            1207.8113313760696,
+            1220.607672275809
+          ],
+          [
+            1547.3215757018793,
+            980.5021585863346,
+            1362.45740514653,
+            971.8167148797421
+          ],
+          [
+            1284.958468171657,
+            1375.0515758070876,
+            1142.6592311581321,
+            1060.0400897513136
+          ],
+          [
+            1317.975892904626,
+            1163.6103552876104,
+            1243.9557541481918,
+            1138.471410018445
+          ]
+        ],
+        "first_estimated_rotors_rad_s": [
+          [
+            1220.050428871057,
+            1220.050428871057,
+            1188.3946571337137,
+            1188.3946571337137
+          ],
+          [
+            1218.5253602139599,
+            1220.1442620607334,
+            1190.2423979819316,
+            1191.4601308177942
+          ],
+          [
+            1249.8144569209112,
+            1197.3393008188873,
+            1206.6308226648775,
+            1170.5582963117845
+          ],
+          [
+            1253.1588517615362,
+            1214.2508597000217,
+            1200.543120863986,
+            1160.041098454693
+          ]
+        ]
+      },
+      "estimation_rms": {
+        "position_m": 0.006916413851378859,
+        "velocity_m_s": 0.04051177839867358,
+        "body_rate_rad_s": 0.07757195085441136,
+        "rotor_rad_s": 0.0,
+        "attitude_deg": 0.4796295376854723
+      }
+    },
+    {
+      "trial_id": "navigation_only/nominal/V13/gust_lateral_p10_VL/seed_3",
+      "variant": "navigation_only",
+      "fault": "nominal",
+      "controller": "V13",
+      "scenario_id": "gust_lateral_p10_VL",
+      "sensor_seed": 3,
+      "sensor_profile": "navigation_only_nominal",
+      "sensor_profile_sha256": "ebf1c5c1136e94b8a257625577f5bba6dba5766e80aa70769ee29288d9606d82",
+      "config_sha256": "cd20d0c3a6043fd54039edbebc90ae78e5c776c3db3ea4976b8d150589bb661f",
+      "truth_parameter_sha256": "13a1dcc6332987eba93ea4653f4d6087741d1ac085701982ed94c22e6658c807",
+      "controller_model_sha256": "2582197db2546d329b62bee631beef5f89459c2c4b11a2131ab024240177956d",
+      "trajectory_sha256": "7fde962d294ca0498ae41aecb09453ee75e8c8acff37334a1a0ab8e1bf0afd6b",
+      "simulated_seconds": 12.0,
+      "tracking_pass": true,
+      "model_domain_valid": false,
+      "passed": false,
+      "failure_reasons": [
+        "propulsion_model_domain"
+      ],
+      "campaign_timed_out": false,
+      "stop_reason": null,
+      "paper_failed": false,
+      "paper_reasons": [],
+      "rmse_z": 0.07269623811744716,
+      "rmse_velocity": 0.2612946559290878,
+      "max_omega": 0.4092517849507153,
+      "prop_domain_outside_fraction": 0.006333333333333333,
+      "optimizer_calls": 600,
+      "optimizer_failures": 0,
+      "command_total_variation": 18.873096554506063,
+      "estimator_diagnostics": {
+        "updates": 319,
+        "replays": 6001,
+        "delayed_updates": 319,
+        "rejected_updates": 0,
+        "stale_measurements": 0,
+        "nis": {
+          "gnss": 2.737036192819718,
+          "barometer": 2.543554901702318,
+          "magnetometer": 1.3863767274716112
+        },
+        "barometer_bias_estimate": -0.017434784778742527,
+        "error_state_dimension": 16,
+        "barometer_bias_variance": 0.005831332635842742,
+        "filter_kind": "joint_baro"
+      },
+      "condition": "navigation_only",
+      "source": "results/envelope_startup_groups_v10/experiment.json",
+      "trace": "results/envelope_startup_groups_v10/runs/navigation_only/nominal/V13/gust_lateral_p10_VL/seed_3/runs/navigation_only_nominal/V13/arena_20260930T055429566532Z/gust_lateral_p10_VL_V13.npz",
+      "diagnostics": {
+        "scenario_id": "gust_lateral_p10_VL",
+        "profile": "navigation_only_nominal",
+        "variant": "navigation_only",
+        "controller": "V13",
+        "sensor_seed": 3,
+        "tracking_pass": true,
+        "model_domain_valid": false,
+        "passed": false,
+        "failure_reasons": [
+          "propulsion_model_domain"
+        ],
+        "rmse_velocity": 0.2612946559290878,
+        "rmse_z": 0.07269623811744716,
+        "prop_domain_outside_fraction": 0.006333333333333333,
+        "optimizer_failures": 0,
+        "campaign_timed_out": false,
+        "diagnostic_start_s": 0.5,
+        "minimum_rotor_rpm": 8330.2190192161,
+        "assumed_minimum_rpm": 10000,
+        "below_minimum_rpm_samples": 38,
+        "above_maximum_rpm_samples": 0,
+        "above_advance_ratio_limit_samples": 0,
+        "reverse_flow_samples": 0,
+        "below_minimum_rpm_after_settle_samples": 0,
+        "domain_first_s": 0.14,
+        "domain_last_s": 0.214,
+        "command_slew_rms_rad_s2": 8172.812779429175,
+        "indi_cutoff_hz": 50.0,
+        "time_align": "S1",
+        "rotor_startup_guard": false,
+        "angular_accel_error_raw_rms_rad_s2": 0.2578900286231063,
+        "angular_accel_error_filtered_rms_rad_s2": 0.14229924494172752
+      },
+      "controller_settings": {
+        "V13": {
+          "kind": "V13",
+          "warm_start": "measured_state_and_controller_trim_input",
+          "N": 20,
+          "dt_pred_s": 0.05,
+          "dt_ctrl_s": 0.02,
+          "ipopt_options": {
+            "ipopt.print_level": 0,
+            "ipopt.sb": "yes",
+            "print_time": 0,
+            "ipopt.max_iter": 30,
+            "ipopt.warm_start_init_point": "yes",
+            "ipopt.tol": 0.0001
+          },
+          "cost_spec": "paper",
+          "cost_weights": {
+            "w_v": 5.0,
+            "w_omega": 1.0,
+            "r_dev": 0.02,
+            "r_rate": 0.1,
+            "terminal": 10.0
+          },
+          "Q_z": 20.0,
+          "preview": true,
+          "soft_constraints": {},
+          "alloc_mode": "A1",
+          "time_align": "S1",
+          "indi_cutoff_hz": 50.0,
+          "rotor_startup_guard": false,
+          "alloc_feedback": true
+        }
+      },
+      "startup": {
+        "first_rotor_ready_s": 0.0,
+        "allocation_before_rotor_ready": 0,
+        "all_zero_commands_before_rotor_ready": 0,
+        "minimum_startup_command_rpm": 7275.500530120662,
+        "minimum_startup_actual_rpm": 8330.2190192161,
+        "first_paths": [
+          "fallback_init",
+          "A1",
+          "A1",
+          "A1"
+        ],
+        "first_commands_rad_s": [
+          [
+            1220.1291814019621,
+            1220.1291814019621,
+            1207.3182940805864,
+            1207.318294080586
+          ],
+          [
+            1237.5004801683167,
+            1237.500480168317,
+            1194.5861770408096,
+            1194.5861770408096
+          ],
+          [
+            1239.0575922167627,
+            1239.057592216763,
+            1194.589337107413,
+            1194.5893371074128
+          ],
+          [
+            1239.8707826110085,
+            1239.8707826110087,
+            1194.5609132809595,
+            1194.5609132809595
+          ]
+        ],
+        "first_estimated_rotors_rad_s": [
+          [
+            1220.050428871057,
+            1220.050428871057,
+            1188.3946571337137,
+            1188.3946571337137
+          ],
+          [
+            1220.0579231652102,
+            1220.0579231652102,
+            1190.195479280037,
+            1190.195479280037
+          ],
+          [
+            1221.717801920435,
+            1221.717801920435,
+            1190.6133094142554,
+            1190.6133094142554
+          ],
+          [
+            1223.3679011305337,
+            1223.3679011305337,
+            1190.9916784743011,
+            1190.9916784743011
+          ]
+        ]
+      },
+      "estimation_rms": {
+        "position_m": 0.22161101594132113,
+        "velocity_m_s": 0.0902157195408324,
+        "body_rate_rad_s": 0.005257206061867903,
+        "rotor_rad_s": 0.0,
+        "attitude_deg": 0.8466749098624596
+      }
+    },
+    {
+      "trial_id": "rotor_only/nominal/V13/gust_lateral_p10_VL/seed_3",
+      "variant": "rotor_only",
+      "fault": "nominal",
+      "controller": "V13",
+      "scenario_id": "gust_lateral_p10_VL",
+      "sensor_seed": 3,
+      "sensor_profile": "rotor_only_nominal",
+      "sensor_profile_sha256": "9df43f204bd12146c89dc93c178a6c0835dd8ec6a05124ae36a9366d76ee1ef8",
+      "config_sha256": "11250aeb14afb83c2f6d2ea73591b4d73084ee2b5ab8e73f5fecfe6209781f99",
+      "truth_parameter_sha256": "13a1dcc6332987eba93ea4653f4d6087741d1ac085701982ed94c22e6658c807",
+      "controller_model_sha256": "2582197db2546d329b62bee631beef5f89459c2c4b11a2131ab024240177956d",
+      "trajectory_sha256": "ecafaeedf2ade29883e6ff44e5994d835092ac931f276119418c3645dab17b1d",
+      "simulated_seconds": 12.0,
+      "tracking_pass": true,
+      "model_domain_valid": true,
+      "passed": true,
+      "failure_reasons": [],
+      "campaign_timed_out": false,
+      "stop_reason": null,
+      "paper_failed": false,
+      "paper_reasons": [],
+      "rmse_z": 0.026439938622259504,
+      "rmse_velocity": 0.265430865217952,
+      "max_omega": 0.3949084362269669,
+      "prop_domain_outside_fraction": 0.0,
+      "optimizer_calls": 600,
+      "optimizer_failures": 0,
+      "command_total_variation": 49.00123106483972,
+      "estimator_diagnostics": {
+        "updates": 323,
+        "replays": 6001,
+        "delayed_updates": 320,
+        "rejected_updates": 0,
+        "stale_measurements": 0,
+        "nis": {
+          "gnss": 2.8162273973179376e-06,
+          "barometer": 5.282916954371776e-09,
+          "magnetometer": 2.4937575224770423e-05
+        },
+        "barometer_bias_estimate": -4.411898853363259e-06,
+        "error_state_dimension": 16,
+        "barometer_bias_variance": 0.005724831427868429,
+        "filter_kind": "joint_baro",
+        "rotor_observer": {
+          "accepted": 6049,
+          "old_samples": 0,
+          "outside_history": 0,
+          "invalid_packets": 0,
+          "ready": true,
+          "sample_age_s": 0.0039999999999995595,
+          "history_intervals": 250,
+          "pending_packets": 2,
+          "motor_tau_s": 0.02
+        },
+        "rotor_prehistory_s": 0.1
+      },
+      "condition": "rotor_only",
+      "source": "results/envelope_startup_groups_v10/experiment.json",
+      "trace": "results/envelope_startup_groups_v10/runs/rotor_only/nominal/V13/gust_lateral_p10_VL/seed_3/runs/rotor_only_nominal/V13/arena_20260930T055525353593Z/gust_lateral_p10_VL_V13.npz",
+      "diagnostics": {
+        "scenario_id": "gust_lateral_p10_VL",
+        "profile": "rotor_only_nominal",
+        "variant": "rotor_only",
+        "controller": "V13",
+        "sensor_seed": 3,
+        "tracking_pass": true,
+        "model_domain_valid": true,
+        "passed": true,
+        "failure_reasons": [],
+        "rmse_velocity": 0.265430865217952,
+        "rmse_z": 0.026439938622259504,
+        "prop_domain_outside_fraction": 0.0,
+        "optimizer_failures": 0,
+        "campaign_timed_out": false,
+        "diagnostic_start_s": 0.5,
+        "minimum_rotor_rpm": 11045.545384862256,
+        "assumed_minimum_rpm": 10000,
+        "below_minimum_rpm_samples": 0,
+        "above_maximum_rpm_samples": 0,
+        "above_advance_ratio_limit_samples": 0,
+        "reverse_flow_samples": 0,
+        "below_minimum_rpm_after_settle_samples": 0,
+        "domain_first_s": null,
+        "domain_last_s": null,
+        "command_slew_rms_rad_s2": 8874.486968505034,
+        "indi_cutoff_hz": 50.0,
+        "time_align": "S1",
+        "rotor_startup_guard": false,
+        "angular_accel_error_raw_rms_rad_s2": 0.0007308054313500713,
+        "angular_accel_error_filtered_rms_rad_s2": 0.0004069669332057135
+      },
+      "controller_settings": {
+        "V13": {
+          "kind": "V13",
+          "warm_start": "measured_state_and_controller_trim_input",
+          "N": 20,
+          "dt_pred_s": 0.05,
+          "dt_ctrl_s": 0.02,
+          "ipopt_options": {
+            "ipopt.print_level": 0,
+            "ipopt.sb": "yes",
+            "print_time": 0,
+            "ipopt.max_iter": 30,
+            "ipopt.warm_start_init_point": "yes",
+            "ipopt.tol": 0.0001
+          },
+          "cost_spec": "paper",
+          "cost_weights": {
+            "w_v": 5.0,
+            "w_omega": 1.0,
+            "r_dev": 0.02,
+            "r_rate": 0.1,
+            "terminal": 10.0
+          },
+          "Q_z": 20.0,
+          "preview": true,
+          "soft_constraints": {},
+          "alloc_mode": "A1",
+          "time_align": "S1",
+          "indi_cutoff_hz": 50.0,
+          "rotor_startup_guard": false,
+          "alloc_feedback": true
+        }
+      },
+      "startup": {
+        "first_rotor_ready_s": 0.0,
+        "allocation_before_rotor_ready": 0,
+        "all_zero_commands_before_rotor_ready": 0,
+        "minimum_startup_command_rpm": 11188.8051435181,
+        "minimum_startup_actual_rpm": 11303.850663048053,
+        "first_paths": [
+          "fallback_init",
+          "A1",
+          "A1",
+          "A1"
+        ],
+        "first_commands_rad_s": [
+          [
+            1220.1291814019621,
+            1220.1291814019621,
+            1207.3182940805864,
+            1207.318294080586
+          ],
+          [
+            1240.5607241812443,
+            1235.9283481346235,
+            1199.66694174507,
+            1187.8379535458107
+          ],
+          [
+            1237.1924148012076,
+            1232.3888331028945,
+            1193.5285380206565,
+            1185.8998029152256
+          ],
+          [
+            1240.7788697504986,
+            1245.7839412069543,
+            1197.4238332684715,
+            1192.592364566214
+          ]
+        ],
+        "first_estimated_rotors_rad_s": [
+          [
+            1219.77556536446,
+            1222.44198328123,
+            1187.1987007868374,
+            1189.8597380913438
+          ],
+          [
+            1226.047621125014,
+            1221.3676943975179,
+            1198.2158423205049,
+            1186.3804470686891
+          ],
+          [
+            1221.3963006056763,
+            1216.43307718677,
+            1191.185454252528,
+            1183.2823175512078
+          ],
+          [
+            1225.2313275693161,
+            1229.9331696178356,
+            1194.9443260948624,
+            1189.2814433628234
+          ]
+        ]
+      },
+      "estimation_rms": {
+        "position_m": 5.127186955003194e-05,
+        "velocity_m_s": 0.0008769365165639045,
+        "body_rate_rad_s": 9.46509961682048e-05,
+        "rotor_rad_s": 13.094860301868403,
+        "attitude_deg": 0.011690557618783385
+      }
+    },
+    {
+      "trial_id": "baseline/nominal/V13/gust_lateral_p10_VL/seed_3",
+      "variant": "baseline",
+      "fault": "nominal",
+      "controller": "V13",
+      "scenario_id": "gust_lateral_p10_VL",
+      "sensor_seed": 3,
+      "sensor_profile": "rotor_projected_warm",
+      "sensor_profile_sha256": "1091868104c933deebc1abe04f7f64729a84450066eeab33dd82aea1a8779701",
+      "config_sha256": "9c1b18f412db20f9356e2b5e1ffbd3f28be966cfd3f305e16f6896cec05acf8f",
+      "truth_parameter_sha256": "13a1dcc6332987eba93ea4653f4d6087741d1ac085701982ed94c22e6658c807",
+      "controller_model_sha256": "2582197db2546d329b62bee631beef5f89459c2c4b11a2131ab024240177956d",
+      "trajectory_sha256": "fa3f566938f617dee0be73cbc2089ee329413c2b2be0ea016a79b8c8f40ff153",
+      "simulated_seconds": 12.0,
+      "tracking_pass": true,
+      "model_domain_valid": false,
+      "passed": false,
+      "failure_reasons": [
+        "propulsion_model_domain"
+      ],
+      "campaign_timed_out": false,
+      "stop_reason": null,
+      "paper_failed": false,
+      "paper_reasons": [],
+      "rmse_z": 0.07846450246802628,
+      "rmse_velocity": 0.2632319836937603,
+      "max_omega": 0.45682871015088267,
+      "prop_domain_outside_fraction": 0.007166666666666667,
+      "optimizer_calls": 600,
+      "optimizer_failures": 0,
+      "command_total_variation": 1540.3986837417308,
+      "estimator_diagnostics": {
+        "updates": 319,
+        "replays": 6001,
+        "delayed_updates": 319,
+        "rejected_updates": 0,
+        "stale_measurements": 0,
+        "nis": {
+          "gnss": 3.082711539298309,
+          "barometer": 2.5408127626650545,
+          "magnetometer": 0.9259320954127475
+        },
+        "barometer_bias_estimate": -0.018068702467698358,
+        "error_state_dimension": 16,
+        "barometer_bias_variance": 0.005831339071764329,
+        "filter_kind": "joint_baro",
+        "rotor_observer": {
+          "accepted": 6049,
+          "old_samples": 0,
+          "outside_history": 0,
+          "invalid_packets": 0,
+          "ready": true,
+          "sample_age_s": 0.0039999999999995595,
+          "history_intervals": 250,
+          "pending_packets": 2,
+          "motor_tau_s": 0.02
+        },
+        "rotor_prehistory_s": 0.1
+      },
+      "condition": "rotor_projected_warm",
+      "source": "results/envelope_startup_groups_v10/experiment.json",
+      "trace": "results/envelope_startup_groups_v10/runs/baseline/nominal/V13/gust_lateral_p10_VL/seed_3/runs/rotor_projected_warm/V13/arena_20260930T055620810166Z/gust_lateral_p10_VL_V13.npz",
+      "diagnostics": {
+        "scenario_id": "gust_lateral_p10_VL",
+        "profile": "rotor_projected_warm",
+        "variant": "baseline",
+        "controller": "V13",
+        "sensor_seed": 3,
+        "tracking_pass": true,
+        "model_domain_valid": false,
+        "passed": false,
+        "failure_reasons": [
+          "propulsion_model_domain"
+        ],
+        "rmse_velocity": 0.2632319836937603,
+        "rmse_z": 0.07846450246802628,
+        "prop_domain_outside_fraction": 0.007166666666666667,
+        "optimizer_failures": 0,
+        "campaign_timed_out": false,
+        "diagnostic_start_s": 0.5,
+        "minimum_rotor_rpm": 7987.781081486212,
+        "assumed_minimum_rpm": 10000,
+        "below_minimum_rpm_samples": 43,
+        "above_maximum_rpm_samples": 0,
+        "above_advance_ratio_limit_samples": 0,
+        "reverse_flow_samples": 0,
+        "below_minimum_rpm_after_settle_samples": 1,
+        "domain_first_s": 0.136,
+        "domain_last_s": 6.848,
+        "command_slew_rms_rad_s2": 277140.69051782857,
+        "indi_cutoff_hz": 50.0,
+        "time_align": "S1",
+        "rotor_startup_guard": false,
+        "angular_accel_error_raw_rms_rad_s2": 54.510685168188836,
+        "angular_accel_error_filtered_rms_rad_s2": 20.613042778883504
+      },
+      "controller_settings": {
+        "V13": {
+          "kind": "V13",
+          "warm_start": "measured_state_and_controller_trim_input",
+          "N": 20,
+          "dt_pred_s": 0.05,
+          "dt_ctrl_s": 0.02,
+          "ipopt_options": {
+            "ipopt.print_level": 0,
+            "ipopt.sb": "yes",
+            "print_time": 0,
+            "ipopt.max_iter": 30,
+            "ipopt.warm_start_init_point": "yes",
+            "ipopt.tol": 0.0001
+          },
+          "cost_spec": "paper",
+          "cost_weights": {
+            "w_v": 5.0,
+            "w_omega": 1.0,
+            "r_dev": 0.02,
+            "r_rate": 0.1,
+            "terminal": 10.0
+          },
+          "Q_z": 20.0,
+          "preview": true,
+          "soft_constraints": {},
+          "alloc_mode": "A1",
+          "time_align": "S1",
+          "indi_cutoff_hz": 50.0,
+          "rotor_startup_guard": false,
+          "alloc_feedback": true
+        }
+      },
+      "startup": {
+        "first_rotor_ready_s": 0.0,
+        "allocation_before_rotor_ready": 0,
+        "all_zero_commands_before_rotor_ready": 0,
+        "minimum_startup_command_rpm": 2327.0414700985416,
+        "minimum_startup_actual_rpm": 7987.781081486212,
+        "first_paths": [
+          "fallback_init",
+          "A1",
+          "A1",
+          "A1"
+        ],
+        "first_commands_rad_s": [
+          [
+            1204.0245011330599,
+            1221.0364591787297,
+            1207.8113313760696,
+            1220.607672275809
+          ],
+          [
+            1548.9875841446956,
+            979.085727643301,
+            1366.5486990769143,
+            964.2347220098252
+          ],
+          [
+            1283.0077630299154,
+            1369.0756935366398,
+            1141.547340545957,
+            1050.547588999025
+          ],
+          [
+            1318.7935429299696,
+            1169.8912172141227,
+            1246.668305723114,
+            1136.3154691135774
+          ]
+        ],
+        "first_estimated_rotors_rad_s": [
+          [
+            1219.77556536446,
+            1222.44198328123,
+            1187.1987007868374,
+            1189.8597380913438
+          ],
+          [
+            1224.5150581689202,
+            1221.4540332933136,
+            1198.2627610225475,
+            1187.645098610443
+          ],
+          [
+            1249.3602766386903,
+            1192.0693929259537,
+            1207.1088069601365,
+            1163.1479607384963
+          ],
+          [
+            1254.894086276039,
+            1220.8954710166452,
+            1204.4057064798947,
+            1158.1826577765078
+          ]
+        ]
+      },
+      "estimation_rms": {
+        "position_m": 0.2198763688673428,
+        "velocity_m_s": 0.11252844510197298,
+        "body_rate_rad_s": 0.07800421513529422,
+        "rotor_rad_s": 13.09486030311056,
+        "attitude_deg": 1.2925856744099744
+      }
+    },
+    {
+      "trial_id": "baseline/nominal/V13/gust_lateral_p10_VL/seed_3",
+      "variant": "baseline",
+      "fault": "nominal",
+      "controller": "V13",
+      "scenario_id": "gust_lateral_p10_VL",
+      "sensor_seed": 3,
+      "sensor_profile": "nav_startup_gnss_only",
+      "sensor_profile_sha256": "730d2ef8cb60bf0126a545aa933966916f55353b2449528ef0b7ff52e91adb41",
+      "config_sha256": "9dd830d611db479a4199a6049646f626fc14397471cb0bed70def9683f7ed767",
+      "truth_parameter_sha256": "13a1dcc6332987eba93ea4653f4d6087741d1ac085701982ed94c22e6658c807",
+      "controller_model_sha256": "2582197db2546d329b62bee631beef5f89459c2c4b11a2131ab024240177956d",
+      "trajectory_sha256": "9fc7b5d0911e455db7a37a77c8cabd0ac450c60977e8d85819455d316504be48",
+      "simulated_seconds": 12.0,
+      "tracking_pass": true,
+      "model_domain_valid": false,
+      "passed": false,
+      "failure_reasons": [
+        "propulsion_model_domain"
+      ],
+      "campaign_timed_out": false,
+      "stop_reason": null,
+      "paper_failed": false,
+      "paper_reasons": [],
+      "rmse_z": 0.03752888337664441,
+      "rmse_velocity": 0.2571658466254251,
+      "max_omega": 0.4063689659689022,
+      "prop_domain_outside_fraction": 0.004,
+      "optimizer_calls": 600,
+      "optimizer_failures": 0,
+      "command_total_variation": 9.794942030978904,
+      "estimator_diagnostics": {
+        "updates": 321,
+        "replays": 6001,
+        "delayed_updates": 319,
+        "rejected_updates": 0,
+        "stale_measurements": 0,
+        "nis": {
+          "gnss": 2.7021041912045347,
+          "barometer": 0.003866930585674884,
+          "magnetometer": 7.47360985301756e-05
+        },
+        "barometer_bias_estimate": -0.048371837893461646,
+        "error_state_dimension": 16,
+        "barometer_bias_variance": 0.005827185439207963,
+        "filter_kind": "joint_baro"
+      },
+      "condition": "nav_startup_gnss_only",
+      "source": "results/navigation_startup_v10/gnss/experiment.json",
+      "trace": "results/navigation_startup_v10/gnss/runs/baseline/nominal/V13/gust_lateral_p10_VL/seed_3/runs/nav_startup_gnss_only/V13/arena_20260930T055811045242Z/gust_lateral_p10_VL_V13.npz",
+      "diagnostics": {
+        "scenario_id": "gust_lateral_p10_VL",
+        "profile": "nav_startup_gnss_only",
+        "variant": "baseline",
+        "controller": "V13",
+        "sensor_seed": 3,
+        "tracking_pass": true,
+        "model_domain_valid": false,
+        "passed": false,
+        "failure_reasons": [
+          "propulsion_model_domain"
+        ],
+        "rmse_velocity": 0.2571658466254251,
+        "rmse_z": 0.03752888337664441,
+        "prop_domain_outside_fraction": 0.004,
+        "optimizer_failures": 0,
+        "campaign_timed_out": false,
+        "diagnostic_start_s": 0.5,
+        "minimum_rotor_rpm": 9451.41635727625,
+        "assumed_minimum_rpm": 10000,
+        "below_minimum_rpm_samples": 24,
+        "above_maximum_rpm_samples": 0,
+        "above_advance_ratio_limit_samples": 0,
+        "reverse_flow_samples": 0,
+        "below_minimum_rpm_after_settle_samples": 0,
+        "domain_first_s": 0.138,
+        "domain_last_s": 0.184,
+        "command_slew_rms_rad_s2": 5654.912479747862,
+        "indi_cutoff_hz": 50.0,
+        "time_align": "S1",
+        "rotor_startup_guard": false,
+        "angular_accel_error_raw_rms_rad_s2": 0.23924315800183024,
+        "angular_accel_error_filtered_rms_rad_s2": 0.13194923698980685
+      },
+      "controller_settings": {
+        "V13": {
+          "kind": "V13",
+          "warm_start": "measured_state_and_controller_trim_input",
+          "N": 20,
+          "dt_pred_s": 0.05,
+          "dt_ctrl_s": 0.02,
+          "ipopt_options": {
+            "ipopt.print_level": 0,
+            "ipopt.sb": "yes",
+            "print_time": 0,
+            "ipopt.max_iter": 30,
+            "ipopt.warm_start_init_point": "yes",
+            "ipopt.tol": 0.0001
+          },
+          "cost_spec": "paper",
+          "cost_weights": {
+            "w_v": 5.0,
+            "w_omega": 1.0,
+            "r_dev": 0.02,
+            "r_rate": 0.1,
+            "terminal": 10.0
+          },
+          "Q_z": 20.0,
+          "preview": true,
+          "soft_constraints": {},
+          "alloc_mode": "A1",
+          "time_align": "S1",
+          "indi_cutoff_hz": 50.0,
+          "rotor_startup_guard": false,
+          "alloc_feedback": true
+        }
+      },
+      "startup": {
+        "first_rotor_ready_s": 0.0,
+        "allocation_before_rotor_ready": 0,
+        "all_zero_commands_before_rotor_ready": 0,
+        "minimum_startup_command_rpm": 8840.951025368584,
+        "minimum_startup_actual_rpm": 9451.41635727625,
+        "first_paths": [
+          "fallback_init",
+          "A1",
+          "A1",
+          "A1"
+        ],
+        "first_commands_rad_s": [
+          [
+            1220.1291814019621,
+            1220.1291814019621,
+            1207.3182940805864,
+            1207.318294080586
+          ],
+          [
+            1237.5004801683167,
+            1237.500480168317,
+            1194.5861770408096,
+            1194.5861770408096
+          ],
+          [
+            1239.0575922167627,
+            1239.057592216763,
+            1194.589337107413,
+            1194.5893371074128
+          ],
+          [
+            1239.8707826110085,
+            1239.8707826110087,
+            1194.5609132809595,
+            1194.5609132809595
+          ]
+        ],
+        "first_estimated_rotors_rad_s": [
+          [
+            1220.050428871057,
+            1220.050428871057,
+            1188.3946571337137,
+            1188.3946571337137
+          ],
+          [
+            1220.0579231652102,
+            1220.0579231652102,
+            1190.195479280037,
+            1190.195479280037
+          ],
+          [
+            1221.717801920435,
+            1221.717801920435,
+            1190.6133094142554,
+            1190.6133094142554
+          ],
+          [
+            1223.3679011305337,
+            1223.3679011305337,
+            1190.9916784743011,
+            1190.9916784743011
+          ]
+        ]
+      },
+      "estimation_rms": {
+        "position_m": 0.21652956575784482,
+        "velocity_m_s": 0.08597282100074836,
+        "body_rate_rad_s": 0.004685597636920187,
+        "rotor_rad_s": 0.0,
+        "attitude_deg": 0.8009164725033409
+      }
+    },
+    {
+      "trial_id": "baseline/nominal/V13/gust_lateral_p10_VL/seed_3",
+      "variant": "baseline",
+      "fault": "nominal",
+      "controller": "V13",
+      "scenario_id": "gust_lateral_p10_VL",
+      "sensor_seed": 3,
+      "sensor_profile": "nav_startup_barometer_only",
+      "sensor_profile_sha256": "fff0bf4b2d2c796eeb9789aea57a980138deb54664eb12c895422da7e571e40b",
+      "config_sha256": "13fb909674a50fd1ab368ad1e9d5863ef1d903d7ba85bc421b5a4cb53de81ecc",
+      "truth_parameter_sha256": "13a1dcc6332987eba93ea4653f4d6087741d1ac085701982ed94c22e6658c807",
+      "controller_model_sha256": "2582197db2546d329b62bee631beef5f89459c2c4b11a2131ab024240177956d",
+      "trajectory_sha256": "9eea476bbd218c4cfe58051440699185ba9e14f90c1092eac793a9bd2f1222a1",
+      "simulated_seconds": 12.0,
+      "tracking_pass": true,
+      "model_domain_valid": true,
+      "passed": true,
+      "failure_reasons": [],
+      "campaign_timed_out": false,
+      "stop_reason": null,
+      "paper_failed": false,
+      "paper_reasons": [],
+      "rmse_z": 0.08036171528360125,
+      "rmse_velocity": 0.270993877957574,
+      "max_omega": 0.38712289589001647,
+      "prop_domain_outside_fraction": 0.0,
+      "optimizer_calls": 600,
+      "optimizer_failures": 0,
+      "command_total_variation": 12.348347160042454,
+      "estimator_diagnostics": {
+        "updates": 322,
+        "replays": 6001,
+        "delayed_updates": 320,
+        "rejected_updates": 0,
+        "stale_measurements": 0,
+        "nis": {
+          "gnss": 0.0020716691219365103,
+          "barometer": 2.748634600815539,
+          "magnetometer": 2.0934052166461194e-05
+        },
+        "barometer_bias_estimate": 0.031008069822098288,
+        "error_state_dimension": 16,
+        "barometer_bias_variance": 0.00572974037297469,
+        "filter_kind": "joint_baro"
+      },
+      "condition": "nav_startup_barometer_only",
+      "source": "results/navigation_startup_v10/barometer/experiment.json",
+      "trace": "results/navigation_startup_v10/barometer/runs/baseline/nominal/V13/gust_lateral_p10_VL/seed_3/runs/nav_startup_barometer_only/V13/arena_20260930T055905202237Z/gust_lateral_p10_VL_V13.npz",
+      "diagnostics": {
+        "scenario_id": "gust_lateral_p10_VL",
+        "profile": "nav_startup_barometer_only",
+        "variant": "baseline",
+        "controller": "V13",
+        "sensor_seed": 3,
+        "tracking_pass": true,
+        "model_domain_valid": true,
+        "passed": true,
+        "failure_reasons": [],
+        "rmse_velocity": 0.270993877957574,
+        "rmse_z": 0.08036171528360125,
+        "prop_domain_outside_fraction": 0.0,
+        "optimizer_failures": 0,
+        "campaign_timed_out": false,
+        "diagnostic_start_s": 0.5,
+        "minimum_rotor_rpm": 10392.197657099248,
+        "assumed_minimum_rpm": 10000,
+        "below_minimum_rpm_samples": 0,
+        "above_maximum_rpm_samples": 0,
+        "above_advance_ratio_limit_samples": 0,
+        "reverse_flow_samples": 0,
+        "below_minimum_rpm_after_settle_samples": 0,
+        "domain_first_s": null,
+        "domain_last_s": null,
+        "command_slew_rms_rad_s2": 5361.924019609505,
+        "indi_cutoff_hz": 50.0,
+        "time_align": "S1",
+        "rotor_startup_guard": false,
+        "angular_accel_error_raw_rms_rad_s2": 0.0013390737773747432,
+        "angular_accel_error_filtered_rms_rad_s2": 0.0007449525673345791
+      },
+      "controller_settings": {
+        "V13": {
+          "kind": "V13",
+          "warm_start": "measured_state_and_controller_trim_input",
+          "N": 20,
+          "dt_pred_s": 0.05,
+          "dt_ctrl_s": 0.02,
+          "ipopt_options": {
+            "ipopt.print_level": 0,
+            "ipopt.sb": "yes",
+            "print_time": 0,
+            "ipopt.max_iter": 30,
+            "ipopt.warm_start_init_point": "yes",
+            "ipopt.tol": 0.0001
+          },
+          "cost_spec": "paper",
+          "cost_weights": {
+            "w_v": 5.0,
+            "w_omega": 1.0,
+            "r_dev": 0.02,
+            "r_rate": 0.1,
+            "terminal": 10.0
+          },
+          "Q_z": 20.0,
+          "preview": true,
+          "soft_constraints": {},
+          "alloc_mode": "A1",
+          "time_align": "S1",
+          "indi_cutoff_hz": 50.0,
+          "rotor_startup_guard": false,
+          "alloc_feedback": true
+        }
+      },
+      "startup": {
+        "first_rotor_ready_s": 0.0,
+        "allocation_before_rotor_ready": 0,
+        "all_zero_commands_before_rotor_ready": 0,
+        "minimum_startup_command_rpm": 10281.689748279383,
+        "minimum_startup_actual_rpm": 10392.197657099248,
+        "first_paths": [
+          "fallback_init",
+          "A1",
+          "A1",
+          "A1"
+        ],
+        "first_commands_rad_s": [
+          [
+            1220.1291814019621,
+            1220.1291814019621,
+            1207.3182940805864,
+            1207.318294080586
+          ],
+          [
+            1237.5004801683167,
+            1237.500480168317,
+            1194.5861770408096,
+            1194.5861770408096
+          ],
+          [
+            1239.0575922167627,
+            1239.057592216763,
+            1194.589337107413,
+            1194.5893371074128
+          ],
+          [
+            1239.8707826110085,
+            1239.8707826110087,
+            1194.5609132809595,
+            1194.5609132809595
+          ]
+        ],
+        "first_estimated_rotors_rad_s": [
+          [
+            1220.050428871057,
+            1220.050428871057,
+            1188.3946571337137,
+            1188.3946571337137
+          ],
+          [
+            1220.0579231652102,
+            1220.0579231652102,
+            1190.195479280037,
+            1190.195479280037
+          ],
+          [
+            1221.717801920435,
+            1221.717801920435,
+            1190.6133094142554,
+            1190.6133094142554
+          ],
+          [
+            1223.3679011305337,
+            1223.3679011305337,
+            1190.9916784743011,
+            1190.9916784743011
+          ]
+        ]
+      },
+      "estimation_rms": {
+        "position_m": 0.06335291403749042,
+        "velocity_m_s": 0.015856994189460447,
+        "body_rate_rad_s": 0.0002462084877732792,
+        "rotor_rad_s": 0.0,
+        "attitude_deg": 0.027879206241482712
+      }
+    },
+    {
+      "trial_id": "baseline/nominal/V13/gust_lateral_p10_VL/seed_3",
+      "variant": "baseline",
+      "fault": "nominal",
+      "controller": "V13",
+      "scenario_id": "gust_lateral_p10_VL",
+      "sensor_seed": 3,
+      "sensor_profile": "nav_startup_magnetometer_only",
+      "sensor_profile_sha256": "b351b357e74618141f8d3f445c6f3db9504069fd51e629aeff7576484e7ec9d0",
+      "config_sha256": "ba03c6e65a314f98fb4638dfa4fcfd3186459ecbad30850ccf8016f5edc87664",
+      "truth_parameter_sha256": "13a1dcc6332987eba93ea4653f4d6087741d1ac085701982ed94c22e6658c807",
+      "controller_model_sha256": "2582197db2546d329b62bee631beef5f89459c2c4b11a2131ab024240177956d",
+      "trajectory_sha256": "fc70364bc21249a136c4ca695985f8903987938bb673eaf9bb064eea214229a1",
+      "simulated_seconds": 12.0,
+      "tracking_pass": true,
+      "model_domain_valid": true,
+      "passed": true,
+      "failure_reasons": [],
+      "campaign_timed_out": false,
+      "stop_reason": null,
+      "paper_failed": false,
+      "paper_reasons": [],
+      "rmse_z": 0.02647545888320025,
+      "rmse_velocity": 0.26529871165903146,
+      "max_omega": 0.390464582507329,
+      "prop_domain_outside_fraction": 0.0,
+      "optimizer_calls": 600,
+      "optimizer_failures": 0,
+      "command_total_variation": 1.1729447596968285,
+      "estimator_diagnostics": {
+        "updates": 322,
+        "replays": 6001,
+        "delayed_updates": 320,
+        "rejected_updates": 0,
+        "stale_measurements": 0,
+        "nis": {
+          "gnss": 5.271582075017261e-05,
+          "barometer": 1.664281835024942e-09,
+          "magnetometer": 1.4014200960104175
+        },
+        "barometer_bias_estimate": -3.5355291094454333e-06,
+        "error_state_dimension": 16,
+        "barometer_bias_variance": 0.005724830480107506,
+        "filter_kind": "joint_baro"
+      },
+      "condition": "nav_startup_magnetometer_only",
+      "source": "results/navigation_startup_v10/magnetometer/experiment.json",
+      "trace": "results/navigation_startup_v10/magnetometer/runs/baseline/nominal/V13/gust_lateral_p10_VL/seed_3/runs/nav_startup_magnetometer_only/V13/arena_20260930T060001033478Z/gust_lateral_p10_VL_V13.npz",
+      "diagnostics": {
+        "scenario_id": "gust_lateral_p10_VL",
+        "profile": "nav_startup_magnetometer_only",
+        "variant": "baseline",
+        "controller": "V13",
+        "sensor_seed": 3,
+        "tracking_pass": true,
+        "model_domain_valid": true,
+        "passed": true,
+        "failure_reasons": [],
+        "rmse_velocity": 0.26529871165903146,
+        "rmse_z": 0.02647545888320025,
+        "prop_domain_outside_fraction": 0.0,
+        "optimizer_failures": 0,
+        "campaign_timed_out": false,
+        "diagnostic_start_s": 0.5,
+        "minimum_rotor_rpm": 11059.172492721076,
+        "assumed_minimum_rpm": 10000,
+        "below_minimum_rpm_samples": 0,
+        "above_maximum_rpm_samples": 0,
+        "above_advance_ratio_limit_samples": 0,
+        "reverse_flow_samples": 0,
+        "below_minimum_rpm_after_settle_samples": 0,
+        "domain_first_s": null,
+        "domain_last_s": null,
+        "command_slew_rms_rad_s2": 316.99982398199114,
+        "indi_cutoff_hz": 50.0,
+        "time_align": "S1",
+        "rotor_startup_guard": false,
+        "angular_accel_error_raw_rms_rad_s2": 0.039963537832155026,
+        "angular_accel_error_filtered_rms_rad_s2": 0.02197984388131379
+      },
+      "controller_settings": {
+        "V13": {
+          "kind": "V13",
+          "warm_start": "measured_state_and_controller_trim_input",
+          "N": 20,
+          "dt_pred_s": 0.05,
+          "dt_ctrl_s": 0.02,
+          "ipopt_options": {
+            "ipopt.print_level": 0,
+            "ipopt.sb": "yes",
+            "print_time": 0,
+            "ipopt.max_iter": 30,
+            "ipopt.warm_start_init_point": "yes",
+            "ipopt.tol": 0.0001
+          },
+          "cost_spec": "paper",
+          "cost_weights": {
+            "w_v": 5.0,
+            "w_omega": 1.0,
+            "r_dev": 0.02,
+            "r_rate": 0.1,
+            "terminal": 10.0
+          },
+          "Q_z": 20.0,
+          "preview": true,
+          "soft_constraints": {},
+          "alloc_mode": "A1",
+          "time_align": "S1",
+          "indi_cutoff_hz": 50.0,
+          "rotor_startup_guard": false,
+          "alloc_feedback": true
+        }
+      },
+      "startup": {
+        "first_rotor_ready_s": 0.0,
+        "allocation_before_rotor_ready": 0,
+        "all_zero_commands_before_rotor_ready": 0,
+        "minimum_startup_command_rpm": 10951.422282386906,
+        "minimum_startup_actual_rpm": 11269.063807674429,
+        "first_paths": [
+          "fallback_init",
+          "A1",
+          "A1",
+          "A1"
+        ],
+        "first_commands_rad_s": [
+          [
+            1220.1291814019621,
+            1220.1291814019621,
+            1207.3182940805864,
+            1207.318294080586
+          ],
+          [
+            1237.5004801683167,
+            1237.500480168317,
+            1194.5861770408096,
+            1194.5861770408096
+          ],
+          [
+            1239.0575922167627,
+            1239.057592216763,
+            1194.589337107413,
+            1194.5893371074128
+          ],
+          [
+            1239.8707826110085,
+            1239.8707826110087,
+            1194.5609132809595,
+            1194.5609132809595
+          ]
+        ],
+        "first_estimated_rotors_rad_s": [
+          [
+            1220.050428871057,
+            1220.050428871057,
+            1188.3946571337137,
+            1188.3946571337137
+          ],
+          [
+            1220.0579231652102,
+            1220.0579231652102,
+            1190.195479280037,
+            1190.195479280037
+          ],
+          [
+            1221.717801920435,
+            1221.717801920435,
+            1190.6133094142554,
+            1190.6133094142554
+          ],
+          [
+            1223.3679011305337,
+            1223.3679011305337,
+            1190.9916784743011,
+            1190.9916784743011
+          ]
+        ]
+      },
+      "estimation_rms": {
+        "position_m": 0.00038193392306853376,
+        "velocity_m_s": 0.002662535586038259,
+        "body_rate_rad_s": 0.0016411773846101486,
+        "rotor_rad_s": 0.0,
+        "attitude_deg": 0.06833057318942676
+      }
+    }
+  ]
+}

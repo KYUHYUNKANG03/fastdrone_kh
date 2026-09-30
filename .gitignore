@@ -101,3 +101,19 @@ venv/
 !/results/sensor_readiness_v9/report_tests.xml
 !/results/sensor_readiness_v9/rotor_tests.xml
 !/results/sensor_readiness_v9/findings.md
+
+# Reviewed paired envelope checkpoint; full simulation traces remain local.
+!/results/sensor_readiness_v10/
+/results/sensor_readiness_v10/*
+!/results/sensor_readiness_v10/report.md
+!/results/sensor_readiness_v10/findings.md
+!/results/sensor_readiness_v10/comparison.png
+!/results/sensor_readiness_v10/low_speed_domain.png
+!/results/sensor_readiness_v10/outcomes.json
+!/results/sensor_readiness_v10/verification.json
+!/results/sensor_readiness_v10/tests.xml
+!/results/sensor_readiness_v10/startup_groups/
+/results/sensor_readiness_v10/startup_groups/*
+!/results/sensor_readiness_v10/startup_groups/report.md
+!/results/sensor_readiness_v10/startup_groups/outcomes.json
+!/results/sensor_readiness_v10/startup_groups/comparison.png

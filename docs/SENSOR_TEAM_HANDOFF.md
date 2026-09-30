@@ -3,7 +3,14 @@
 Status: development candidate, 2026-09-30. The team controller gains, aircraft
 model, allocation rules, and original truth-feedback configurations are unchanged.
 
-The current v9 checkpoint adds a timestamp-aware rotor observer and an explicit
+The current v10 checkpoint adds paired truth/fusion development screens across
+maneuvers, physical motor mismatch and isolated sensor faults. All controller
+gains and v9 runtime remain fixed. The [findings](../results/sensor_readiness_v10/findings.md)
+separate tracking, propulsion-domain and execution failures; the
+[screen guide](SENSOR_ENVELOPE_SCREEN.md) records the comparisons and commands.
+This is still development validation, not the final tuning or paper campaign.
+
+The previous v9 checkpoint adds a timestamp-aware rotor observer and an explicit
 steady-trim measurement-history policy. Both controllers pass the nominal
 85 m/s development case with the original 4 ms telemetry latency. The default
 reproduction fixture now exercises this new observer. The original candidate

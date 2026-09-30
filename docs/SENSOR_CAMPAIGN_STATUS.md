@@ -1,6 +1,23 @@
-# Sensor campaign status — 2026-09-30, causal rotor observation
+# Sensor campaign status — 2026-09-30, paired envelope validation
 
 ## Current checkpoint
+
+V10 adds [paired truth/fusion screens](SENSOR_ENVELOPE_SCREEN.md) while keeping
+the v9 aircraft, controllers and estimator runtime unchanged. The physical motor
+mismatch cases now change the plant time constant, keeping the observer at 20 ms.
+Telemetry-outage diagnostics count allocations made while feedback is stale;
+the controller fault policy is unchanged. Read [the recorded findings](../results/sensor_readiness_v10/findings.md)
+and [all paired outcomes](../results/sensor_readiness_v10/report.md) before choosing
+the next sensor/interface changes. Final tuning and held-out evaluation remain unstarted.
+
+The checkpoint records 30 paired trials plus eight adaptive V13 startup trials,
+with no execution timeouts. Forty-four targeted tests pass. GNSS-only errors
+reproduce a low-speed propulsion-domain crossing while tracking still passes;
+both controllers pass the isolated rotor outage with a nominal motor model.
+All results use development seed 3. Physical motor mismatch and initial-estimate
+error expose additional failures, so these results do not establish a full envelope.
+
+## Previous v9 checkpoint
 
 V9 implements timestamp-aware rotor projection and an independent steady-trim
 measurement-history startup. Both controllers pass the nominal 85 m/s case with

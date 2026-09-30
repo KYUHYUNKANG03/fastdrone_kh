@@ -45,7 +45,7 @@ def summarize(sources, output):
                     'estimator_diagnostics')
             row = {k: record.get(k) for k in keys}
             row['condition'] = (record.get('sensor_profile') if record['variant'] == 'baseline'
-                                and str(record.get('sensor_profile', '')).startswith('rotor_')
+                                and str(record.get('sensor_profile', '')).startswith(('rotor_', 'nav_startup_'))
                                 else record['variant'])
             row['source'] = str(source.relative_to(ROOT))
             path = trace_path(record, source)
@@ -95,7 +95,9 @@ def summarize(sources, output):
         '`warm` conditions replay 0.1 s of noisy steady-trim rotor prehistory; `cold` conditions '
         'start with no arrived rotor measurement. `rotor_telemetry_warm` keeps the 20 ms measurement '
         'filter; `rotor_unfiltered_warm` uses 1 microsecond. Projected tau10ms/tau40ms conditions '
-        'change only the declared observer motor time constant from its nominal 20 ms.', '',
+        'change only the declared observer motor time constant from its nominal 20 ms. '
+        '`nav_startup_*_only` restores one navigation sensor from nominal on the same '
+        'fixed-covariance quiet control, leaving all other sensors quiet.', '',
         'All outcomes, including early stops and timeouts, are retained. RMSE on a stopped run '
         'covers only its recorded prefix and is not directly comparable with full-duration RMSE. '
         'These runs do not estimate failure probabilities or a maximum usable sensor specification.', '',
