@@ -1,0 +1,13 @@
+{
+  "archive": "/Users/leo/Desktop/\u1112\u1161\u11a8\u1100\u116d/2026-2/\u1103\u1173\u1105\u1169\u1107\u1169\u11ba/fast-drone-arena-sensor-fusion/sensor-development-v13-windows.zip",
+  "sha256": "d80b68ae88e3827d9089e23ebb32f47113049a63515c0ef10e98d359f19e3fae",
+  "files": 312,
+  "config": "configs/arena_rotor_projected_development_v9.json",
+  "config_sha256": "9c1b18f412db20f9356e2b5e1ffbd3f28be966cfd3f305e16f6896cec05acf8f",
+  "stage": "DEVELOPMENT",
+  "source_revision": "d2e7b6fed8e158bd3d291c34227f85de04043456",
+  "source_tracked_dirty": false,
+  "windows_run_source_revision": "f2dc38be2be08a9bc0ee17c14161c682867670c9",
+  "windows_run_url": "https://github.com/leo11dk/fast-drone-sensor-fusion/actions/runs/36717085838",
+  "note": "Includes native-path test repair. Runtime/configuration hashes match the verified Windows run. Subsequent edits update documentation, preflight checklist text and evidence only."
+}

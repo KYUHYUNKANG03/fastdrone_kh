@@ -60,6 +60,16 @@ The [verification index](verification.json) hashes the compact evidence and all
 both run manifests are retained. Complete logs and approximately 6 MB of raw
 flight traces are saved in the Desktop checkout; they are not committed.
 
+The refreshed Desktop archive is `sensor-development-v13-windows.zip`, built
+from clean revision `d2e7b6fed8e158bd3d291c34227f85de04043456`. It includes the
+native-path test repair and 312 source/data/document files. Its runtime hashes
+match the verified Windows run. A fresh Mac extraction passes package byte,
+dependency and model checks plus all six static preflight checks; this package
+relocation check adds no new flight trials. See the [archive receipt](package_receipt.json),
+[package check](package_check.json), [source preflight](package_source_preflight.json)
+and [extracted preflight](package_preflight.json). The archive SHA-256 is
+`d80b68ae88e3827d9089e23ebb32f47113049a63515c0ef10e98d359f19e3fae`.
+
 This establishes numerical reproduction of **two V13 cases on one hosted
 Windows machine**. It does not validate the entire envelope, the four school
 computers, orphan-worker behavior or transfer of a completed full tuning

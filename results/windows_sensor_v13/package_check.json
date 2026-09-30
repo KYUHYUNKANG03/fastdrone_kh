@@ -1,0 +1,154 @@
+{
+  "stage": "DEVELOPMENT",
+  "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+  "python": "3.13.7",
+  "file_problems": [],
+  "checks": {
+    "versions": {
+      "passed": true,
+      "rows": [
+        [
+          "python",
+          "3.13.7",
+          "3.13.7",
+          "OK"
+        ],
+        [
+          "numpy",
+          "2.3.3",
+          "2.3.3",
+          "OK"
+        ],
+        [
+          "scipy",
+          "1.16.3",
+          "1.16.3",
+          "OK"
+        ],
+        [
+          "casadi",
+          "3.7.2",
+          "3.7.2",
+          "OK"
+        ],
+        [
+          "matplotlib",
+          "3.10.6",
+          "3.10.6",
+          "OK"
+        ],
+        [
+          "pytest",
+          "9.0.2",
+          "9.0.2",
+          "OK"
+        ]
+      ]
+    },
+    "threads": {
+      "passed": true,
+      "rows": [
+        [
+          "OMP_NUM_THREADS",
+          "1",
+          "1",
+          "OK"
+        ],
+        [
+          "OPENBLAS_NUM_THREADS",
+          "1",
+          "1",
+          "OK"
+        ],
+        [
+          "VECLIB_MAXIMUM_THREADS",
+          "1",
+          "1",
+          "OK"
+        ],
+        [
+          "MKL_NUM_THREADS",
+          "1",
+          "1",
+          "OK"
+        ]
+      ]
+    },
+    "config_model": {
+      "passed": true,
+      "rows": [
+        [
+          "config sha256",
+          "9c1b18f412db20f9356e2b5e1ffbd3f28be966cfd3f305e16f6896cec05acf8f",
+          "9c1b18f412db20f9356e2b5e1ffbd3f28be966cfd3f305e16f6896cec05acf8f",
+          "OK"
+        ],
+        [
+          "model C_Na",
+          "\ub9e5 \uae30\uc900 \u00b1rtol 1e-08",
+          "\ucd5c\ub300 \uc0c1\ub300\uc624\ucc28 0.00e+00",
+          "OK"
+        ],
+        [
+          "model C_dc",
+          "\ub9e5 \uae30\uc900 \u00b1rtol 1e-08",
+          "\ucd5c\ub300 \uc0c1\ub300\uc624\ucc28 0.00e+00",
+          "OK"
+        ],
+        [
+          "model C_A0",
+          "\ub9e5 \uae30\uc900 \u00b1rtol 1e-08",
+          "\ucd5c\ub300 \uc0c1\ub300\uc624\ucc28 0.00e+00",
+          "OK"
+        ],
+        [
+          "model C_Aa2",
+          "\ub9e5 \uae30\uc900 \u00b1rtol 1e-08",
+          "\ucd5c\ub300 \uc0c1\ub300\uc624\ucc28 0.00e+00",
+          "OK"
+        ],
+        [
+          "model x_cp",
+          "\ub9e5 \uae30\uc900 \u00b1rtol 1e-08",
+          "\ucd5c\ub300 \uc0c1\ub300\uc624\ucc28 0.00e+00",
+          "OK"
+        ],
+        [
+          "model C_lp",
+          "\ub9e5 \uae30\uc900 \u00b1rtol 1e-08",
+          "\ucd5c\ub300 \uc0c1\ub300\uc624\ucc28 0.00e+00",
+          "OK"
+        ],
+        [
+          "model C_mq",
+          "\ub9e5 \uae30\uc900 \u00b1rtol 1e-08",
+          "\ucd5c\ub300 \uc0c1\ub300\uc624\ucc28 0.00e+00",
+          "OK"
+        ],
+        [
+          "model x_cp_poly",
+          "\ub9e5 \uae30\uc900 \u00b1rtol 1e-08",
+          "\ucd5c\ub300 \uc0c1\ub300\uc624\ucc28 0.00e+00",
+          "OK"
+        ],
+        [
+          "controller_model sha256(\uae30\ub85d\ub9cc)",
+          "2582197db2546d329b62bee631beef5f89459c2c4b11a2131ab024240177956d",
+          "2582197db2546d329b62bee631beef5f89459c2c4b11a2131ab024240177956d",
+          "OK"
+        ]
+      ]
+    }
+  },
+  "passed": true,
+  "not_checked": [
+    "Git release/tag",
+    "Windows orphan workers",
+    "cross-machine numerical reproduction",
+    "final tuning readiness"
+  ],
+  "extracted_root": "/private/tmp/drone-v13-windows-package-yogx578l",
+  "source_revision": "d2e7b6fed8e158bd3d291c34227f85de04043456",
+  "archive_sha256": "d80b68ae88e3827d9089e23ebb32f47113049a63515c0ef10e98d359f19e3fae",
+  "scope": "Mac relocation check of source package; native Windows reference evidence is recorded separately."
+}

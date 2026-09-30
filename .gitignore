@@ -196,3 +196,7 @@ venv/
 /results/windows_sensor_v13/legacy/*
 !/results/windows_sensor_v13/legacy/comparison.json
 !/results/windows_sensor_v13/legacy/manifest.json
+!/results/windows_sensor_v13/package_receipt.json
+!/results/windows_sensor_v13/package_check.json
+!/results/windows_sensor_v13/package_preflight.json
+!/results/windows_sensor_v13/package_source_preflight.json
