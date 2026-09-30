@@ -91,6 +91,15 @@ An accepted delayed update acts at its historical sample time; propagation and
 replay can change the controller's current estimate. An individual historical
 correction must not be interpreted as the whole arrival-time state jump.
 
+For packet counts and NIS summaries, use the `update_statistics` reconstructed
+from the first-processing navigation log. The legacy `estimator_diagnostics`
+object is rebuilt from the retained history: its `updates` and `rejected_updates`
+are not whole-flight totals. Its `delayed_updates` uses packet age at the current
+filter time, rather than first-arrival latency, and `replays` includes ordinary
+new-IMU processing calls. Those fields must not be interpreted as a transport-delay
+failure rate or as the number of late packets. The current study retains those
+raw fields but uses sample/arrival/processing timestamps for its timing analysis.
+
 The four GNSS noise/delay cells are compared within each sensor context.
 The isolated context also removes other sensor errors and uses the quiet rotor
 policy, so the difference between contexts cannot be assigned to GNSS alone.

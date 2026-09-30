@@ -1,14 +1,20 @@
-# Sensor campaign status — 2026-09-30, experiment preparation
+# Sensor campaign status — 2026-09-30, development study in progress
 
 ## Current checkpoint
 
-V11 adds a [pre-run workflow](SENSOR_PRE_RUN.md) with static environment/model
-checks, a source/configuration-bound plan, a single-writer resume mechanism,
-and reports that preserve pending cases and failures. The default 93-task plan
-has not been executed. It covers all five controllers and a fixed-covariance
-GNSS noise/latency factorial. The runtime and v9 reproduction fixtures remain
-unchanged. Final paper readiness remains false; the old v6 paper candidate is
-not silently promoted or overwritten.
+The 93-task plan is now being executed: 45 controller-integration cases and 48
+additional GNSS noise/delay cases, using development seeds and fixed controller
+settings. Serial integration and one GNSS worker run in separate same-host
+folders with guarded merging planned after both finish. Both processes survived
+the connection interruption. The [study guide](SENSOR_STARTUP_STUDY.md) explains
+the resume, merge and provenance-checked analysis procedure. This is an ongoing
+study, not a completed result.
+
+The [v11 pre-run workflow](SENSOR_PRE_RUN.md) supplies the static checks and frozen
+plan. The runtime and v9 reproduction fixtures remain unchanged during execution.
+Final paper readiness remains false; the old v6 paper candidate is not silently
+promoted or overwritten. A source-path portability patch is verified separately
+and will be integrated after the current study finishes.
 
 ## Latest executed development evidence
 

@@ -13,12 +13,16 @@ model attribution and notices remain in `models/team_light/` and `external/`.
 
 ## Current status
 
-**V11 prepares the next experiments without starting a new flight campaign.**
-It adds a static preflight audit, a saved 93-task development plan covering all
-five controllers and GNSS noise/latency separation, failure-preserving reports,
-and updated portable-package checks. Start with the
-[pre-run guide](docs/SENSOR_PRE_RUN.md). Local development prerequisites and
-final paper readiness are separate gates; final sensor tuning remains pending.
+**The prepared 93-task development study is running.** It covers all five
+controllers and a GNSS noise/delay factorial, using the unchanged v9 runtime
+and development seeds. Both execution processes survived the connection
+interruption; saved trials are retained, including failures. Read the
+[execution and analysis guide](docs/SENSOR_STARTUP_STUDY.md). The study is not
+yet complete, and final sensor tuning remains pending.
+
+The [v11 pre-run workflow](docs/SENSOR_PRE_RUN.md) provides static environment
+checks, source-bound plans and guarded resume/reporting. Local development
+prerequisites and final paper readiness are separate gates.
 
 **Development software, not validated flight hardware or final paper results.**
 V10 records **38 development simulation trials**: 30 paired truth/fusion trials
