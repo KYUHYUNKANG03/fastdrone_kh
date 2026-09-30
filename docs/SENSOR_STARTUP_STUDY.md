@@ -24,7 +24,7 @@ python scripts/sensor_preparation_parallel.py --output results/prepared_sensor_v
 
 The parallel executor retains the scientific plan and its runtime/configuration
 hashes. It writes a separate immutable `parallel_executor.json` with its own
-source hash, two-worker limit and selected task identities. It shares the
+source hash, selected worker count (one or two) and task identities. It shares the
 serial runner's exclusive lock, so the two commands cannot write concurrently.
 Each worker launches a fresh, single-threaded simulation subprocess into a
 distinct task directory. One parent writes records atomically in plan order.
@@ -39,6 +39,36 @@ Two simultaneous local reference replays were bit-identical to the recorded v9
 trajectory. This supports use of the executor on this Mac; it does not replace
 numerical reproduction on another computer or provide a controller speed
 benchmark. Timings collected during overlapping jobs include resource contention.
+
+## Overlap stages in separate folders on the same host
+
+To use two total simulation processes while the integration runner executes
+M17 serially, take a read-only snapshot and run **one** GNSS worker there:
+
+```sh
+python scripts/sensor_preparation_split.py snapshot --source results/prepared_sensor_validation_v11_final --output results/prepared_sensor_validation_v12_gnss
+python scripts/sensor_preparation_parallel.py --output results/prepared_sensor_validation_v12_gnss --workers 1
+```
+
+The snapshot captures one atomic results checkpoint, including already completed
+truth controls. It does not copy raw traces: their absolute paths still point
+to the original same-host folders. The two stages now have separate task storage,
+locks and result writers. Keep the original folders and do not treat this as a
+portable archive. Worker count is immutable for a started executor directory.
+
+After **both** runners have finished, merge into the original plan:
+
+```sh
+python scripts/sensor_preparation_split.py merge --target results/prepared_sensor_validation_v11_final --source results/prepared_sensor_validation_v12_gnss
+```
+
+Merge exclusively locks both directories, requires identical source-bound plans,
+rejects unknown trials and conflicting duplicates, and preserves every recorded
+failure. Shared controls must be identical records. It records input hashes,
+added/shared task IDs and the secondary executor contract in `merge_receipt.json`.
+The final diagnostic report then verifies the merged records against the actual
+simulation traces and physical parameters. A snapshot is not extra experimental
+evidence; the resulting denominator remains 93 unique tasks.
 
 ## Analyze all planned tasks
 

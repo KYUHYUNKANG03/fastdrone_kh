@@ -57,6 +57,11 @@ then convert mechanical RPM using `2*pi/60`; record the exact hardware conventio
 Telemetry transport and an observer LPF introduce separate delays. They are not
 the motor's physical response time or automatically canceled by the INDI filter.
 
+The [specification-basis review](SENSOR_SPECIFICATION_BASIS.md) compares the
+active engineering profile with primary manufacturer references and derives
+the bandwidth/variance conversion. Its hardware mapping remains provisional;
+the current development profile has not been replaced with datasheet numbers.
+
 ## Simulation assumptions still requiring qualification
 
 The candidate initializes navigation at the cruise truth unless explicit initial
@@ -106,3 +111,31 @@ source fingerprint. For discrete faults also declare onset, duration, and size.
 The target is a supported operating envelope for each sensor/controller pairing,
 with uncertainty and model limitations, rather than one universal sensor cutoff
 at which NMPC–INDI becomes “useless.”
+
+## Precision planning for the eventual held-out grid
+
+Choose the failure event, operating cell and confidence rule before examining
+held-out results. For illustration, if independent identically distributed
+trials in one fixed cell have zero failures in `n` runs, the exact one-sided
+95% binomial upper bound is `1 - 0.05^(1/n)`. It follows directly by solving
+`P(zero failures | p) = (1-p)^n = 0.05`.
+
+| Zero-failure runs in one cell | One-sided 95% upper failure-probability bound |
+|---:|---:|
+| 3 | 63.2% |
+| 10 | 25.9% |
+| 59 | 4.95% |
+| 299 | 0.997% |
+
+These examples are sample-size planning calculations, not confidence claims
+about adaptively selected development results. A two-sided interval, nonzero
+failures, dependent repetitions, multiple-cell coverage or sequential stopping
+requires the corresponding analysis rule. Repeating deterministic controls
+does not increase the effective sample count. Paired controller comparisons
+reuse seeds across variants; different operating conditions must not be pooled
+as if they were repeated trials of one failure probability.
+
+Track execution incompleteness, tracking failure and model-domain exclusion
+separately. A domain crossing establishes a limit of the simulation's supported
+model, not the probability of a real aircraft failure. The final sensor-quality
+grid and repeat count are still unselected; reserved seeds remain unused.

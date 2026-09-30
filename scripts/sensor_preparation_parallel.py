@@ -1,4 +1,4 @@
-"""Two-worker V13/F13 execution of an unchanged prepared GNSS stage.
+"""One/two-worker V13/F13 execution of an unchanged prepared GNSS stage.
 
 The immutable scientific plan is retained. A separate executor contract records
 this orchestration source and worker count. One parent owns the results/lock;
@@ -22,7 +22,9 @@ from scripts.sensor_preparation import checked_plan
 from scripts.sensor_preflight import audit, configure_process
 
 
-def execute(output, runner=run_campaign):
+def execute(output, runner=run_campaign, workers=2):
+    if workers not in (1, 2):
+        raise ValueError('workers must be 1 or 2')
     output = Path(output).resolve()
     plan = checked_plan(output)
     selected = {t['trial_id'] for t in plan['tasks'] if t['stage'] == 'gnss_startup'}
@@ -31,7 +33,7 @@ def execute(output, runner=run_campaign):
     tasks = [t for t in plan['tasks'] if t['trial_id'] in selected]
     if any(t['controller'] not in ('V13', 'F13') for t in tasks):
         raise ValueError('parallel executor only supports V13/F13')
-    contract = dict(schema='sensor_parallel_executor/1', stage='DEVELOPMENT', workers=2,
+    contract = dict(schema='sensor_parallel_executor/1', stage='DEVELOPMENT', workers=workers,
         plan_sha256=config_sha256(plan), task_ids=[t['trial_id'] for t in tasks],
         source_sha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
         note='Independent single-threaded child simulations; one parent result writer. No M17.')
@@ -43,12 +45,12 @@ def execute(output, runner=run_campaign):
         if path.exists() and json.loads(path.read_text(encoding='utf-8')) != contract:
             raise ValueError('parallel executor contract changed; use a new directory')
         write_atomic(path, contract)
-        return _execute(output, plan, tasks, runner)
+        return _execute(output, plan, tasks, runner, workers)
     finally:
         lock.unlink()
 
 
-def _execute(output, plan, tasks, runner):
+def _execute(output, plan, tasks, runner, workers):
     path = output/'results.json'
     records = {}
     if path.exists():
@@ -91,11 +93,11 @@ def _execute(output, plan, tasks, runner):
 
     pending = [t for t in tasks if t['trial_id'] not in records]
     save()
-    with ThreadPoolExecutor(max_workers=2) as pool:
-        # Bounded pairs: stop scheduling after a broken command, but preserve
+    with ThreadPoolExecutor(max_workers=workers) as pool:
+        # Bounded batches: stop scheduling after a broken command, but preserve
         # the other in-flight result before raising. Completed failures persist.
-        for start in range(0, len(pending), 2):
-            pair = pending[start:start+2]
+        for start in range(0, len(pending), workers):
+            pair = pending[start:start+workers]
             futures = []
             for task in pair:
                 print('START '+task['trial_id'], flush=True)
@@ -120,6 +122,7 @@ def _execute(output, plan, tasks, runner):
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--output', type=Path, required=True, help='existing preparation plan directory')
+    parser.add_argument('--workers', type=int, choices=(1, 2), default=2)
     args = parser.parse_args(argv)
     configure_process()
     plan = checked_plan(args.output)
@@ -127,7 +130,7 @@ def main(argv=None):
     if not check['development_ready']:
         print(json.dumps(check, indent=2))
         return 1
-    execute(args.output)
+    execute(args.output, workers=args.workers)
     return 0
 
 
