@@ -21,7 +21,6 @@ jobs:
       VECLIB_MAXIMUM_THREADS: '1'
       MKL_NUM_THREADS: '1'
       PYTHONUTF8: '1'
-      MPLCONFIGDIR: ${{ runner.temp }}/sensor-matplotlib
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -31,7 +30,10 @@ jobs:
           python-version: '3.13.7'
           architecture: x64
       - name: Install the recorded dependencies
-        run: python -m pip install -r requirements-lock.txt
+        run: |
+          python -m pip install -r requirements-lock.txt
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          "MPLCONFIGDIR=$env:RUNNER_TEMP/sensor-matplotlib" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
       - name: Verify source guards, preparation and short integration tests
         env:
           ARENA_QUICK: '1'

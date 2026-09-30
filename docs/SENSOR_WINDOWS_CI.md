@@ -36,4 +36,5 @@ describe that earlier checkpoint, not the current workflow status.
 
 Primary references: [GitHub's Python workflow guide](https://docs.github.com/en/actions/tutorials/build-and-test-code/python),
 [hosted runner definitions](https://docs.github.com/en/actions/reference/runners/github-hosted-runners),
-[artifact upload action](https://github.com/actions/upload-artifact/tree/v7.0.1).
+[artifact upload action](https://github.com/actions/upload-artifact/tree/v7.0.1),
+[expression context availability](https://docs.github.com/en/actions/reference/workflows-and-actions/contexts#context-availability).
