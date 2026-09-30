@@ -37,13 +37,17 @@ All failures remain reported separately from execution errors; this batch uses
 one development seed and does not estimate reliability or hardware limits.
 
 The v9 timestamp-aware rotor observer, steady-trim measurement-history startup,
-aircraft and controller gains remain unchanged. Its numerical reproduction
-fixtures remain source-compatible. The v10 full-profile low-speed repeat is
-trajectory-bit-identical to its paired control run with fused feedback.
+aircraft and controller gains remain unchanged. V13 makes source fingerprints
+portable across path conventions and supplies fresh numerical references.
+Both reference trajectories are bit-identical to their archived v9 counterparts
+on the pinned Mac; 89 portability/tool tests pass. Native Windows execution is
+still unverified. Historical plans and fixtures require their original source.
 
 - [Completed integration/GNSS findings](results/sensor_validation_v12/findings.md)
 - [Integration/GNSS verification](results/sensor_validation_v12/verification.json)
 - [Study execution and analysis commands](docs/SENSOR_STARTUP_STUDY.md)
+- [Portable source transition and archived-study revision](docs/SOURCE_PORTABILITY.md)
+- [Windows validation workflow draft](docs/SENSOR_WINDOWS_CI.md)
 - [Earlier paired envelope findings](results/sensor_readiness_v10/findings.md)
 - [V11 preparation and validation](results/sensor_preparation_v11/verification.md)
 - [Paired outcomes and trace figures](results/sensor_readiness_v10/report.md)
@@ -92,11 +96,11 @@ python scripts/sensor_reproduce.py --output results/my_sensor_reproduction
 ```
 
 A reproduction pass means agreement with a recorded outcome, not validation of
-the full operating envelope. The active v9 fixture is a passing 85 m/s V13 run
+the full operating envelope. The active v13 fixture is a passing 85 m/s V13 run
 with the new observer. Each replay uses a new output folder. The separate
-`scripts/data/sensor_legacy_reproduction_v9.json` fixture preserves the 20 m/s
+`scripts/data/sensor_legacy_reproduction_v13.json` fixture preserves the 20 m/s
 legacy-observer regression, including its known model-domain failure. Its fresh
-v9 trajectory is identical to v8 on the pinned Mac. Archived fixtures retain
+v13 trajectory is identical to v9 on the pinned Mac. Archived fixtures retain
 their original runtime hashes and require their own code revision.
 
 Compare the new observer and startup policies without changing controller gains:
@@ -137,7 +141,7 @@ ARENA_QUICK=1 python -m pytest -q control/test_arena_sensor_fusion.py control/te
 For a portable Windows handoff, first create a source package:
 
 ```sh
-python scripts/sensor_workspace.py build --output sensor-development.zip
+python scripts/sensor_workspace.py build --config configs/arena_rotor_projected_development_v9.json --output sensor-development-v13.zip
 ```
 
 Then follow [the Windows package instructions](docs/SENSOR_WINDOWS_DEVELOPMENT.md).
@@ -149,7 +153,7 @@ truth-only tuning records are not final sensor-inclusive tuning results.
 
 `origin` is this repository. Future verified changes are committed and pushed
 here in coherent checkpoints. Python environments, credentials, caches, local
-backups, bulk traces, and generated archives are ignored. Selected v7/v8/v9/v10 summaries
+backups, bulk traces, and generated archives are ignored. Selected v7–v13 summaries
 and reference fixtures are versioned; raw campaigns remain in the local Desktop
 checkout. Historical documentation can refer to those local-only artifacts.
 

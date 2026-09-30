@@ -1,17 +1,18 @@
-# Sensor experiment preparation — v11
+# Sensor experiment preparation
 
-The repository is prepared for bounded development validation. The final paper
-campaign remains gated. V11 changes preparation, portability and reporting;
-it does not change the 114 runtime sources, aircraft, controller gains, truth
-baseline, sensor candidate, or historical reproduction fixtures. No new flight
-campaign was started for this checkpoint.
+The v11 preparation workflow has now completed its 93-task study, published at
+`06dcb88b91e3330416ca18421dc486ce409e27fa`. Read the
+[v12 findings](../results/sensor_validation_v12/findings.md) before choosing the
+next development experiment. Current source includes the portable v13 runtime
+and fresh references; new plans require fresh folders. The aircraft, controller
+gains and truth baseline are unchanged. The final paper campaign remains gated.
 
 ## Run order
 
 | Step | Purpose | Advance when |
 |---|---|---|
 | Local static preflight | Dependencies, thread limits, fitted model, arena facts, reference compatibility | All development checks pass |
-| Numerical reproduction on each execution machine | Reproduce the v9 recorded sensor trajectory and verdicts | Metrics meet recorded tolerances; failures are investigated |
+| Numerical reproduction on each execution machine | Reproduce the active v13 sensor trajectory and verdicts | Metrics meet recorded tolerances; failures are investigated |
 | Controller integration | Truth, quiet sampled and nominal fusion at the declared low/high speeds | Runs and records are trustworthy; characterize any tracking/domain failures |
 | GNSS startup factorial | Separate noise, delay and their interaction at fixed filter/controller settings | Multi-seed diagnostics explain whether a startup/interface change is justified |
 | Broader development envelope | Braking, mission, initial errors, faults and motor mismatch, with truth controls | Supported and unsupported conditions are documented |
@@ -51,8 +52,8 @@ hashes correctly prevent final execution.
 ## Saved development plan (does not simulate)
 
 ```sh
-python scripts/sensor_preparation.py plan --output results/prepared_sensor_validation_v11_final
-python scripts/sensor_preparation_report.py --source results/prepared_sensor_validation_v11_final --output results/prepared_status_before_run
+python scripts/sensor_preparation.py plan --output results/my_prepared_sensor_validation
+python scripts/sensor_preparation_report.py --source results/my_prepared_sensor_validation --output results/my_prepared_status_before_run
 ```
 
 The default plan records 93 unique tasks using development seeds 3, 4 and 5.
@@ -104,8 +105,8 @@ The command above **does simulate**. It checks numerical agreement, not general
 robustness. Then start one prepared stage:
 
 ```sh
-python scripts/sensor_preparation.py run --output results/prepared_sensor_validation_v11_final --stage integration
-python scripts/sensor_preparation.py run --output results/prepared_sensor_validation_v11_final --stage gnss_startup
+python scripts/sensor_preparation.py run --output results/my_prepared_sensor_validation --stage integration
+python scripts/sensor_preparation.py run --output results/my_prepared_sensor_validation --stage gnss_startup
 ```
 
 The [startup study guide](SENSOR_STARTUP_STUDY.md) documents an optional two-worker
@@ -127,7 +128,7 @@ IDs; the readable identities remain in `plan.json` and `results.json`.
 After any stage, write a new report directory:
 
 ```sh
-python scripts/sensor_preparation_report.py --source results/prepared_sensor_validation_v11_final --output results/prepared_status_after_integration
+python scripts/sensor_preparation_report.py --source results/my_prepared_sensor_validation --output results/my_prepared_status_after_integration
 ```
 
 The report retains all planned cases, including pending and execution-incomplete
@@ -168,6 +169,6 @@ conventions, sampling/anti-aliasing assumptions, latency and jitter, bias/drift,
 vibration, clipping and ESC electrical-to-mechanical speed conversion. The
 current engineering profiles are not calibrated device specifications.
 
-See [the full protocol](SENSOR_PAPER_PROTOCOL.md), [latest evidence](../results/sensor_readiness_v10/findings.md),
+See [the full protocol](SENSOR_PAPER_PROTOCOL.md), [latest evidence](../results/sensor_validation_v12/findings.md),
 [broader envelope commands](SENSOR_ENVELOPE_SCREEN.md) and the team's
 [distributed tuning/main procedure](../DISTRIBUTED_RUN.md) for the later gates.

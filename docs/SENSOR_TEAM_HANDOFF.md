@@ -11,7 +11,14 @@ Read [the findings](../results/sensor_validation_v12/findings.md) and
 and remaining pre-tuning decisions. Runtime sources stayed unchanged during
 execution, and final tuning has not started.
 
-The latest executed v10 checkpoint adds paired truth/fusion development screens across
+Current source includes the separately verified portability patch and v13
+numerical references; 89 targeted portability/tool tests pass on the Mac.
+Archive the completed study at `06dcb88b91e3330416ca18421dc486ce409e27fa` when
+reanalyzing it. New plans must use a new output directory and current hashes.
+See [source compatibility](SOURCE_PORTABILITY.md) and the
+[unexecuted Windows workflow draft](SENSOR_WINDOWS_CI.md).
+
+The earlier v10 checkpoint adds paired truth/fusion development screens across
 maneuvers, physical motor mismatch and isolated sensor faults. All controller
 gains and v9 runtime remain fixed. The [findings](../results/sensor_readiness_v10/findings.md)
 separate tracking, propulsion-domain and execution failures; the
@@ -147,6 +154,9 @@ must remain visible in any sensor boundary claim.
 
 ## Concrete candidate files
 
+- `configs/arena_rotor_projected_development_v9.json`: current development
+  profile, seed 3, joint barometer filter and timestamp-aware rotor observer.
+  It is not the frozen final tuning configuration.
 - `configs/arena_sensor_candidate_v6.json`: `arena_v2.json` plus the complete
   optional joint-bias sensor binding, seed 2001. No controller/plant edits.
 - `configs/sensors/joint_baro_candidate_v6.json`: the same profile for explicit

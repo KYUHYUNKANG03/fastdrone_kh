@@ -10,6 +10,12 @@ failures and three pre-gust settling failures. Read the
 Successful execution does not imply that every controller case passed or that
 final tuning is ready.
 
+The commands below describe the archived study at publication revision
+`06dcb88b91e3330416ca18421dc486ce409e27fa`. Current source uses the portable v13
+fingerprint runtime and intentionally rejects this old saved plan. Retain the
+raw study folders with the publication revision for reanalysis; create fresh
+plans/output directories for new work. See [source portability](SOURCE_PORTABILITY.md).
+
 ## Serial integration, then optional two-worker GNSS execution
 
 Run numerical reproduction on the execution machine before the study. Use the

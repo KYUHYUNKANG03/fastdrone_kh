@@ -126,10 +126,13 @@ def audit(config=CONFIG, spec_path=SPEC):
         checks.append(dict(name='sensor_binding_and_paper_spec', passed=False, detail=str(exc)))
         blockers.append('Sensor binding/paper spec could not be audited.')
     blockers.extend([
-        'GNSS startup noise/latency mechanism and multi-seed operating envelope remain unresolved.',
-        'M17/GSLQR/CPID have not completed the new timestamped-rotor candidate integration stage.',
+        'The completed 93-task development study does not validate the broader operating envelope; '
+        'startup sensitivity, low-RPM excursions and high-speed settling failures need follow-up.',
+        'The sensor-inclusive tuning failure policy must declare how model-domain validity and '
+        'pre-gust settling relate to the inherited stop_reason/paper_failed penalty.',
         'Rotor stale-feedback policy and combined actuator mismatch/dropout envelope are not validated.',
-        'Sensor policy, realistic initialization assumptions and hardware specification mapping are not frozen.',
+        'Sensor policy, initialization, fixed-versus-matched estimator comparisons and controller '
+        'interface variants are not frozen. Device-specific claims also need hardware specification mapping.',
         'Native Windows numerical reproduction and worker lifecycle checks are not verified.',
         'Runtime source keys now use portable relative paths, but final cross-OS tuning-record '
         'loading still needs a native end-to-end check.',

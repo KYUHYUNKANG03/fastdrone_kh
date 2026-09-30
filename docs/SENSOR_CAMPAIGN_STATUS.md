@@ -14,10 +14,14 @@ between acceptance checks and the inherited binary tuning penalty.
 The [v11 pre-run workflow](SENSOR_PRE_RUN.md) supplies the static checks and frozen
 plan. The runtime and v9 reproduction fixtures remained unchanged during execution.
 Final paper readiness remains false; the old v6 paper candidate is not silently
-promoted or overwritten. A source-path portability patch is verified separately
-and will be integrated after the current study finishes.
+promoted or overwritten. The separately verified source-path portability patch
+is now integrated, with fresh v13 references and 89 passing targeted tests.
+Flight equations and gains are unchanged. Old study plans remain tied to their
+original source; see [source portability](SOURCE_PORTABILITY.md). Windows
+validation has a [reviewable workflow draft](SENSOR_WINDOWS_CI.md), but no native
+Windows job has run.
 
-## Latest executed development evidence
+## Earlier v10 development evidence
 
 V10 adds [paired truth/fusion screens](SENSOR_ENVELOPE_SCREEN.md) while keeping
 the v9 aircraft, controllers and estimator runtime unchanged. The physical motor

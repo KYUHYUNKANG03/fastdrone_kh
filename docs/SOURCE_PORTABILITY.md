@@ -32,10 +32,13 @@ this declared source transition from a normal replay under identical sources.
 The legacy reference retains its model-domain failure. Reproduction agreement
 does not turn that failure into a successful flight result.
 
-The integration/GNSS study used the old runtime, available at source commit
-`4d30e025679c56b3acb72edb112d67c706b2cbeb`. Keep its source-bound plan and raw
-records with that revision when reanalyzing or reproducing the study. Create a
-new output folder and plan for any new study on the portable runtime.
+The integration/GNSS study used the old runtime, unchanged from
+`4d30e025679c56b3acb72edb112d67c706b2cbeb`. Its completed publication revision is
+`06dcb88b91e3330416ca18421dc486ce409e27fa`, which also contains the final analysis
+code and reviewed evidence. Use that publication revision with the original
+source-bound plan and local raw records to reanalyze the study. Bulk traces are
+not in Git. Create a new output folder and plan for any new study on the
+portable runtime; do not reuse the completed v11 plan directory.
 
 ## What this verifies
 

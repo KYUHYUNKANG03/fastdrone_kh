@@ -1,0 +1,55 @@
+name: Windows sensor development validation
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [validation/windows-sensors]
+
+permissions:
+  contents: read
+
+jobs:
+  windows:
+    runs-on: windows-2022
+    timeout-minutes: 45
+    defaults:
+      run:
+        shell: pwsh
+    env:
+      OMP_NUM_THREADS: '1'
+      OPENBLAS_NUM_THREADS: '1'
+      VECLIB_MAXIMUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+      PYTHONUTF8: '1'
+      MPLCONFIGDIR: ${{ runner.temp }}/sensor-matplotlib
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.13.7'
+          architecture: x64
+      - name: Install the recorded dependencies
+        run: python -m pip install -r requirements-lock.txt
+      - name: Verify source guards, preparation and short integration tests
+        env:
+          ARENA_QUICK: '1'
+        run: |
+          New-Item -ItemType Directory -Force results/windows_ci | Out-Null
+          python -m pytest -q control/test_source_manifest.py control/test_sensor_binding.py control/test_main_distributed.py scripts/test_sensor_preflight.py scripts/test_sensor_reproduce.py scripts/test_sensor_workspace.py scripts/test_sensor_preparation.py scripts/test_sensor_envelope_screen.py --junitxml=results/windows_ci/tests.xml
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Audit development prerequisites
+        run: python scripts/sensor_preflight.py --output results/windows_ci/preflight.json
+      - name: Reproduce the projected-observer high-speed reference
+        run: python scripts/sensor_reproduce.py --output results/windows_ci/projected
+      - name: Reproduce the legacy-observer low-speed reference
+        run: python scripts/sensor_reproduce.py --reference scripts/data/sensor_legacy_reproduction_v13.json --output results/windows_ci/legacy
+      - name: Preserve checks, failures, manifests and traces
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: windows-sensor-validation-${{ github.sha }}
+          path: results/windows_ci/
+          if-no-files-found: warn
+          retention-days: 30
