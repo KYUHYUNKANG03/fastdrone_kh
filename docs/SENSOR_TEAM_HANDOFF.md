@@ -3,7 +3,12 @@
 Status: development candidate, 2026-09-30. The team controller gains, aircraft
 model, allocation rules, and original truth-feedback configurations are unchanged.
 
-The current v10 checkpoint adds paired truth/fusion development screens across
+The current v11 checkpoint prepares the next experiments without running a new
+campaign. Read [the pre-run workflow](SENSOR_PRE_RUN.md) for the saved 93-task
+development plan, static checks, resume guards, and pending/failure reporting.
+The runtime remains unchanged and final tuning has not started.
+
+The latest executed v10 checkpoint adds paired truth/fusion development screens across
 maneuvers, physical motor mismatch and isolated sensor faults. All controller
 gains and v9 runtime remain fixed. The [findings](../results/sensor_readiness_v10/findings.md)
 separate tracking, propulsion-domain and execution failures; the

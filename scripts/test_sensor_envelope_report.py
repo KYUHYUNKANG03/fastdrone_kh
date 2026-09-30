@@ -96,3 +96,29 @@ def test_duplicate_sources_and_changed_driver_are_rejected(tmp_path, monkeypatch
     path.write_text(json.dumps(doc))
     with pytest.raises(ValueError, match='driver differs'):
         report.summarize([path], tmp_path/'report')
+
+
+@pytest.mark.parametrize('mode,reason', [
+    ('empty', 'no_executed_steps'), ('nonfinite', 'nonfinite_xs'),
+    ('quaternion', 'invalid_truth_quaternion'), ('estimate', 'nonfinite_estimated_states')])
+def test_failed_trace_metrics_are_explicitly_unavailable(tmp_path, mode, reason):
+    xs = np.zeros((1 if mode == 'empty' else 3, 17)); xs[:, 9] = 1.
+    estimate = xs.copy()
+    if mode == 'nonfinite':
+        xs[-1, 0] = np.nan
+    if mode == 'quaternion':
+        xs[-1, 9] = 0.
+    if mode == 'estimate':
+        estimate[-1, 0] = np.inf
+    path = tmp_path/'trace.npz'
+    np.savez(path, xs=xs, xs_est=estimate, ts=np.arange(len(xs))*.002)
+    result = report.trace_metrics(path, 'sensors')
+    assert result == {'diagnostics_unavailable': reason}
+    json.dumps(result, allow_nan=False)
+
+
+def test_corrupt_shapes_still_raise_instead_of_hiding_diagnostics(tmp_path):
+    path = tmp_path/'trace.npz'
+    np.savez(path, ts=np.arange(3), xs=np.zeros((2, 17)))
+    with pytest.raises(ValueError, match='malformed'):
+        report.trace_metrics(path, 'truth')

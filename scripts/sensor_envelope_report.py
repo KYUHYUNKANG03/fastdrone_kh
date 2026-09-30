@@ -25,7 +25,29 @@ def trace_metrics(path, feedback):
     """Estimation metrics cover recorded time, including startup and failures."""
     result = {}
     with np.load(path, allow_pickle=False) as trace:
+        times, truth = trace['ts'], trace['xs']
+        if times.ndim != 1 or truth.shape != (len(times), 17):
+            raise ValueError('malformed truth trace shape')
+        if len(times) < 2:
+            return dict(diagnostics_unavailable='no_executed_steps')
+        # Divergence is a legitimate saved failure. Retain its verdict instead
+        # of dropping it or failing the entire report on SciPy/min/NaN errors.
+        for key in ('ts', 'xs', 'us', 'wind'):
+            if key in trace and not np.all(np.isfinite(trace[key])):
+                return dict(diagnostics_unavailable='nonfinite_'+key)
+        if np.any(np.diff(times) <= 0):
+            raise ValueError('non-increasing trace timestamps')
+        if np.any(np.linalg.norm(truth[:, 6:10], axis=1) == 0):
+            return dict(diagnostics_unavailable='invalid_truth_quaternion')
         if feedback == 'sensors':
+            if trace['xs_est'].ndim != 2 or trace['xs_est'].shape[1:] != (17,):
+                raise ValueError('malformed estimate trace shape')
+            if len(trace['xs_est']) == 0:
+                return dict(diagnostics_unavailable='no_estimated_states')
+            if not np.all(np.isfinite(trace['xs_est'])):
+                return dict(diagnostics_unavailable='nonfinite_estimated_states')
+            if np.any(np.linalg.norm(trace['xs_est'][:, 6:10], axis=1) == 0):
+                return dict(diagnostics_unavailable='invalid_estimated_quaternion')
             count = min(len(trace['xs']), len(trace['xs_est']))
             truth, estimate = trace['xs'][:count], trace['xs_est'][:count]
             error = estimate-truth
@@ -140,9 +162,10 @@ def summarize(sources, output):
                 row['physical_motor_tau_s'] = float(plant['tau_m'])
                 row['observer_motor_tau_s'] = (binding.profile['rotor_observer']['motor_tau_s']
                                                if binding.profile else None)
-                detail = diagnose(record, source)
-                row['domain_diagnostics'] = {k:v for k,v in detail.items() if k not in ('source', 'trace')}
                 row.update(trace_metrics(path, task['feedback']))
+                if 'diagnostics_unavailable' not in row:
+                    detail = diagnose(record, source)
+                    row['domain_diagnostics'] = {k:v for k,v in detail.items() if k not in ('source', 'trace')}
             local_rows[trial_id] = row
             rows.append(row)
         for row in local_rows.values():
@@ -234,7 +257,8 @@ def write_report(rows, output):
 
 def plot_low_speed_boundary(pairs, by_id, output):
     selected = [r for r in pairs if r['condition']=='lateral_low' and r.get('trace')
-                and by_id[(r['source'], r['truth_trial_id'])].get('trace')]
+                and r.get('domain_diagnostics')
+                and by_id[(r['source'], r['truth_trial_id'])].get('domain_diagnostics')]
     if not selected:
         return False
     import matplotlib.pyplot as plt

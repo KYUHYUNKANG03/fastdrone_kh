@@ -63,3 +63,21 @@ def test_manifest_path_cannot_escape_workspace(tmp_path):
     path.write_text(json.dumps(doc))
     with pytest.raises(ValueError, match='invalid path'):
         verify_files(destination)
+
+
+def test_selected_config_is_the_one_embedded_and_verified(tmp_path):
+    root, _, _, _ = bundle(tmp_path)
+    (root/'configs'/'new.json').write_text('{"candidate": 9}')
+    output = tmp_path/'selected.zip'
+    receipt = build(root, output, 'configs/new.json')
+    assert receipt['config'] == 'configs/new.json'
+    with zipfile.ZipFile(output) as archive:
+        destination = tmp_path/'selected'
+        archive.extractall(destination)
+    doc, problems = verify_files(destination)
+    assert not problems and doc['config'] == 'configs/new.json'
+    doc['config_sha256'] = 'stale'
+    (destination/MANIFEST).write_text(json.dumps(doc))
+    assert verify_files(destination)[1] == ['configuration digest differs from manifest']
+    with pytest.raises(ValueError, match='relative'):
+        build(root, tmp_path/'unsafe.zip', '../secret.json')

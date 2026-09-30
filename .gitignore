@@ -117,3 +117,17 @@ venv/
 !/results/sensor_readiness_v10/startup_groups/report.md
 !/results/sensor_readiness_v10/startup_groups/outcomes.json
 !/results/sensor_readiness_v10/startup_groups/comparison.png
+
+# Reviewed preparation evidence only; no new bulk simulation traces.
+!/results/sensor_preparation_v11/
+/results/sensor_preparation_v11/*
+!/results/sensor_preparation_v11/verification.md
+!/results/sensor_preparation_v11/verification.json
+!/results/sensor_preparation_v11/plan_summary.json
+!/results/sensor_preparation_v11/preflight.json
+!/results/sensor_preparation_v11/tests.xml
+!/results/sensor_preparation_v11/fairness_repairs_final.xml
+!/results/sensor_preparation_v11/report_tests.xml
+!/results/sensor_preparation_v11/portable_final_tests.xml
+!/results/sensor_preparation_v11/package_receipt.json
+!/results/sensor_preparation_v11/package_check.json

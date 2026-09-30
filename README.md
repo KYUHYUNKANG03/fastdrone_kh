@@ -13,6 +13,13 @@ model attribution and notices remain in `models/team_light/` and `external/`.
 
 ## Current status
 
+**V11 prepares the next experiments without starting a new flight campaign.**
+It adds a static preflight audit, a saved 93-task development plan covering all
+five controllers and GNSS noise/latency separation, failure-preserving reports,
+and updated portable-package checks. Start with the
+[pre-run guide](docs/SENSOR_PRE_RUN.md). Local development prerequisites and
+final paper readiness are separate gates; final sensor tuning remains pending.
+
 **Development software, not validated flight hardware or final paper results.**
 V10 records **38 development simulation trials**: 30 paired truth/fusion trials
 and eight adaptive V13 startup diagnostics. All 44 targeted software tests pass.
@@ -29,6 +36,7 @@ fixtures remain source-compatible. The v10 full-profile low-speed repeat is
 trajectory-bit-identical to its paired control run with fused feedback.
 
 - [Latest paired envelope findings](results/sensor_readiness_v10/findings.md)
+- [V11 preparation and validation](results/sensor_preparation_v11/verification.md)
 - [Paired outcomes and trace figures](results/sensor_readiness_v10/report.md)
 - [Envelope screen commands and interpretation](docs/SENSOR_ENVELOPE_SCREEN.md)
 - [Historical v9 observer comparisons](results/sensor_readiness_v9/report.md)

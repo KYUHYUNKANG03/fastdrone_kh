@@ -23,6 +23,21 @@ NUMERICS = ('simulated_seconds', 'rmse_z', 'rmse_velocity', 'max_omega',
             'command_total_variation')
 
 
+def canonical_source_hashes(hashes):
+    """Normalize path separators at the portable artifact boundary, not bytes.
+
+    Runtime manifests use native Path string keys. Windows backslashes must
+    compare with the Mac reference's slashes without weakening any file hash.
+    """
+    normalized = {}
+    for name, digest in hashes.items():
+        name = name.replace('\\', '/')
+        if name in normalized:
+            raise ValueError('duplicate normalized source path')
+        normalized[name] = digest
+    return normalized
+
+
 def compare(reference, actual, rtol=1e-3):
     import math
     problems = []
@@ -44,7 +59,7 @@ def reproduce(reference, output):
     reference = json.loads(Path(reference).read_text(encoding='utf-8'))
     if reference.get('schema') != 'sensor_reproduction/1' or reference.get('stage') != 'DEVELOPMENT':
         raise ValueError('reference must be a recorded DEVELOPMENT reproduction case')
-    if reference['runtime_source_sha256'] != runtime_source_hashes():
+    if canonical_source_hashes(reference['runtime_source_sha256']) != canonical_source_hashes(runtime_source_hashes()):
         raise ValueError('runtime source differs from the reference')
     config = ROOT/reference['config']
     if config_sha256(load_config(config)) != reference['config_sha256']:

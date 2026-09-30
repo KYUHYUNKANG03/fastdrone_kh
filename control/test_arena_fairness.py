@@ -531,7 +531,8 @@ def test_i7_excluded_pair_is_recorded_as_a_skipped_row(config, tmp_path, monkeyp
     import control.validation_metrics as metrics_module
     ran = []
 
-    def fake_trial(factory, name, profile, case, limits):
+    def fake_trial(factory, name, profile, case, limits, *, feedback, sensor_profile, sensor_seed):
+        assert feedback == 'truth' and sensor_profile is None and sensor_seed == 0
         ran.append(name)
         return dict(passed=True, tracking_pass=True, failure_reasons=[], stop_reason=None,
                     simulated_seconds=0.0), None, []
@@ -1116,7 +1117,8 @@ def test_i4_tuned_arena_run_applies_and_records_the_best_values(config, factory,
     _write_records(tmp_path/'run', _tuned_record(config, factory, 'CPID', best_values=best))
     seen = []
 
-    def fake_trial(factory, name, profile, case, limits):
+    def fake_trial(factory, name, profile, case, limits, *, feedback, sensor_profile, sensor_seed):
+        assert feedback == 'truth' and sensor_profile is None and sensor_seed == 0
         seen.append((name, factory.overrides))
         return dict(passed=True, tracking_pass=True, failure_reasons=[], stop_reason=None,
                     simulated_seconds=0.0), None, []
@@ -1134,7 +1136,7 @@ def test_i4_tuned_arena_run_applies_and_records_the_best_values(config, factory,
         assert tuned['record_sha256'] == sha and tuned['best_values']['Kp_vel'] == 32.0
     assert 'Gains: **tuned**' in (out/'REPORT.md').read_text(encoding='utf-8')
     command = json.loads((out/'arena_reference.json').read_text(encoding='utf-8'))['command']
-    assert command.endswith(f"--tuned {tmp_path/'run'} --only-controllers CPID --only-cases gust_lateral_p10_VL")
+    assert command.endswith(f"--tuned {tmp_path/'run'} --only-controllers CPID --only-cases gust_lateral_p10_VL --feedback truth")
 
 
 @pytest.mark.parametrize('problem, needle', [

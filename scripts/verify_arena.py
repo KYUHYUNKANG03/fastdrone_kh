@@ -27,7 +27,10 @@ import json
 import os
 from pathlib import Path
 import platform
-import resource
+try:
+    import resource
+except ImportError:  # Native Windows: numerical checks still run; RSS is unknown.
+    resource = None
 import subprocess
 import sys
 import tempfile
@@ -38,8 +41,14 @@ import time
 BUDGET = {True: dict(minutes=20.0, memory_gb=3.0), False: dict(minutes=30.0, memory_gb=None)}
 
 
+def memory_text(value):
+    return 'unavailable on this platform' if value is None else f'{value:.2f} GiB'
+
+
 def peak_memory_gb():
     """지금까지 끝난 하위 프로세스와 이 프로세스 중 최대 상주 메모리(GiB)."""
+    if resource is None:
+        return None
     scale = 1.0 if platform.system() == 'Darwin' else 1024.0     # macOS는 바이트, 리눅스는 KB
     peak = max(resource.getrusage(resource.RUSAGE_CHILDREN).ru_maxrss,
                resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
@@ -196,7 +205,7 @@ def main():
     table.append(('1 environment', ok_env, detail))
     ok_tests, detail = step_tests(args.quick)
     table.append(('2 fairness tests' + (' (quick)' if args.quick else ''), ok_tests,
-                  f'{detail}, peak memory so far {peak_memory_gb():.2f} GiB'))
+                  f'{detail}, peak memory so far {memory_text(peak_memory_gb())}'))
     ok_facts, detail = step_facts()
     table.append(('3 config vs confirmed facts', ok_facts, detail))
     ok_reruns, mode, results = step_reruns(args.quick, args.rtol, fingerprint)
@@ -208,12 +217,12 @@ def main():
     minutes, memory = (time.perf_counter() - started)/60.0, peak_memory_gb()
     budget = BUDGET[args.quick]
     within = minutes <= budget['minutes'] and (budget['memory_gb'] is None
-                                               or memory <= budget['memory_gb'])
+                                               or (memory is not None and memory <= budget['memory_gb']))
     target = f'target {budget["minutes"]:g} min' + (f', {budget["memory_gb"]:g} GB' if budget['memory_gb']
                                                      else ', memory not budgeted') + ', 1 CPU'
     note = '; quick mode skips M17 NLP builds (~2 GB each), the full mode covers them' if args.quick else ''
     table.append(('5 resource budget', None if not within else True,
-                  f'{minutes:.1f} min, peak memory {memory:.2f} GiB ({target}){note}'))
+                  f'{minutes:.1f} min, peak memory {memory_text(memory)} ({target}){note}'))
     width = max(len(name) for name, *_ in table)
     print('\n' + '='*100)
     for name, ok, detail in table:

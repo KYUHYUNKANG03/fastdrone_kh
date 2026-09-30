@@ -1,6 +1,16 @@
-# Sensor campaign status — 2026-09-30, paired envelope validation
+# Sensor campaign status — 2026-09-30, experiment preparation
 
 ## Current checkpoint
+
+V11 adds a [pre-run workflow](SENSOR_PRE_RUN.md) with static environment/model
+checks, a source/configuration-bound plan, a single-writer resume mechanism,
+and reports that preserve pending cases and failures. The default 93-task plan
+has not been executed. It covers all five controllers and a fixed-covariance
+GNSS noise/latency factorial. The runtime and v9 reproduction fixtures remain
+unchanged. Final paper readiness remains false; the old v6 paper candidate is
+not silently promoted or overwritten.
+
+## Latest executed development evidence
 
 V10 adds [paired truth/fusion screens](SENSOR_ENVELOPE_SCREEN.md) while keeping
 the v9 aircraft, controllers and estimator runtime unchanged. The physical motor

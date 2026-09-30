@@ -1,0 +1,2444 @@
+{
+  "schema": "sensor_preparation_verification/1",
+  "stage": "DEVELOPMENT",
+  "new_campaign_trials": 0,
+  "planned_trials": 93,
+  "plan_sha256": "d2a72c0c060e99ed776037660919c2034fd47b6451982834c09c8c65fc6d3b19",
+  "runtime_files_unchanged": 114,
+  "historical_envelope_records_reproduced": 30,
+  "historical_records_exactly_equal": true,
+  "numerical_replay_run": false,
+  "final_test_counts": {
+    "passed": 365,
+    "skipped": 17,
+    "xfailed": 1
+  },
+  "test_note": "Latest outcome per distinct test across broad check and targeted repairs; not a single invocation.",
+  "initial_failures": "Two legacy fairness mocks lacked feedback kwargs; after repair one stale command-suffix assertion was also updated. No runtime changes.",
+  "test_outcomes": [
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i10_angular_acceleration_matches_plant_at_trim[0.0]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i10_angular_acceleration_matches_plant_at_trim[10.0]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i10_angular_acceleration_matches_plant_at_trim[15.0]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i10_angular_acceleration_matches_plant_at_trim[20.0]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i10_angular_acceleration_matches_plant_at_trim[25.0]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i10_angular_acceleration_matches_plant_at_trim[30.0]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i10_angular_acceleration_matches_plant_at_trim[35.0]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i10_angular_acceleration_matches_plant_at_trim[40.0]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i10_angular_acceleration_matches_plant_at_trim[45.0]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i10_angular_acceleration_matches_plant_at_trim[5.0]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i10_angular_acceleration_matches_plant_at_trim[50.0]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i10_angular_acceleration_matches_plant_at_trim[55.0]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i10_angular_acceleration_matches_plant_at_trim[60.0]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i10_angular_acceleration_matches_plant_at_trim[65.0]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i10_angular_acceleration_matches_plant_at_trim[70.0]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i10_angular_acceleration_matches_plant_at_trim[75.0]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i10_angular_acceleration_matches_plant_at_trim[80.0]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i10_angular_acceleration_matches_plant_at_trim[85.0]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i10_constant_pressure_centre_would_fail_the_trim_gate",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i10_controller_model_trim_matches_plant_trim[0.0]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i10_controller_model_trim_matches_plant_trim[20.0]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i10_controller_model_trim_matches_plant_trim[40.0]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i10_controller_model_trim_matches_plant_trim[60.0]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i10_controller_model_trim_matches_plant_trim[85.0]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i10_offtrim_angular_acceleration_matches_plant[10.0-y]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i10_offtrim_angular_acceleration_matches_plant[10.0-z]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i10_offtrim_angular_acceleration_matches_plant[15.0-y]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i10_offtrim_angular_acceleration_matches_plant[15.0-z]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i10_offtrim_angular_acceleration_matches_plant[20.0-y]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i10_offtrim_angular_acceleration_matches_plant[20.0-z]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i10_offtrim_angular_acceleration_matches_plant[25.0-y]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i10_offtrim_angular_acceleration_matches_plant[25.0-z]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i10_offtrim_angular_acceleration_matches_plant[30.0-y]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i10_offtrim_angular_acceleration_matches_plant[30.0-z]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i10_offtrim_angular_acceleration_matches_plant[35.0-y]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i10_offtrim_angular_acceleration_matches_plant[35.0-z]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i10_offtrim_angular_acceleration_matches_plant[40.0-y]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i10_offtrim_angular_acceleration_matches_plant[40.0-z]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i10_offtrim_angular_acceleration_matches_plant[45.0-y]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i10_offtrim_angular_acceleration_matches_plant[45.0-z]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i10_offtrim_angular_acceleration_matches_plant[5.0-y]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i10_offtrim_angular_acceleration_matches_plant[5.0-z]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i10_offtrim_angular_acceleration_matches_plant[50.0-y]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i10_offtrim_angular_acceleration_matches_plant[50.0-z]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i10_offtrim_angular_acceleration_matches_plant[55.0-y]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i10_offtrim_angular_acceleration_matches_plant[55.0-z]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i10_offtrim_angular_acceleration_matches_plant[60.0-y]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i10_offtrim_angular_acceleration_matches_plant[60.0-z]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i10_offtrim_angular_acceleration_matches_plant[65.0-y]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i10_offtrim_angular_acceleration_matches_plant[65.0-z]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i10_offtrim_angular_acceleration_matches_plant[70.0-y]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i10_offtrim_angular_acceleration_matches_plant[70.0-z]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i10_offtrim_angular_acceleration_matches_plant[75.0-y]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i10_offtrim_angular_acceleration_matches_plant[75.0-z]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i10_offtrim_angular_acceleration_matches_plant[80.0-y]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i10_offtrim_angular_acceleration_matches_plant[80.0-z]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i10_offtrim_angular_acceleration_matches_plant[85.0-y]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i10_offtrim_angular_acceleration_matches_plant[85.0-z]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i10_offtrim_gate_rejects_the_uncorrected_model",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i10_translational_acceleration_matches_plant[0.0]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i10_translational_acceleration_matches_plant[20.0]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i10_translational_acceleration_matches_plant[40.0]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i10_translational_acceleration_matches_plant[60.0]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i10_translational_acceleration_matches_plant[85.0]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i11_arena_cpid_tilt_is_the_px4_default",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i11_arena_cpid_uses_acceleration_authority_and_preload",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i11_cpid_integrators_freeze_while_saturated",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i11_cpid_preload_reproduces_the_trim_thrust_vector[0.0]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i11_cpid_preload_reproduces_the_trim_thrust_vector[10.0]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i11_cpid_preload_reproduces_the_trim_thrust_vector[20.0]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i11_integrator_log_has_the_same_format_for_gslqr_and_cpid",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i11_one_percent_rule_flags_only_long_limit_contact",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i1_controllers_never_hold_the_plant_parameter_dict",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i1_same_plant_factory_hash_and_initial_state",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i2_baseline_feedforward_reads_the_same_window[CPID]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i2_baseline_feedforward_reads_the_same_window[GSLQR]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i2_every_controller_uses_reference_acceleration[CPID]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i2_every_controller_uses_reference_acceleration[F13]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i2_every_controller_uses_reference_acceleration[GSLQR]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i2_every_controller_uses_reference_acceleration[V13]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i2_negative_control_baselines_without_feedforward_ignore_acceleration",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i2_preview_beyond_horizon_is_refused",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i2_preview_horizon_must_equal_nmpc_prediction_horizon",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i2_same_observation_keys_and_preview_window",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i3_every_nmpc_forbids_zero_or_negative_thrust_plans",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i3_m17_rotor_floor_is_the_positive_thrust_rate",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i3_m17_symbolic_floor_matches_the_numeric_helper",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i3_nmpc_family_solver_settings_are_identical",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i3_nmpc_thrust_bounds_are_symmetric",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i3_same_warm_start_rule",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i4_checker_accepts_equal_records",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i4_checker_flags_unfair_records[broken0-budgets differ]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i4_checker_flags_unfair_records[broken1-spent]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i4_checker_flags_unfair_records[broken2-main-test]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i4_checker_flags_unfair_records[broken3-overlaps]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i4_checker_flags_unfair_records[broken4-outside]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i4_checker_flags_unfair_records[broken5-objective]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i4_committed_pilot_tuning_records_are_fair",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i4_compass_search_is_deterministic",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i4_compass_search_spends_exactly_the_budget",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i4_resume_refuses_records_from_another_config",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i4_tuned_arena_run_applies_and_records_the_best_values",
+      "status": "passed",
+      "evidence": "fairness_repairs_final.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i4_tuned_arena_run_refuses_unfair_records[budget_mismatch-budgets differ]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i4_tuned_arena_run_refuses_unfair_records[foreign_config-tuned with config]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i4_tuned_arena_run_refuses_unfair_records[missing-no tuning record]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i4_tuned_arena_run_refuses_unfair_records[running-tuning not complete]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i4_tuned_arena_run_refuses_unfair_records[smoke_reference-untuned smoke reference]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i5_nmpc_converges_near_trim_input_at_exact_trim[F13-0.0]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i5_nmpc_converges_near_trim_input_at_exact_trim[F13-20.0]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i5_nmpc_converges_near_trim_input_at_exact_trim[F13-85.0]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i5_nmpc_converges_near_trim_input_at_exact_trim[M17-0.0]",
+      "status": "skipped",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i5_nmpc_converges_near_trim_input_at_exact_trim[M17-20.0]",
+      "status": "skipped",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i5_nmpc_converges_near_trim_input_at_exact_trim[M17-85.0]",
+      "status": "skipped",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i5_nmpc_converges_near_trim_input_at_exact_trim[V13-0.0]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i5_nmpc_converges_near_trim_input_at_exact_trim[V13-20.0]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i5_nmpc_converges_near_trim_input_at_exact_trim[V13-85.0]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i6_ramp_case_twice_is_bit_identical[CPID]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i6_ramp_case_twice_is_bit_identical[GSLQR]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i6_same_case_twice_is_bit_identical[CPID]",
+      "status": "skipped",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i6_same_case_twice_is_bit_identical[F13]",
+      "status": "skipped",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i6_same_case_twice_is_bit_identical[GSLQR]",
+      "status": "skipped",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i6_same_case_twice_is_bit_identical[M17]",
+      "status": "skipped",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i6_same_case_twice_is_bit_identical[V13]",
+      "status": "skipped",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i7_config_matches_confirmed_facts",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i7_cpid_is_a_low_speed_baseline_in_the_main_test",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i7_excluded_pair_is_recorded_as_a_skipped_row",
+      "status": "passed",
+      "evidence": "fairness_repairs_final.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i7_explicit_request_of_an_excluded_pair_is_refused",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i7_mission_starts_in_hover_at_altitude_without_takeoff",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i7_violations_are_detected[<lambda>-V_H]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i7_violations_are_detected[<lambda>-absolute]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i7_violations_are_detected[<lambda>-controllers]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i7_violations_are_detected[<lambda>-disturbance]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i7_violations_are_detected[<lambda>-mass]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i7_violations_are_detected[<lambda>-phases]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i7_violations_are_detected[<lambda>-takeoff]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i8_cpid_requested_thrust_matches_plant_at_trim[0.0]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i8_cpid_requested_thrust_matches_plant_at_trim[10.0]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i8_cpid_requested_thrust_matches_plant_at_trim[15.0]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i8_cpid_requested_thrust_matches_plant_at_trim[20.0]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i8_cpid_requested_thrust_matches_plant_at_trim[30.0]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i8_cpid_requested_thrust_matches_plant_at_trim[5.0]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i8_cpid_requested_thrust_matches_plant_at_trim[50.0]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i8_cpid_requested_thrust_matches_plant_at_trim[85.0]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i8_f13_reaction_torque_follows_curve",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i8_indi_measurement_and_effectiveness_match_plant",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i8_our_state_matches_trim_solver_state",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i8_static_inverse_would_break_the_cpid_check",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i8_symbolic_model_matches_plant_wrench_over_operating_range",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i9_baselines_hold_the_plant_trim[CPID-0.0]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i9_baselines_hold_the_plant_trim[CPID-20.0]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i9_baselines_hold_the_plant_trim[CPID-85.0]",
+      "status": "xfailed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i9_baselines_hold_the_plant_trim[GSLQR-0.0]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i9_baselines_hold_the_plant_trim[GSLQR-20.0]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i9_baselines_hold_the_plant_trim[GSLQR-85.0]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i9_cpid_attitude_target_matches_plant_hover",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i9_hover_quat_trims_are_equilibria_in_the_plant_convention",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i9_negative_control_unconverted_trims_flip_gslqr",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i9_nmpc_family_holds_the_plant_trim[F13-0.0]",
+      "status": "skipped",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i9_nmpc_family_holds_the_plant_trim[F13-20.0]",
+      "status": "skipped",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i9_nmpc_family_holds_the_plant_trim[F13-85.0]",
+      "status": "skipped",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i9_nmpc_family_holds_the_plant_trim[M17-0.0]",
+      "status": "skipped",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i9_nmpc_family_holds_the_plant_trim[M17-20.0]",
+      "status": "skipped",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i9_nmpc_family_holds_the_plant_trim[M17-85.0]",
+      "status": "skipped",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i9_nmpc_family_holds_the_plant_trim[V13-0.0]",
+      "status": "skipped",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i9_nmpc_family_holds_the_plant_trim[V13-20.0]",
+      "status": "skipped",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_fairness",
+      "test": "test_i9_nmpc_family_holds_the_plant_trim[V13-85.0]",
+      "status": "skipped",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_sensor_fusion",
+      "test": "test_delayed_measurement_replays_from_sample_time",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_sensor_fusion",
+      "test": "test_filter_tracks_static_measurements_without_nan",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_sensor_fusion",
+      "test": "test_gnss_calibrates_constant_barometer_bias",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_sensor_fusion",
+      "test": "test_gnss_outage_preserves_later_noise_and_other_sensor_streams",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_sensor_fusion",
+      "test": "test_latency_is_preserved_in_packet_metadata",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_sensor_fusion",
+      "test": "test_preflight_barometer_average_reduces_noise",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_arena_sensor_fusion",
+      "test": "test_sensor_seed_reproduces_packets",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_navigation_update_trace",
+      "test": "test_later_replay_does_not_rewrite_first_processing_record",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_navigation_update_trace",
+      "test": "test_rejected_update_has_no_injected_error_state",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_navigation_update_trace",
+      "test": "test_scalar_innovation_covariance_and_injected_correction_are_logged",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_navigation_update_trace",
+      "test": "test_stale_packet_is_logged_once_without_an_update",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_navigation_update_trace",
+      "test": "test_trace_enabled_is_bit_identical_with_delayed_replays",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_navigation_update_trace",
+      "test": "test_variants_change_only_declared_measurement_fields_and_logging[baro_bias_plus1m]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_navigation_update_trace",
+      "test": "test_variants_change_only_declared_measurement_fields_and_logging[baro_latency_zero]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_navigation_update_trace",
+      "test": "test_variants_change_only_declared_measurement_fields_and_logging[baro_noise_zero]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_navigation_update_trace",
+      "test": "test_variants_change_only_declared_measurement_fields_and_logging[baseline]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_navigation_update_trace",
+      "test": "test_variants_change_only_declared_measurement_fields_and_logging[both_noise_zero]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_navigation_update_trace",
+      "test": "test_variants_change_only_declared_measurement_fields_and_logging[gnss_height_bias_plus1m]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_navigation_update_trace",
+      "test": "test_variants_change_only_declared_measurement_fields_and_logging[gnss_latency_zero]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_navigation_update_trace",
+      "test": "test_variants_change_only_declared_measurement_fields_and_logging[gnss_noise_zero]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_preflight_calibration",
+      "test": "test_calibration_is_installed_before_initial_flight_measurement",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_preflight_calibration",
+      "test": "test_delayed_gnss_does_not_reinitialize_preflight_reference[False]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_preflight_calibration",
+      "test": "test_delayed_gnss_does_not_reinitialize_preflight_reference[True]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_preflight_calibration",
+      "test": "test_invalid_calibration_rng_is_rejected",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_preflight_calibration",
+      "test": "test_legacy_shared_stream_matches_saved_prechange_samples",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_preflight_calibration",
+      "test": "test_preflight_count_does_not_change_any_flight_packets[100]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_preflight_calibration",
+      "test": "test_preflight_count_does_not_change_any_flight_packets[1]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_preflight_calibration",
+      "test": "test_preflight_count_does_not_change_any_flight_packets[25]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_preflight_calibration",
+      "test": "test_profiles_only_change_declared_calibration_fields[baseline]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_preflight_calibration",
+      "test": "test_profiles_only_change_declared_calibration_fields[preflight100]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_preflight_calibration",
+      "test": "test_profiles_only_change_declared_calibration_fields[preflight100_frozen]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_preflight_calibration",
+      "test": "test_profiles_only_change_declared_calibration_fields[preflight1]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_preflight_calibration",
+      "test": "test_profiles_only_change_declared_calibration_fields[preflight25]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_rotor_estimator",
+      "test": "test_bad_time_and_command_fail_before_state_change",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_rotor_estimator",
+      "test": "test_delayed_sample_projects_through_actual_piecewise_commands_without_truth_seed",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_rotor_estimator",
+      "test": "test_dropouts_keep_predicting_but_readiness_expires_and_recovers",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_rotor_estimator",
+      "test": "test_history_is_bounded_and_missing_history_cannot_be_invented",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_rotor_estimator",
+      "test": "test_invalid_or_future_samples_cannot_change_estimate[bad0]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_rotor_estimator",
+      "test": "test_invalid_or_future_samples_cannot_change_estimate[bad1]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_rotor_estimator",
+      "test": "test_invalid_or_future_samples_cannot_change_estimate[bad2]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_rotor_estimator",
+      "test": "test_invalid_or_future_samples_cannot_change_estimate[bad3]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_rotor_estimator",
+      "test": "test_invalid_or_future_samples_cannot_change_estimate[bad4]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_rotor_estimator",
+      "test": "test_invalid_profile_fails_early[bad0]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_rotor_estimator",
+      "test": "test_invalid_profile_fails_early[bad1]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_rotor_estimator",
+      "test": "test_invalid_profile_fails_early[bad2]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_rotor_estimator",
+      "test": "test_invalid_profile_fails_early[bad3]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_rotor_estimator",
+      "test": "test_invalid_profile_fails_early[bad4]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_rotor_estimator",
+      "test": "test_motor_model_mismatch_is_visible_and_not_corrected_with_hidden_truth",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_rotor_estimator",
+      "test": "test_newest_arrived_sample_wins_and_zero_delay_uses_no_future_command",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_rotor_estimator",
+      "test": "test_prehistory_does_not_consume_flight_or_barometer_random_streams",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_rotor_estimator",
+      "test": "test_prehistory_requires_declared_past_command_and_only_initializes_once",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_rotor_estimator",
+      "test": "test_prehistory_shorter_than_latency_does_not_make_telemetry_available",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_rotor_estimator",
+      "test": "test_sample_inside_command_interval_and_late_old_packet",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_rotor_estimator",
+      "test": "test_steady_trim_prehistory_has_arrived_measurements_but_no_zero_latency_shortcut[telemetry]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_rotor_estimator",
+      "test": "test_steady_trim_prehistory_has_arrived_measurements_but_no_zero_latency_shortcut[telemetry_predictor]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_rotor_estimator",
+      "test": "test_varying_commands_jitter_reordering_and_loss_match_independent_analytic_plant",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_sensor_binding",
+      "test": "test_additional_delay_applies_to_sensor_observation",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_sensor_binding",
+      "test": "test_distributed_ids_include_seeds_and_pass_them_to_shared_runner",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_sensor_binding",
+      "test": "test_external_or_missing_inline_profile_is_rejected",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_sensor_binding",
+      "test": "test_inline_profile_is_hashed_and_resolution_does_not_modify_input",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_sensor_binding",
+      "test": "test_invalid_seed_is_rejected[-1]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_sensor_binding",
+      "test": "test_invalid_seed_is_rejected[2.5]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_sensor_binding",
+      "test": "test_invalid_seed_is_rejected[2001]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_sensor_binding",
+      "test": "test_invalid_seed_is_rejected[True]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_sensor_binding",
+      "test": "test_invalid_sensor_numbers_are_rejected[barometer-latency_s-inf]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_sensor_binding",
+      "test": "test_invalid_sensor_numbers_are_rejected[estimator-baro_sigma-0.0]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_sensor_binding",
+      "test": "test_invalid_sensor_numbers_are_rejected[estimator-preflight_baro_samples-1.2]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_sensor_binding",
+      "test": "test_invalid_sensor_numbers_are_rejected[gnss-pos_sigma--1.0]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_sensor_binding",
+      "test": "test_invalid_sensor_numbers_are_rejected[imu-rate_hz-nan]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_sensor_binding",
+      "test": "test_main_seeds_cannot_reuse_training_or_undeclared_range[None]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_sensor_binding",
+      "test": "test_main_seeds_cannot_reuse_training_or_undeclared_range[seeds1]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_sensor_binding",
+      "test": "test_main_seeds_cannot_reuse_training_or_undeclared_range[seeds2]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_sensor_binding",
+      "test": "test_main_seeds_cannot_reuse_training_or_undeclared_range[seeds3]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_sensor_binding",
+      "test": "test_main_seeds_cannot_reuse_training_or_undeclared_range[seeds4]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_sensor_binding",
+      "test": "test_main_seeds_cannot_reuse_training_or_undeclared_range[seeds5]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_sensor_binding",
+      "test": "test_old_config_truth_and_explicit_truth_override",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_sensor_binding",
+      "test": "test_shared_runner_inherits_binding_and_truth_remains_bit_identical",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_sensor_binding",
+      "test": "test_tuning_parallel_inherits_same_sensor_profile_and_seed",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_sensor_binding",
+      "test": "test_tuning_record_records_used_sensor_seed",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_sensor_binding",
+      "test": "test_underresolved_vibration_is_rejected",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_sensor_binding",
+      "test": "test_valid_main_seeds_and_oversampled_profile",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_sensor_binding",
+      "test": "test_vibration_is_gyro_measurement_error_and_preserves_other_noise",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_sensor_campaign",
+      "test": "test_failed_rerun_cannot_reuse_a_previous_success",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_sensor_campaign",
+      "test": "test_gnss_outage_duration_variant_uses_fixed_start",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_sensor_campaign",
+      "test": "test_sensor_noise_scale_is_symmetric_for_imu",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_sensor_campaign",
+      "test": "test_sensor_variant_changes_only_requested_specification",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_sensor_campaign",
+      "test": "test_subsystem_group_replaces_each_named_block",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_sensor_campaign",
+      "test": "test_subsystem_variant_replaces_only_selected_block",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_sensor_campaign",
+      "test": "test_truth_campaign_rejects_sensor_sweep",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_sensor_feedback_diagnostics",
+      "test": "test_constant_rate_bias_does_not_create_angular_acceleration",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_sensor_feedback_diagnostics",
+      "test": "test_large_interval_matches_controller_time_clamp",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_sensor_feedback_diagnostics",
+      "test": "test_linear_rate_error_has_exact_exponential_filter_response",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_sensor_feedback_diagnostics",
+      "test": "test_nonincreasing_timestamps_are_rejected",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_sensor_matching_screen",
+      "test": "test_ablation_changes_exactly_one_parameter_and_profile_label[cutoff25-path3-25.0]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_sensor_matching_screen",
+      "test": "test_ablation_changes_exactly_one_parameter_and_profile_label[gyro_quiet-path1-0.0]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_sensor_matching_screen",
+      "test": "test_ablation_changes_exactly_one_parameter_and_profile_label[rotor_tau2ms-path2-0.002]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_sensor_matching_screen",
+      "test": "test_ablation_changes_exactly_one_parameter_and_profile_label[startup_guard-path0-True]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_sensor_matching_screen",
+      "test": "test_development_rejects_reserved_or_invalid_seeds[seeds0]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_sensor_matching_screen",
+      "test": "test_development_rejects_reserved_or_invalid_seeds[seeds1]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_sensor_matching_screen",
+      "test": "test_development_rejects_reserved_or_invalid_seeds[seeds2]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_sensor_matching_screen",
+      "test": "test_fault_changes_only_measurement_model",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_sensor_matching_screen",
+      "test": "test_group_controls_preserve_controller_and_effective_filter_covariance[imu_only]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_sensor_matching_screen",
+      "test": "test_group_controls_preserve_controller_and_effective_filter_covariance[navigation_only]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_sensor_matching_screen",
+      "test": "test_group_controls_preserve_controller_and_effective_filter_covariance[quiet_sampled]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_sensor_matching_screen",
+      "test": "test_group_controls_preserve_controller_and_effective_filter_covariance[rotor_only]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_sensor_matching_screen",
+      "test": "test_quiet_control_clears_injected_errors_and_leaves_input_untouched",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_sensor_matching_screen",
+      "test": "test_restored_group_preserves_seeded_packets[imu_only-sensors0]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_sensor_matching_screen",
+      "test": "test_restored_group_preserves_seeded_packets[navigation_only-sensors1]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_sensor_matching_screen",
+      "test": "test_restored_group_preserves_seeded_packets[rotor_only-sensors2]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_sensor_matching_screen",
+      "test": "test_resume_and_failures_are_counted_without_rerunning",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_sensor_timing",
+      "test": "test_bias_walk_is_independent_of_plant_step_and_continues_through_loss",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_sensor_timing",
+      "test": "test_ideal_profile_has_no_hidden_bias_random_walk",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_sensor_timing",
+      "test": "test_imu_noise_density_scales_with_sample_period",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_sensor_timing",
+      "test": "test_imu_noise_uses_sensor_period_not_plant_step",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_sensor_timing",
+      "test": "test_late_arrival_replay_matches_in_order_updates",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_sensor_timing",
+      "test": "test_legacy_estimator_noise_override_keeps_covariance_independent_of_sensor_noise",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_sensor_timing",
+      "test": "test_measurement_between_imu_samples_updates_at_its_sample_time",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_sensor_timing",
+      "test": "test_predictor_ignores_telemetry",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_sensor_timing",
+      "test": "test_rotor_filter_uses_measurement_interval_and_rejects_old_samples",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_sensor_timing",
+      "test": "test_rpm_is_unavailable_before_arrival_and_delivered_without_new_sample",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_sensors_delay",
+      "test": "test_bernoulli_dropout_drops_samples",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_sensors_delay",
+      "test": "test_delay_holds_back_samples",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_sensors_delay",
+      "test": "test_no_delay_matches_old_behavior",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_sensors_delay",
+      "test": "test_scheduled_outage_blocks_window",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_sensors_delay",
+      "test": "test_set_rate_changes_period",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "control.test_setup_env_model",
+      "test": "test_difference_beyond_rtol_fails_and_within_passes[C_Na]",
+      "status": "passed",
+      "evidence": "portable_final_tests.xml"
+    },
+    {
+      "classname": "control.test_setup_env_model",
+      "test": "test_difference_beyond_rtol_fails_and_within_passes[C_mq]",
+      "status": "passed",
+      "evidence": "portable_final_tests.xml"
+    },
+    {
+      "classname": "control.test_setup_env_model",
+      "test": "test_difference_beyond_rtol_fails_and_within_passes[x_cp]",
+      "status": "passed",
+      "evidence": "portable_final_tests.xml"
+    },
+    {
+      "classname": "control.test_setup_env_model",
+      "test": "test_difference_beyond_rtol_fails_and_within_passes[x_cp_poly]",
+      "status": "passed",
+      "evidence": "portable_final_tests.xml"
+    },
+    {
+      "classname": "control.test_setup_env_model",
+      "test": "test_model_sha_is_recorded_not_judged",
+      "status": "passed",
+      "evidence": "portable_final_tests.xml"
+    },
+    {
+      "classname": "control.test_setup_env_model",
+      "test": "test_polynomial_length_mismatch_fails",
+      "status": "passed",
+      "evidence": "portable_final_tests.xml"
+    },
+    {
+      "classname": "control.test_setup_env_model",
+      "test": "test_reference_file_matches_this_platform_exactly",
+      "status": "passed",
+      "evidence": "portable_final_tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_envelope_report",
+      "test": "test_corrupt_shapes_still_raise_instead_of_hiding_diagnostics",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_envelope_report",
+      "test": "test_duplicate_sources_and_changed_driver_are_rejected",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_envelope_report",
+      "test": "test_failed_trace_metrics_are_explicitly_unavailable[empty-no_executed_steps]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_envelope_report",
+      "test": "test_failed_trace_metrics_are_explicitly_unavailable[estimate-nonfinite_estimated_states]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_envelope_report",
+      "test": "test_failed_trace_metrics_are_explicitly_unavailable[nonfinite-nonfinite_xs]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_envelope_report",
+      "test": "test_failed_trace_metrics_are_explicitly_unavailable[quaternion-invalid_truth_quaternion]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_envelope_report",
+      "test": "test_manifest_profile_path_and_record_profile_name_are_distinct",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_envelope_report",
+      "test": "test_paired_outcomes_keep_truth_failures_distinct[False-False-both_fail]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_envelope_report",
+      "test": "test_paired_outcomes_keep_truth_failures_distinct[False-True-truth_only_failure]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_envelope_report",
+      "test": "test_paired_outcomes_keep_truth_failures_distinct[True-False-fusion_only_failure]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_envelope_report",
+      "test": "test_paired_outcomes_keep_truth_failures_distinct[True-True-both_pass]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_envelope_report",
+      "test": "test_report_keeps_timeouts_and_rejects_altered_pairing",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_envelope_report",
+      "test": "test_report_refuses_incomplete_and_mismatched_inputs",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_envelope_report",
+      "test": "test_trace_reports_stale_allocations_and_estimation_error",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_envelope_screen",
+      "test": "test_all_conditions_satisfy_runner_arena_facts_and_truth_case_identity",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_envelope_screen",
+      "test": "test_failure_retention_partial_resume_and_changed_contract",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_envelope_screen",
+      "test": "test_no_trial_output_is_recorded_and_stops_batch",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_envelope_screen",
+      "test": "test_outage_removes_only_scheduled_rotor_packets_and_preserves_noise_stream",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_envelope_screen",
+      "test": "test_physical_motor_mismatch_keeps_observer_and_controllers_fixed",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_envelope_screen",
+      "test": "test_seed_guards[seeds0]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_envelope_screen",
+      "test": "test_seed_guards[seeds1]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_envelope_screen",
+      "test": "test_seed_guards[seeds2]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_envelope_screen",
+      "test": "test_seed_guards[seeds3]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_envelope_screen",
+      "test": "test_seed_guards[seeds4]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_envelope_screen",
+      "test": "test_seed_guards[seeds5]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_envelope_screen",
+      "test": "test_sensor_faults_cannot_change_aircraft_or_controller[gnss_outage1s]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_envelope_screen",
+      "test": "test_sensor_faults_cannot_change_aircraft_or_controller[initial_error]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_envelope_screen",
+      "test": "test_sensor_faults_cannot_change_aircraft_or_controller[rpm_latency20ms]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_envelope_screen",
+      "test": "test_sensor_faults_cannot_change_aircraft_or_controller[rpm_outage200ms]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_envelope_screen",
+      "test": "test_sensor_faults_cannot_change_aircraft_or_controller[rpm_rate100hz]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_envelope_screen",
+      "test": "test_source_provenance_keeps_v9_reproduction_valid",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_envelope_screen",
+      "test": "test_truth_is_deduplicated_across_sensor_conditions_and_seeds",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_group_report",
+      "test": "test_duplicate_trials_cannot_inflate_report_counts",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_group_report",
+      "test": "test_rejects_incomplete_or_different_runtime[change0-incomplete]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_group_report",
+      "test": "test_rejects_incomplete_or_different_runtime[change1-incomplete]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_group_report",
+      "test": "test_rejects_incomplete_or_different_runtime[change2-runtime differs]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_group_report",
+      "test": "test_timeout_survives_report_without_a_trace",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_navigation_screen",
+      "test": "test_restores_one_measurement_block_with_filter_and_controller_fixed[barometer]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_navigation_screen",
+      "test": "test_restores_one_measurement_block_with_filter_and_controller_fixed[gnss]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_navigation_screen",
+      "test": "test_restores_one_measurement_block_with_filter_and_controller_fixed[magnetometer]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_navigation_screen",
+      "test": "test_resume_contract_cannot_change_sensor_axis",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_preflight",
+      "test": "test_audit_fails_cleanly_before_import_on_missing_dependency",
+      "status": "passed",
+      "evidence": "portable_final_tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_preflight",
+      "test": "test_cli_paper_requirement_fails_and_report_cannot_be_overwritten",
+      "status": "passed",
+      "evidence": "portable_final_tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_preflight",
+      "test": "test_missing_dependency_is_failure_even_on_windows",
+      "status": "passed",
+      "evidence": "portable_final_tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_preflight",
+      "test": "test_process_environment_sets_threads_and_git_without_touching_profiles",
+      "status": "passed",
+      "evidence": "portable_final_tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_preflight",
+      "test": "test_static_pass_does_not_open_paper_gate",
+      "status": "passed",
+      "evidence": "portable_final_tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_preflight",
+      "test": "test_windows_manifest_keys_match_without_weakening_byte_hashes",
+      "status": "passed",
+      "evidence": "portable_final_tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_preflight",
+      "test": "test_windows_memory_is_unknown_not_zero",
+      "status": "passed",
+      "evidence": "portable_final_tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_preparation",
+      "test": "test_factorial_varies_generated_noise_and_delay_but_not_covariance_or_gains",
+      "status": "passed",
+      "evidence": "portable_final_tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_preparation",
+      "test": "test_lock_and_bad_resume_records_are_rejected",
+      "status": "passed",
+      "evidence": "portable_final_tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_preparation",
+      "test": "test_missing_output_saved_before_stop_and_lock_released",
+      "status": "passed",
+      "evidence": "portable_final_tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_preparation",
+      "test": "test_plan_has_all_controllers_truth_controls_and_disjoint_seeds",
+      "status": "passed",
+      "evidence": "portable_final_tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_preparation",
+      "test": "test_plan_is_nonexecuting_and_refuses_changes",
+      "status": "passed",
+      "evidence": "portable_final_tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_preparation",
+      "test": "test_plan_runtime_hash_keys_are_portable_across_operating_systems",
+      "status": "passed",
+      "evidence": "portable_final_tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_preparation",
+      "test": "test_reject_bad_or_reserved_seeds[seeds0]",
+      "status": "passed",
+      "evidence": "portable_final_tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_preparation",
+      "test": "test_reject_bad_or_reserved_seeds[seeds1]",
+      "status": "passed",
+      "evidence": "portable_final_tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_preparation",
+      "test": "test_reject_bad_or_reserved_seeds[seeds2]",
+      "status": "passed",
+      "evidence": "portable_final_tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_preparation",
+      "test": "test_reject_bad_or_reserved_seeds[seeds3]",
+      "status": "passed",
+      "evidence": "portable_final_tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_preparation",
+      "test": "test_reject_bad_or_reserved_seeds[seeds4]",
+      "status": "passed",
+      "evidence": "portable_final_tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_preparation",
+      "test": "test_reject_bad_or_reserved_seeds[seeds5]",
+      "status": "passed",
+      "evidence": "portable_final_tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_preparation",
+      "test": "test_resume_retains_failures_and_reuses_truth_controls",
+      "status": "passed",
+      "evidence": "portable_final_tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_preparation_report",
+      "test": "test_changed_result_identity_rejected[controller-CPID]",
+      "status": "passed",
+      "evidence": "portable_final_tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_preparation_report",
+      "test": "test_changed_result_identity_rejected[input_config_sha256-wrong]",
+      "status": "passed",
+      "evidence": "portable_final_tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_preparation_report",
+      "test": "test_changed_result_identity_rejected[sensor_seed-1000]",
+      "status": "passed",
+      "evidence": "portable_final_tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_preparation_report",
+      "test": "test_changed_result_identity_rejected[truth_trial_id-other]",
+      "status": "passed",
+      "evidence": "portable_final_tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_preparation_report",
+      "test": "test_nonzero_command_exit_is_not_hidden_by_a_trial_verdict",
+      "status": "passed",
+      "evidence": "portable_final_tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_preparation_report",
+      "test": "test_timeouts_remain_in_denominator_and_pending_remains_separate",
+      "status": "passed",
+      "evidence": "portable_final_tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_preparation_report",
+      "test": "test_unstarted_plan_reports_all_pending_without_inventing_results",
+      "status": "passed",
+      "evidence": "portable_final_tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_reproduce",
+      "test": "test_comparison_keeps_failures_and_domain_verdicts_distinct_from_reproduction",
+      "status": "passed",
+      "evidence": "portable_final_tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_reproduce",
+      "test": "test_numeric_tolerance_missing_values_and_nan_fail",
+      "status": "passed",
+      "evidence": "portable_final_tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_rotor_screen",
+      "test": "test_contract_checks_conditions_and_resume",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_rotor_screen",
+      "test": "test_observer_conditions_keep_sensor_specs_aircraft_and_controllers_fixed[rotor_projected_cold-0.02-0.0]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_rotor_screen",
+      "test": "test_observer_conditions_keep_sensor_specs_aircraft_and_controllers_fixed[rotor_projected_warm-0.02-0.1]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_rotor_screen",
+      "test": "test_observer_conditions_keep_sensor_specs_aircraft_and_controllers_fixed[rotor_projected_warm_tau10ms-0.01-0.1]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_rotor_screen",
+      "test": "test_observer_conditions_keep_sensor_specs_aircraft_and_controllers_fixed[rotor_projected_warm_tau40ms-0.04-0.1]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_rotor_screen",
+      "test": "test_timing_conditions_only_change_declared_fields[rotor_direct-0.0-1e-06]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_rotor_screen",
+      "test": "test_timing_conditions_only_change_declared_fields[rotor_no_latency-0.0-0.02]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_rotor_screen",
+      "test": "test_timing_conditions_only_change_declared_fields[rotor_unfiltered-0.004-1e-06]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_workspace",
+      "test": "test_manifest_path_cannot_escape_workspace",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_workspace",
+      "test": "test_portable_bundle_preserves_checksums_and_excludes_private_state",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_workspace",
+      "test": "test_refuse_archive_overwrite_and_symlink",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_workspace",
+      "test": "test_selected_config_is_the_one_embedded_and_verified",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_workspace",
+      "test": "test_verify_rejects_changed_missing_and_extra_code[add]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_workspace",
+      "test": "test_verify_rejects_changed_missing_and_extra_code[change]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    },
+    {
+      "classname": "scripts.test_sensor_workspace",
+      "test": "test_verify_rejects_changed_missing_and_extra_code[remove]",
+      "status": "passed",
+      "evidence": "tests.xml"
+    }
+  ],
+  "test_evidence_sha256": {
+    "tests.xml": "bf54be7f005d6956d6cbbf34b552312928bc940d846d678b9aa40c4e995c3a12",
+    "fairness_repairs_final.xml": "caaecef28e048b828d01f0e47c91f14d4ba7efd280c781406228bacb7df3cd5b",
+    "report_tests.xml": "a8216b5484960e24d8eb1b2d95057effb65e640c6df7c6b28cb4e1ab21cbdce3",
+    "portable_final_tests.xml": "8a0fbea7ba4f6039810373d9cca49d7e75f2a7b16f7c9822cd41f4ecd0ceb6d6"
+  },
+  "native_windows_verified": false,
+  "paper_ready": false,
+  "development_preflight": "preflight.json",
+  "portable_package_receipt": "package_receipt.json",
+  "source_runtime_sha256": {
+    "control/__init__.py": "4442b0651dd775b6aed0b5216a778ed3bc19f2e98be79dd5fd525a963285cb9c",
+    "control/acados_fallback_mc.py": "844f72c9d6e76d7143fb2ad4eb95608c75c469f051958e0fa61677e267d982ae",
+    "control/arena.py": "bad57298c5d095d689ca036ade7c89c0cfee5970d5d253b2b0a911214f99ff25",
+    "control/arena_design_check.py": "9cbed9eb3c7a55fc3a85d20d20f032855b8c7cb9cde5ef9a11923376600644e7",
+    "control/arena_dt_convergence.py": "ad73e2738e48c59a038048c014e13f8aa69622416b1f4d1734cf4d188b9ba300",
+    "control/arena_estimator.py": "583201c781336d1150e87e970ca1b10b551ee912c235066ca2d573c301d3ec9b",
+    "control/arena_factory.py": "b2ae950cd1b17ca4afd7b6726ccb9ef4c20e3ae49680fe48cb0b1390321cc2de",
+    "control/arena_feedback.py": "2034ee659adabe72937e11a9bb5eb0c1cfbd1f3da20956eee32e16afce1cda32",
+    "control/arena_feedforward_check.py": "b427db6335002662194e10d0c8b30648856bcbffba45040bd36531af3bdb5c2c",
+    "control/arena_integrators.py": "8ce6980f69bcf6a0753a266a1894eb91cc5e1b0e377c12b6d8bc132d243b6cbb",
+    "control/arena_joint_estimator.py": "51357b402b21082785d47a2d0d7fe75a16d26c91a0bcd54a5923a06624466787",
+    "control/arena_m17_diagnosis.py": "91a6e8a1bd263529e011028dab41e8c841c8dc28061f3f3c3455121e287247e4",
+    "control/arena_m17_floor_variants.py": "096905fbaeb6d3966631cf5b661b5c209835f0a042522e75459892a5cb672f82",
+    "control/arena_m17_probe.py": "9fe2760261b8d2c42fe4909b9c06cfcbd3c515eb59d433d7ff96009c8dd8b63a",
+    "control/arena_mission_rho.py": "887617104097ef49a4eac69bbf0c9c9fc6f9191eff407acb4f86131e9113163c",
+    "control/arena_model_mismatch.py": "c5c3f63fed0c2f077bf3469c7e7979b1832fb8f6912f226f5302513e147a81cd",
+    "control/arena_observation_delay.py": "7fa1d405cee463f7187bb3b9e52141a2be4a77888ca294366f102df95a42ea2c",
+    "control/arena_plant_wrench.py": "14c15af56dd29c41f0bb6fb4aecff0e026a88a7ee85adbce7554515ede4d851f",
+    "control/arena_reference_merge.py": "ce038c9ecad2f852b9973cd3ae05aa9ca393f43e13abc18881a7cf1fb7371b61",
+    "control/arena_sensors.py": "d8474c0a2c56d814424ec987d6408496f5b22a4069dad7700175a82fc7653142",
+    "control/arena_smoke_summary.py": "0f0dc6fbe28cdb17fdfc7b1bb3be6c22dc6486b235d3603b5a69c56bcfb326d2",
+    "control/arena_suggest_workers.py": "19130f4b311a177b5bb55511dfdc99f05d537f02602a98cc2495e50677eb58b2",
+    "control/arena_trim.py": "85e5972b74b6994ea128e332add745e3af56b32cdcb505159a9c514b00f426e0",
+    "control/arena_tune.py": "1f9ef7923d98f23a6e8fd3bed1940959db9610e419b3fa6e5f67202afa5b8348",
+    "control/arena_tune_repro.py": "c3dfb87752b29f998108372ed19a843eead6dc9d5482271a80a0fd142d41a454",
+    "control/arena_tuning_candidates.py": "bcfc9d71090de3f9dfdda8ce44f97c07597aaadd0a26376c466d6aab27327b9e",
+    "control/arena_tuning_path_check.py": "e575c40617b9f2507d370094e673403697a5f768928305a927abd1ecb2c3f5bd",
+    "control/arena_tuning_report.py": "6e1568d0f6fc8be61ee8280c4a2093a72207ce0d4d35f9fdc649a23c22ca0a36",
+    "control/battery.py": "2cf4f4bed3f761f7c2cbc3d010a500970e260e2e7f539746628e2275784670ee",
+    "control/bench_acados.py": "5a62d0c11aaa21c708b950d814c340e5ede1ebd4e20def954fc12180c5dee1f6",
+    "control/bench_compute.py": "fbbd28df436cd9736d7727c7292d209ac0bbd48a945388ac8d3dc36b65a61499",
+    "control/controller.py": "a2d9bbc362414c49ad112ce0d2ed5dcc14faa3d64f8be0b2f64872cc2446c99b",
+    "control/derive_vl_vh.py": "2d28f20d81914486d22faaede44f59b56905ccb669e1bb9270de72d762d583f9",
+    "control/dynamics.py": "839054bce880491952e5fc112b2eda5ccb768cf57d980d695d2335e8f3b41794",
+    "control/dynamics_hifi.py": "a407ba9a8fbf88959e0d03e9c721db5f660ebaaba7dd761c93d642ac9bff27b2",
+    "control/ekf_comparison.py": "c8c36f85a608fcc171238e1d84fddc23faa4390df2b8a5e6153b2942c0edfecc",
+    "control/ekf_sim.py": "330ef15ce2f63b93edfc0ae6d05e04c3e7648a49ffec034ff53e62836bbf641d",
+    "control/estimator.py": "3db05205b6458af3c549822d785ed2cda4137097284971e7476e9d6866273752",
+    "control/fair_compare.py": "8b606cbdf1d5994114f18fe885e6ab1697376d5c1b347124b278ea18d6c4224a",
+    "control/fallback_controller.py": "33e13bfbcb1e5ed9e8caf5fa1b64eedf83d8bef59e2c6834994ae29d97282d55",
+    "control/final_config_mission.py": "0963c423d6e3085175c677553e2b8520b04bc7ae3b936ae0a5fa25a46602bac2",
+    "control/flight_envelope.py": "d4e914bc1ae65f0c4ec2eac21bf3c7d13304c304b22d18745101518c345ae06c",
+    "control/gindi.py": "8fabbdfc2e72175cbbe5daca72cc8b6f3e30afeb447ced79bb3e14cfb794c018",
+    "control/gust_comparison.py": "d828eaebff80f7ee8f62f3fa674f87ae2280e42296f046c340e268ee927a1f45",
+    "control/hybrid_comparison.py": "23a4ee7c6c96fc279e37f098f17c08494ddb554dc48a8dccbf3d8fb37a3b694b",
+    "control/joint_consistency_check.py": "8633bd38eb4ece99b63d3ca880e8b551a8e3280ebfa1e8c3826427f2fe3a045a",
+    "control/joint_fusion_experiment.py": "f046bf114e86e84bb286a010f5587e373635b9405463b1f4b90f6a9185a2a858",
+    "control/kh_adapter.py": "20c861f7d09a1eaf1635da369a29c72b60204e1459b9ab21c79b477a99ace8c8",
+    "control/kh_discriminate_scenario_vs_warmstart.py": "e87c7da6d87336c8ede19bf534cea5bb6901e7243496fae98c39724800c5f2b6",
+    "control/kh_mission_repro.py": "3013d33642d5e935cd14946e2a27a864cf0ffc40e2a8de96092e129e0f873d54",
+    "control/kh_repro.py": "999351cd9b1cd14f14325efef835dce0dab9ccef0ed22d65499863d39354d0dd",
+    "control/kh_timing_severity_compare.py": "2a4463ba4d1bbf998480749b03fccdb7d2b47ed4a590b4bb7c61c1ba59d2804b",
+    "control/main_distributed.py": "c40d390eba5c642ef438d6e8fd4fef042d54165ecea3a006b7fdc43659befd0e",
+    "control/main_experiment.py": "01733400dbb31322ee2fc8e6d9967d980fb44e9e646e67a3b15f5754529b8f9e",
+    "control/mission_profiles.py": "e281edb2fffbbd7410c18d154a275b08faaddaf5de9680fcb71474e3fbc1c3a2",
+    "control/mission_sim.py": "e969484f274f4593a60f07583f293627a97f42836de46bdf666cbe98cd8bd202",
+    "control/moment_correction.py": "c8ae5a3f35d1c73b95fe89526aafe81b43b55eedeee2111a696e5fb68999180f",
+    "control/navigation_grid_campaign.py": "3444c9e5568eff83c8900f5f23aa2b5b0d6dbef90df2c2dfe88cdc17936d935a",
+    "control/navigation_update_experiment.py": "0eba641aabe77e727c250141a9609af93d2bfaaa5fc3dbd2f0e4379daaf6f2ff",
+    "control/navigation_update_report.py": "4d51adff3906a1b6b941cb15e11f61e429ab61512152a967d77fbb189519c02e",
+    "control/night_current_diag.py": "6a299faa437d414ce43daf930a1fe146c9d2dd5ccf24066128a2bf124e9e033b",
+    "control/night_hifi_branch.py": "2e94abf4c6d37b71ddf2025f9692996f29c7c34a86b7af4baf0d0bcbe4a5cbc1",
+    "control/night_perturbation_robustness.py": "ee981a9df4510c59fd9383873bf1349147a3f544f90e4811ad8b12503a459fef",
+    "control/nmpc.py": "04f7b216f74fcb7203459b8cf6e94f0410986a88821163cb642226dff80b98f9",
+    "control/nmpc_common.py": "a91e518c390c9a9f41818b7ef6e148ee9eb3eae0b65d008d5b6a7996322981fe",
+    "control/nmpc_f13.py": "907cf4b3ca2f62561b11be5128ef94b43520cda078249c66fbfac6b56ae0788f",
+    "control/pilot_before_after.py": "7612a78de50d61799daf4f942253788333cee245029251eababb43c15e7198fc",
+    "control/plot_plant_validation.py": "9882944b68877844d6839f4fb06da15d91398e327dcf577e3b081af104310fab",
+    "control/plot_proposal_figures.py": "c60b40c4747c9da2d67b4c81bd29b27bf138c6084ebf69b5fccf35276d8f720e",
+    "control/preflight_calibration_experiment.py": "ba791484b297eb3aa4ef001cecc5db8e1b0772911b88028670c9460fc09b74f8",
+    "control/preflight_calibration_report.py": "42848eb9fbfb797601d85ae1698b1b17f9b0643372158cea677213cc593f2b8d",
+    "control/robustness_crosswind.py": "4d687a8f41e9c7989035fd4717d848e26122ce23ebf52771362afbfaf6f42e12",
+    "control/rotor_estimator.py": "21d8fea07ebf1d2a4c8577d5c572097fc6c6431493fbb5d000696e8d4ceae85b",
+    "control/sensor_binding.py": "127919424449b66d315385b53c87b4e42889129ed8b75148bf5834efd69bca24",
+    "control/sensor_campaign.py": "66df568e1582535dc7c139395290ce42f8d6a860e988769475cd7d7d6b51271b",
+    "control/sensor_campaign_report.py": "f79d814db6bdaf5553c005ba681297a386dd91465f554f5f797965c524037f5b",
+    "control/sensor_controller_screen.py": "83f68cc109e97577a2e9b260478628814251b2f85f88b4e7810209deb6f3552d",
+    "control/sensor_feedback_ablation.py": "5b018a5a6623cc8ee289fd6291ab23230a931dfcc5a7c25052199759360ef36a",
+    "control/sensor_feedback_diagnostics.py": "b1d392188cded2620c239af3fe05eb0a6d810ddc9570f0b4aee1043dd1ecfe37",
+    "control/sensor_filter_experiment.py": "181be054c08e41855925fa17b3141d3fc8124162889f84d008f4cf5ed355acca",
+    "control/sensor_filter_report.py": "e6e7751d1086fa0e69202904aa44d5042c820a14754ffd1dd00024244e62f568",
+    "control/sensor_matching_screen.py": "2f774fca530a294ec58a7419cc6113a2b28753f8c11eaab76046ee69cd6ed0fb",
+    "control/sensor_screen_report.py": "c4e2e3854aaed58543698fa0f4f0262183d6579b3dc6f8369e9f6859df6a3569",
+    "control/sensors.py": "099cacd00af5a465a674a3aba6dd37145c28d7e053cf176356516dffffbb8551",
+    "control/timing_study.py": "7497fd527c4af2a01972cd920b41b1d303c0fd07157eac0eae1374b7aafd26a1",
+    "control/trim.py": "10f88429fb4929dae34a50eb6ad3502235d229da6039e28c3004acc80e4857eb",
+    "control/trim_hifi.py": "cb7657477e8699ac3afaf0fab7f241c6cc687f1323738d87714e19eca0217aad",
+    "control/tuning_analysis.py": "d12d35da604655efdcaad1f5044146abef1d81267c6a98f719f77324085ab5f9",
+    "control/tuning_carryover.py": "29ea9eacaa493b01bace0236b2dbbe7e4698c081249c2829b56775caf8638aa4",
+    "control/tuning_extension.py": "c430f8179644078ba7c49093dd7dee46059622c5b945fc443210069091e9da73",
+    "control/uncertainty.py": "18061ba57f3fd3bbf68387e74361bbc79ffe0b907daf4a342ed03b664a921569",
+    "control/validation_metrics.py": "3b084c2fc36586b7b17e1677e7a7c1dbf56c03af13bd46c15994d6d6bd53ec62",
+    "control/validation_suite.py": "3b8c101e1a76f83c48e1fcc52fc41e4acee7c84ee36f536f7a0d37176c872689",
+    "control/vehicle_params.py": "f4ee0e03e1b00d8e4751feb47c506987ad3370c49d8a1202a77f40c807c4ffde",
+    "control/vnmpc_acados.py": "606fe3731d1e4c32738983bd8d939067505091a885e28a6e82640479aa9bf2ae",
+    "models/team_light/control/__init__.py": "0448f8dad13aac955a70724ea443c4e60e5c32d83144e6c662f7bcf6cbfdd766",
+    "models/team_light/control/airframe.py": "52050c1c49d871a33a811ca34ea5678f809c23254251ee3ef190b50e2b9ae4f6",
+    "models/team_light/control/analyze_baseline_log.py": "0555e41776af1ff172849ed51ec48382993a4d2e4991c33937cbb159a54501c8",
+    "models/team_light/control/baseline_v2.py": "bd991756926583ad50413f0173480043a3489288721333abba83272b7abbdcbd",
+    "models/team_light/control/comparison_nmpc.py": "a9480449ba2deb9167610975d714c7c6d09d8c5f2a9b26b8cc68c6dd0e61e782",
+    "models/team_light/control/controller.py": "e2b9dac4a34fddfad35787dc26ad286de36ea54bd30b89a61203d95cf559209d",
+    "models/team_light/control/curve_authority.py": "e06ca891b0f4b25c25739e10955d94e4ebc9bea8e135fa6434ec290a7575a106",
+    "models/team_light/control/dynamics.py": "c7c63c389552f7299a666a34d6fa7db161480fde33bbe79c77f4cc3a06ca88e8",
+    "models/team_light/control/geometry.py": "564bc71a9a9e00c4254b4ba512cab6cfe6715a0aa7a0ee7222b7cfd9e6967a5a",
+    "models/team_light/control/hybrid_comparison.py": "80d5d594cf407a6ddf46acba47fa1d5abb10f9d0509fc7667f6cd159ddba8213",
+    "models/team_light/control/light_aero.py": "87914e522aed5e1ef13ad9591dc7a25366b0d970d1ee0cefcb29889b74da66ce",
+    "models/team_light/control/light_rocket_curve.py": "29a9f21673a7b625f6d36e2a307b2ff552aba56e33aebdbcb467972288680aa0",
+    "models/team_light/control/mission_sim.py": "c4407841f3ce38abe7d20d807a247280b6bef8518cd466a13fab389a4cb1b421",
+    "models/team_light/control/propeller_curve.py": "1e118de4a3713538d067cc3962830cfb7548d04d7045e861d2550f5ac8c2e228",
+    "models/team_light/control/run_baseline_comparison.py": "abfb5bd00a1a2332a8223588d65303a9b5850d20e027e99964a09ab66c1a41db",
+    "models/team_light/control/serialization.py": "cef1131c212c58aa00f1364afbf228d8ab9dc4bbc02c7356011a83d0a14448b6",
+    "models/team_light/control/trim.py": "01406db0ecdeb449458d8ad620906c564fbce5c3a15c408efbd7c648c2f58caa",
+    "models/team_light/control/validate_model.py": "a36593f9fcc5480b276271825ffe5b423bc5ae6faecf421d92f87942dfb4270a",
+    "models/team_light/control/vehicle_params.py": "06eff0a08f33c865c211f0db4ad3c6ef5cd2101141ba02c27313c0bb24c3ca77"
+  }
+}

@@ -39,17 +39,26 @@ def sha(data):
     return hashlib.sha256(data).hexdigest()
 
 
-def build(root, output):
+def config_path(name):
+    parsed = PurePosixPath(name)
+    if (parsed.is_absolute() or '..' in parsed.parts or '\\' in name
+            or len(parsed.parts) < 2 or parsed.parts[0] != 'configs' or parsed.suffix != '.json'):
+        raise ValueError('workspace config must be a relative configs/*.json path')
+    return parsed.as_posix()
+
+
+def build(root, output, config=CONFIG):
     root, output = Path(root), Path(output)
+    config = config_path(config)
     if output.exists():
         raise ValueError('refusing to replace an existing archive; choose a new filename')
     files = {name: path.read_bytes() for name, path in payload(root).items()}
-    if CONFIG not in files:
-        raise ValueError(f'missing candidate configuration: {CONFIG}')
-    config = json.loads(files[CONFIG])
-    digest = sha(json.dumps(config, sort_keys=True, separators=(',', ':'), ensure_ascii=False).encode())
+    if config not in files:
+        raise ValueError(f'missing candidate configuration: {config}')
+    settings = json.loads(files[config])
+    digest = sha(json.dumps(settings, sort_keys=True, separators=(',', ':'), ensure_ascii=False).encode())
     doc = dict(schema='sensor_workspace/1', stage='DEVELOPMENT',
-               config=CONFIG, config_sha256=digest,
+               config=config, config_sha256=digest,
                files={name: sha(data) for name, data in files.items()},
                notice='Not a tune-final-7 tag, completed tuning bundle, or paper result.')
     output.parent.mkdir(parents=True, exist_ok=True)
@@ -58,7 +67,7 @@ def build(root, output):
             archive.writestr(name, data)
         archive.writestr(MANIFEST, json.dumps(doc, ensure_ascii=False, indent=2)+'\n')
     return dict(archive=str(output), sha256=sha(output.read_bytes()), files=len(files),
-                config_sha256=digest, stage='DEVELOPMENT')
+                config=config, config_sha256=digest, stage='DEVELOPMENT')
 
 
 def verify_files(root):
@@ -66,8 +75,9 @@ def verify_files(root):
     doc = json.loads((root/MANIFEST).read_text(encoding='utf-8'))
     if doc.get('schema') != 'sensor_workspace/1' or doc.get('stage') != 'DEVELOPMENT':
         raise ValueError('unsupported workspace manifest')
-    if doc.get('config') != CONFIG:
-        raise ValueError('unexpected workspace configuration path')
+    selected = config_path(doc.get('config', ''))
+    if selected not in doc['files']:
+        raise ValueError('workspace configuration missing from manifest files')
     problems = []
     actual = payload(root)
     expected = doc['files']
@@ -81,6 +91,11 @@ def verify_files(root):
             problems.append(f'missing file: {name}')
         elif sha(actual[name].read_bytes()) != expected[name]:
             problems.append(f'changed file: {name}')
+    if selected in actual and not problems:
+        settings = json.loads(actual[selected].read_text(encoding='utf-8'))
+        digest = sha(json.dumps(settings, sort_keys=True, separators=(',', ':'), ensure_ascii=False).encode())
+        if digest != doc.get('config_sha256'):
+            problems.append('configuration digest differs from manifest')
     return doc, problems
 
 
@@ -108,11 +123,12 @@ def main(argv=None):
     sub = parser.add_subparsers(dest='command', required=True)
     pack = sub.add_parser('build')
     pack.add_argument('--output', type=Path, required=True)
+    pack.add_argument('--config', default=CONFIG, help='relative arena config to identify and check')
     sub.add_parser('verify')
     sub.add_parser('check')
     a = parser.parse_args(argv)
     if a.command == 'build':
-        result = build(ROOT, a.output)
+        result = build(ROOT, a.output, a.config)
     elif a.command == 'verify':
         _, problems = verify_files(ROOT)
         result = dict(passed=not problems, problems=problems, stage='DEVELOPMENT')

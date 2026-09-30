@@ -1,0 +1,14 @@
+{
+  "archive": "sensor-development-v11.zip",
+  "sha256": "b3ddd0d44512a4e4b52837cb3c94372f4ed68bd8935e946c8eb541a3b72ab8e6",
+  "files": 298,
+  "config": "configs/arena_rotor_projected_development_v9.json",
+  "config_sha256": "9c1b18f412db20f9356e2b5e1ffbd3f28be966cfd3f305e16f6896cec05acf8f",
+  "stage": "DEVELOPMENT",
+  "extracted": "/private/tmp/drobot-sensor-v11-nzf3m9gk",
+  "extracted_check_pass": true,
+  "extracted_plan_identical": true,
+  "plan_sha256": "d2a72c0c060e99ed776037660919c2034fd47b6451982834c09c8c65fc6d3b19",
+  "simulations_started": 0,
+  "native_windows_verified": false
+}

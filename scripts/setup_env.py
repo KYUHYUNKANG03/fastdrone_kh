@@ -129,7 +129,8 @@ def check_versions(pins):
     for name, expected in pins.items():
         got = installed.get(name)
         match = (got == expected)
-        severity = 'FAIL' if (not match and same_platform) else ('WARN' if not match else 'OK')
+        # An absent dependency cannot be a cross-platform version warning.
+        severity = 'FAIL' if got is None or (not match and same_platform) else ('WARN' if not match else 'OK')
         rows.append((name, expected, got, severity))
         if severity == 'FAIL':
             ok = False
