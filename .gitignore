@@ -167,3 +167,10 @@ venv/
 !/results/source_portability_v13/legacy/
 /results/source_portability_v13/legacy/*
 !/results/source_portability_v13/legacy/comparison.json
+!/results/source_portability_v13/finalization_tests.xml
+!/results/source_portability_v13/final_preflight.json
+!/results/source_portability_v13/package_receipt.json
+!/results/source_portability_v13/package_check.json
+!/results/source_portability_v13/package_preflight.json
+!/results/source_portability_v13/finalization.json
+!/results/source_portability_v13/finalization.md

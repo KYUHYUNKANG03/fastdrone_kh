@@ -1,0 +1,33 @@
+{
+  "schema": "sensor_portability_finalization/1",
+  "stage": "DEVELOPMENT",
+  "source_revision": "2b54ae2226616de01110381e370bcf3aa1b66bc7",
+  "study_publication_revision": "06dcb88b91e3330416ca18421dc486ce409e27fa",
+  "study_tasks": 93,
+  "runtime_files": 115,
+  "post_merge_tests_passed": 19,
+  "tests_are_subset_of_original_89": true,
+  "source_and_relocated_static_preflight_passed": true,
+  "package_byte_verification_passed": true,
+  "package_archive_sha256": "cfb5efd0260d589deb3ddd848f462cb8771a805e61a34ba0050846e46dce19ea",
+  "package_source_files": 312,
+  "evidence_files_sha256": {
+    "finalization_tests.xml": "6b2f67120a27be57e955aca08a0f90845b2e2567021346242e51b2004c5e2307",
+    "final_preflight.json": "6ea21bf0bde907d25068576cb5bf4312e5e9ce1a87889b7c65dbdb9109d59195",
+    "package_receipt.json": "1a64486968346581c800b89aa4c117ea38ac888c955dcee8a918d087664d03da",
+    "package_check.json": "2905b7a7bdaec60a937f365cf141deab7ac62df21cbc571bdc1ce88aa770b9ca",
+    "package_preflight.json": "91625e996680e62659cc9f5974f2068a196d75511f869058ce4ca031d99fd86d"
+  },
+  "previous_verification_sha256": "e3dedb1b545b7da6190dc436f5cceb0a1d2eae8887f46262b28297152eb6e636",
+  "raw_portability_capture_files_preserved_in_desktop_checkout": true,
+  "native_windows_verified": false,
+  "windows_workflow_state": "Unexecuted documentation draft; workflow OAuth authorization expired.",
+  "paper_ready": false,
+  "final_tuning_started": false,
+  "notes": [
+    "Source package uses unchanged v9 engineering configuration and the active v13 reference sources.",
+    "The 19 post-merge tests repeat a subset of the 89 earlier tests; do not add the counts.",
+    "No additional flight simulations were launched for the package relocation check.",
+    "The completed v12 study retains its original 114-file runtime; use its publication revision to reanalyze local raw traces."
+  ]
+}

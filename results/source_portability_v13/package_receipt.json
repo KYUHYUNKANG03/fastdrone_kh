@@ -1,0 +1,10 @@
+{
+  "archive": "/Users/leo/Desktop/\u1112\u1161\u11a8\u1100\u116d/2026-2/\u1103\u1173\u1105\u1169\u1107\u1169\u11ba/fast-drone-arena-sensor-fusion/sensor-development-v13.zip",
+  "sha256": "cfb5efd0260d589deb3ddd848f462cb8771a805e61a34ba0050846e46dce19ea",
+  "files": 312,
+  "config": "configs/arena_rotor_projected_development_v9.json",
+  "config_sha256": "9c1b18f412db20f9356e2b5e1ffbd3f28be966cfd3f305e16f6896cec05acf8f",
+  "stage": "DEVELOPMENT",
+  "source_revision": "2b54ae2226616de01110381e370bcf3aa1b66bc7",
+  "source_tracked_dirty": false
+}
