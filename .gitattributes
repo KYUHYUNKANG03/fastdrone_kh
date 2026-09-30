@@ -7,3 +7,5 @@
 *.ps1 text eol=lf
 # JUnit artifacts retain verbatim traceback whitespace for auditability.
 /results/**/*.xml -whitespace
+# Downloaded Windows evidence is hashed verbatim, including its CRLF bytes.
+/results/windows_sensor_v13/** -text -whitespace
