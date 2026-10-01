@@ -111,7 +111,7 @@ class Campaign:
             for sid, s in self.scenarios(name).items():
                 for label in batch.controllers:
                     est = 0.0 if excluded_from(batch.config, label, s) else s.profile.T_total*float(rates[label])
-                    for seed in self.sensor_seeds:
+                    for seed in self.seeds_for(name):
                         trial = dict(trial_id=f'{name}/{sid}/{label}', batch=name, scenario_id=sid,
                                      controller=label, variant=batch.variant, est_seconds=est)
                         if seed is not None:
@@ -119,6 +119,11 @@ class Campaign:
                                          sensor_profile_sha256=binding.metadata['sensor_profile_sha256'])
                         out.append(trial)
         return out
+
+    def seeds_for(self, batch_name):
+        """이 묶음의 보류 시드 — 비교 묶음은 전체 목록, 사다리는 ladder_sensor_seeds(없으면 전체)."""
+        from control.sensor_binding import batch_sensor_seeds
+        return batch_sensor_seeds(self.spec, self.sensor_seeds, batch_name)
 
     def hashes_for(self, label):
         return dict(spec_sha256=self.spec_sha256, base_config_sha256=self.base_sha256,
@@ -133,7 +138,7 @@ class Campaign:
         label = trial['controller']
         from control.sensor_binding import resolve_feedback
         binding = resolve_feedback(batch.config, seed=trial.get('sensor_seed'))
-        if binding.mode == 'sensors' and trial.get('sensor_seed') not in self.sensor_seeds:
+        if binding.mode == 'sensors' and trial.get('sensor_seed') not in self.seeds_for(trial['batch']):
             raise ValueError('trial sensor seed is not in the declared held-out set')
         if s.id not in self._trim:
             self._trim[s.id] = me.trim_status(self.native, s)

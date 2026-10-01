@@ -122,6 +122,36 @@ pin source-file hashes, so an unavailable Git revision cannot silently make
 different source trees equivalent. Cross-machine comparisons check sensor
 metadata as well as verdicts and numeric tolerances.
 
+Per-scenario tuning seeds (decision D4 (c)): an optional
+`sensor_feedback.tuning_seeds` object maps every tuning scenario id to one seed
+in `seeds.tuning`, e.g. `{"tune2_gust_lateral_p7_V14": 2001, ...}`. Tuning then
+passes that scenario's seed to `run_trial`; the seed is a function of the
+configuration and the scenario id only, so execution order, worker count and
+restarts cannot change it. `validate_config` requires exactly the tuning
+scenario ids, distinct values inside the tuning range, and a default `seed`
+different from every tuning seed. The noise sequence depends on the seed alone,
+so this keeps smoke runs and design checks, which still use the default `seed`,
+from re-using any tuning noise sequence. When quoting design-check results,
+state the seed used and whether it lies in the tuning range. Records store
+`seeds.used` (in scenario order) and `seeds.by_scenario`; resume, I-4, tuned
+gain loading and `arena_tune_repro` reject a mismatch. Without the field the
+single-seed behaviour is unchanged. Wording for the paper: "each of the 18
+tuning scenarios was assigned one noise realization" (not repeated seeds per
+scenario).
+
+Per-batch main-experiment seeds: every main batch is either a comparison batch
+(`reference`, `table7_base`, `table7`, `gust`, `mission`) or a ladder batch
+(`ladder:<variant>`); any other name is an error. Comparison batches are paired
+(Table 7 rows against `table7_base`; the ladder's V13 nominal re-uses the
+reference batch's V13 trials), so they all use `sensor_seeds`. An optional
+`ladder_sensor_seeds` list, which must be a subset of `sensor_seeds`, gives the
+ladder batches fewer repeats; all ladder variants share it. Without the field
+the ladder uses `sensor_seeds`, as before. This lives in `control/`, so it is
+fixed before tuning; the seed counts themselves are main-experiment JSON and
+can be chosen later (before seeing results). Ladder failure-rate estimates are
+coarser: with no failures the one-sided 95% upper bound is about 45% for 5
+seeds and 26% for 10.
+
 ## Estimator choices and assumptions
 
 The default remains the legacy 15-error-state ESKF:

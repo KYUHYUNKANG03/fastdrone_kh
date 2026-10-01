@@ -108,11 +108,13 @@ class Evaluator:
         if int(scenario_workers) < 1:
             raise ValueError(f'scenario_workers must be >= 1, got {scenario_workers}')
         self.config, self.native, self.model, self.label = config, native, model, label
-        from control.sensor_binding import resolve_feedback
+        from control.sensor_binding import resolve_feedback, tuning_seed_map
         binding = resolve_feedback(config)
         if binding.mode == 'sensors':
             lo, hi = config['seeds']['tuning']
-            if not lo <= binding.seed <= hi:
+            # 시나리오별 시드(D4)가 있으면 튜닝은 그것만 쓴다 — 기본 seed는 스모크·설계점검용
+            used = list((tuning_seed_map(config) or {0: binding.seed}).values())
+            if not all(lo <= seed <= hi for seed in used):
                 raise ValueError('sensor tuning seed must lie in seeds.tuning')
         self.scenarios = build_scenarios(config, model.cp, native,
                                          scenarios=config['tuning']['scenarios'])
@@ -143,10 +145,13 @@ class Evaluator:
     def score(self, factory, scenario):
         """시나리오 하나를 돌려 채점 항목(dict)을 낸다."""
         import control.validation_suite as suite
+        from control.sensor_binding import tuning_seed_for
         entry = dict(id=scenario.id)
         try:
+            # 시드는 (설정, 시나리오 id)만의 함수다 — 실행 순서·작업자 수·재시작과 무관. None이면 기존 단일 시드 경로
             row, result, log = suite.run_trial(factory, self.label, scenario.profile,
-                                               scenario.cases[0], self.limits)
+                                               scenario.cases[0], self.limits,
+                                               sensor_seed=tuning_seed_for(self.config, scenario.id))
             paper = paper_evaluate(result, scenario.profile, self.paper, window=scenario.window,
                                    solve_log=log, n_max=self.native['n_max'])
             failed = bool(row['stop_reason']) or paper['paper_failed']
@@ -330,7 +335,10 @@ def tune_controller(config, label, budget, run_dir, native=None, model=None, sce
     from control.sensor_binding import resolve_feedback
     binding = resolve_feedback(config)
     if binding.mode == 'sensors':
-        record['seeds']['used'] = [binding.seed]
+        from control.sensor_binding import expected_used_seeds, tuning_seed_map
+        record['seeds']['used'] = expected_used_seeds(config, record['scenario_ids'])
+        if tuning_seed_map(config) is not None:
+            record['seeds']['by_scenario'] = tuning_seed_map(config)
         record.update(binding.metadata)
         from control.sensor_binding import runtime_source_hashes
         record['sensor_runtime_source_sha256'] = runtime_source_hashes()

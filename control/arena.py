@@ -128,6 +128,16 @@ def validate_config(config):
     if len(tune_ids) != len(set(tune_ids)) or set(tune_ids) & set(ids):
         # 논문 §5.3: 튜닝은 본시험과 다른 별도 시나리오에서 한다.
         raise ValueError('tuning scenario ids must be unique and disjoint from main-test ids')
+    from control.sensor_binding import tuning_seed_map
+    seed_map = tuning_seed_map(config)
+    if seed_map is not None:
+        # D4 (c): 튜닝 시나리오마다 시드 하나, 빠짐·남음 없이. 결과를 보기 전에 설정(해시)에 고정된다.
+        if set(seed_map) != set(tune_ids):
+            raise ValueError('sensor_feedback.tuning_seeds must name exactly the tuning scenarios '
+                             f'(missing {sorted(set(tune_ids) - set(seed_map))}, '
+                             f'extra {sorted(set(seed_map) - set(tune_ids))})')
+        if any(not lo_tune <= seed <= hi_tune for seed in seed_map.values()):
+            raise ValueError('sensor_feedback.tuning_seeds must lie in seeds.tuning')
     for s in list(config['scenarios']) + list(tuning):
         if s['type'] not in SCENARIO_TYPES:
             raise ValueError(f"{s['id']}: unknown scenario type {s['type']!r}")

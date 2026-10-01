@@ -279,13 +279,14 @@ def plan(spec, speed_ratio=1.0, check_trims=True, root=ROOT):
     from control.arena_factory import ArenaFactory
     from control.validation_suite import baseline_params
     base = load_config(root/spec['base_config']['path'])
-    from control.sensor_binding import main_sensor_seeds
-    repeats = len(main_sensor_seeds(spec, base))
+    from control.sensor_binding import main_sensor_seeds, batch_sensor_seeds
+    seeds = main_sensor_seeds(spec, base)
     native = baseline_params()
     cp = ArenaFactory(base, native).cp
     rates = spec['timing_mac_wall_per_sim_s']
     rows, rho_rows, limits, near, cache = [], [], [], [], {}
     for batch in build_batches(spec, base, native):
+        repeats = len(batch_sensor_seeds(spec, seeds, batch.name))      # 사다리는 부분집합일 수 있다
         scenarios = build_scenarios(batch.config, cp, native)
         count, skipped_region, skipped_limit, sim_s, wall = 0, 0, 0, 0.0, 0.0
         for s in scenarios:

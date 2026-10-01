@@ -43,13 +43,15 @@ def resolve_feedback(config=None, *, mode=None, profile=None, seed=None):
     if block:
         if block.get('schema') != 'sensor_feedback/1':
             raise ValueError("sensor_feedback requires schema 'sensor_feedback/1'")
-        unknown = set(block) - {'schema', 'mode', 'profile', 'seed'}
+        unknown = set(block) - {'schema', 'mode', 'profile', 'seed', 'tuning_seeds'}
         if unknown:
             raise ValueError(f'unknown sensor_feedback fields: {sorted(unknown)}')
         if block.get('mode') not in ('truth', 'sensors'):
             raise ValueError('sensor_feedback.mode must be truth or sensors')
         if 'seed' in block:
             nonnegative_seed(block['seed'])
+        if 'tuning_seeds' in block:
+            _check_tuning_seed_shape(block)
         if block['mode'] == 'sensors' and not isinstance(block.get('profile'), dict):
             raise ValueError('sensor_feedback.profile must be an inline sensor/1 object')
     mode = block.get('mode', 'truth') if mode is None else mode
@@ -66,12 +68,53 @@ def resolve_feedback(config=None, *, mode=None, profile=None, seed=None):
     return FeedbackBinding(mode, load_sensor_profile(deepcopy(profile)), seed)
 
 
+def _check_tuning_seed_shape(block):
+    """D4 (c): tuning_seeds = {tuning scenario id: seed}. Shape only here; the
+    cross-check against tuning.scenarios lives in arena.validate_config."""
+    seeds = block['tuning_seeds']
+    if block.get('mode') != 'sensors':
+        raise ValueError('sensor_feedback.tuning_seeds requires mode sensors')
+    if not isinstance(seeds, dict) or not seeds:
+        raise ValueError('sensor_feedback.tuning_seeds must be a nonempty object')
+    for seed in seeds.values():
+        nonnegative_seed(seed)
+    if len(set(seeds.values())) != len(seeds):
+        raise ValueError('sensor_feedback.tuning_seeds values must be distinct')
+    if block.get('seed') in set(seeds.values()):
+        # 잡음 수열은 시드만의 함수다 — 기본 seed(스모크·설계점검)가 튜닝 시드와 같으면 표본 내 평가가 된다.
+        raise ValueError('sensor_feedback.seed must differ from every tuning seed')
+
+
+def tuning_seed_map(config):
+    """Per-scenario tuning seeds, or None when the config uses the single seed."""
+    block = (config or {}).get('sensor_feedback', {})
+    seeds = block.get('tuning_seeds') if isinstance(block, dict) else None
+    return dict(seeds) if seeds else None
+
+
+def tuning_seed_for(config, scenario_id):
+    """Seed passed to run_trial for one tuning scenario. None = the binding seed (old path)."""
+    seeds = tuning_seed_map(config)
+    return None if seeds is None else seeds[scenario_id]
+
+
+def expected_used_seeds(config, scenario_ids):
+    """What a tuning record must list in seeds.used — written and checked through this one function."""
+    seeds = tuning_seed_map(config)
+    if seeds is None:
+        return [resolve_feedback(config).seed]
+    return [seeds[sid] for sid in scenario_ids]
+
+
 def main_sensor_seeds(spec, base):
-    """Require a declared held-out seed set; never reuse the tuning binding seed."""
+    """Require a declared held-out seed set; never reuse the tuning binding seed.
+
+    Returns the comparison list. An optional ladder_sensor_seeds (a subset) is
+    validated here too, so every caller of this guard also checks it."""
     binding = resolve_feedback(base)
     seeds = spec.get('sensor_seeds')
     if binding.mode == 'truth':
-        if seeds is not None:
+        if seeds is not None or spec.get('ladder_sensor_seeds') is not None:
             raise ValueError('sensor_seeds requires a sensor-feedback base config')
         return [None]
     if not isinstance(seeds, list) or not seeds:
@@ -85,7 +128,38 @@ def main_sensor_seeds(spec, base):
     if any(not main_lo <= seed <= main_hi or tune_lo <= seed <= tune_hi
            or seed == binding.seed for seed in seeds):
         raise ValueError('sensor_seeds must be in the main range and disjoint from tuning')
+    _ladder_seeds(spec, seeds)
     return list(seeds)
+
+
+# 본 실험 묶음 분류 — 비교 묶음은 서로 짝이라(표7 섭동 ↔ table7_base, 사다리 V13 nominal ↔ reference의 V13)
+# 같은 시드 목록을 쓰고, 사다리만 그 부분집합을 쓸 수 있다. 모르는 묶음은 오류(조용히 한쪽으로 넣지 않는다).
+COMPARISON_BATCHES = ('reference', 'table7_base', 'table7', 'gust', 'mission')
+LADDER_PREFIX = 'ladder:'
+
+
+def _ladder_seeds(spec, seeds):
+    ladder = spec.get('ladder_sensor_seeds')
+    if ladder is None:
+        return list(seeds)
+    if not isinstance(ladder, list) or not ladder:
+        raise ValueError('ladder_sensor_seeds must be a nonempty list')
+    for seed in ladder:
+        nonnegative_seed(seed)
+    if len(ladder) != len(set(ladder)):
+        raise ValueError('ladder_sensor_seeds contains duplicates')
+    if not set(ladder) <= set(seeds):
+        raise ValueError('ladder_sensor_seeds must be a subset of sensor_seeds (paired with the comparison batches)')
+    return list(ladder)
+
+
+def batch_sensor_seeds(spec, seeds, batch_name):
+    """Seeds for one main-experiment batch. `seeds` is the main_sensor_seeds(spec, base) result."""
+    if batch_name in COMPARISON_BATCHES:
+        return list(seeds)
+    if batch_name.startswith(LADDER_PREFIX):
+        return list(seeds) if seeds == [None] else _ladder_seeds(spec, seeds)
+    raise ValueError(f'unknown main-experiment batch {batch_name!r}: neither comparison nor ladder')
 
 
 def runtime_source_hashes():
@@ -104,6 +178,9 @@ def sensor_record_problems(record, config):
                 if record.get(key) != value]
     if record.get('sensor_runtime_source_sha256') != runtime_source_hashes():
         problems.append('sensor runtime source hashes differ or are missing')
-    if record.get('seeds', {}).get('used') != [binding.seed]:
+    seeds = record.get('seeds', {})
+    if seeds.get('used') != expected_used_seeds(config, record.get('scenario_ids', [])):
         problems.append('used sensor tuning seeds differ')
+    if seeds.get('by_scenario') != tuning_seed_map(config):
+        problems.append('per-scenario sensor tuning seeds differ')
     return problems
