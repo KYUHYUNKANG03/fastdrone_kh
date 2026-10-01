@@ -65,12 +65,16 @@ class NavigationFilter:
     def state(self):
         return self.x17.copy()
 
-    def set_initial_baro_bias(self, value):
-        """Install preflight calibration in the replay baseline."""
+    def set_initial_baro_bias(self, value, time=0.0):
+        """Install preflight calibration in the replay baseline.
+
+        `time` is the calibration instant: flight zero, or the start of a
+        navigation prehistory (negative), which the calibration precedes.
+        """
         if self._events:
             raise RuntimeError("preflight calibration must precede filter events")
         self.baro_bias = float(value)
-        self._baro_bias_time = 0.0
+        self._baro_bias_time = float(time)
         self._initial_snapshot = self._snapshot()
 
     def _snapshot(self):

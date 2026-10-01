@@ -1,0 +1,13 @@
+ok         shared _seq counter: 3 failed, 25 passed in 6.53s  caught by ['test_a_flight_packets_and_calibration_identical_with_prehistory', 'test_h_sampling_grid_counts_times_and_sequences']
+ok         flight rng in prehistory: 5 failed, 23 passed in 5.94s  caught by ['test_a_flight_packets_and_calibration_identical_with_prehistory', 'test_g_other_prehistory_noise_changes_handover_but_not_flight_packets']
+ok         reset to truth at zero: 28 passed in 7.04s  caught by []
+ok         wrong start sign: 5 failed, 23 passed in 6.34s  caught by ['test_b_handover_estimate_is_not_reset_to_truth', 'test_c_filter_state_is_reproduced_from_the_packets_alone', 'test_g_other_prehistory_noise_changes_handover_but_not_flight_packets', 'test_h_noise_free_truth_kinematics_and_handover', 'test_h_start_state_is_minus_T_on_the_cruise_and_diagnostics_report_handover']
+ok         default merged into profile: 1 failed, 27 passed in 7.08s  caught by ['test_e_profile_hash_unchanged_without_the_field']
+ok         forward bias walk from b0 at -T: 1 failed, 27 passed in 7.04s  caught by ['test_h_bias_walk_ends_at_the_configured_bias']
+ok         calibration time left at zero: 1 failed, 27 passed in 7.03s  caught by ['test_h_legacy_calibration_time_is_the_prehistory_start']
+ok         drop in-transit packets at zero: 1 failed, 27 passed in 6.97s  caught by ['test_f_packets_in_transit_at_zero_stay_queued_then_apply_at_their_sample_time']
+ok         fresh filter at zero (P0 again): 6 failed, 22 passed in 6.59s  caught by ['test_b_handover_estimate_is_not_reset_to_truth', 'test_c_filter_state_is_reproduced_from_the_packets_alone', 'test_f_packets_in_transit_at_zero_stay_queued_then_apply_at_their_sample_time', 'test_g_other_prehistory_noise_changes_handover_but_not_flight_packets']
+ok         estimate-only reset in the replay baseline: 28 passed in 7.08s  caught by []
+ok         controller state reset to truth at zero: 1 failed, 27 passed in 7.08s  caught by ['test_b_handover_estimate_is_not_reset_to_truth']
+ok         persistent estimate-only reset (P, biases, queue kept): 11 failed, 17 passed in 4.24s  caught by ['test_a_flight_packets_and_calibration_identical_with_prehistory', 'test_b_handover_estimate_is_not_reset_to_truth', 'test_c_filter_state_is_reproduced_from_the_packets_alone', 'test_d_same_seed_is_deterministic', 'test_f_packets_in_transit_at_zero_stay_queued_then_apply_at_their_sample_time', 'test_g_other_prehistory_noise_changes_handover_but_not_flight_packets', 'test_h_guards', 'test_h_start_state_is_minus_T_on_the_cruise_and_diagnostics_report_handover']
+ALL AS EXPECTED

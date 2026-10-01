@@ -1,0 +1,6 @@
+hover_0 T=8: max |sigma_prehistory/sigma_flight - 1| = 0.144%
+hover_0 T=30: max |sigma_prehistory/sigma_flight - 1| = 0.133%
+V_L_20 T=8: max |sigma_prehistory/sigma_flight - 1| = 0.107%
+V_L_20 T=30: max |sigma_prehistory/sigma_flight - 1| = 0.117%
+V_H_85 T=8: max |sigma_prehistory/sigma_flight - 1| = 0.089%
+V_H_85 T=30: max |sigma_prehistory/sigma_flight - 1| = 0.123%

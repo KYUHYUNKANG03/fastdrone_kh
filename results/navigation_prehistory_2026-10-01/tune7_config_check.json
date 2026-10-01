@@ -1,0 +1,109 @@
+{
+ "base": "configs/arena_rotor_projected_development_v9.json",
+ "target": "configs/arena_tune7.json",
+ "base_config_sha256": "9c1b18f412db20f9356e2b5e1ffbd3f28be966cfd3f305e16f6896cec05acf8f",
+ "config_sha256": "e7ef609705ea447c2082cf063517a2a1b31598421f624851d1a81911c36f8801",
+ "raw_file_sha256": "d64230711d38a218c1ec30a7760232eab670c7465950e0c99908b2c8ea9743da",
+ "sensor_profile_sha256": "6bfd656d8b477dea70a26198b7e0076e988cdb2e0580c9a52164d1a89e0359c5",
+ "development_seed": 3,
+ "tuning_seeds": {
+  "tune2_gust_lateral_p7_V14": 2001,
+  "tune2_gust_lateral_m13_V26": 2002,
+  "tune2_gust_lateral_m7_V75": 2003,
+  "tune2_gust_lateral_p13_V82": 2004,
+  "tune2_gust_vertical_m3.5_V75": 2005,
+  "tune2_gust_vertical_p6.5_V82": 2006,
+  "tune2_gust_vertical_p3.5_V14": 2007,
+  "tune2_gust_vertical_m6.5_V26": 2008,
+  "tune2_ramp_accel_V17_70_rho0.8": 2009,
+  "tune2_ramp_brake_V80_25_rho1.2": 2010,
+  "tune3_step_altitude_p0.7_V0": 2011,
+  "tune3_step_altitude_p1.3_V0": 2012,
+  "tune3_step_altitude_p0.7_V14": 2013,
+  "tune3_step_altitude_p1.3_V14": 2014,
+  "tune3_step_speed_p0.7_V0": 2015,
+  "tune3_step_speed_p1.3_V0": 2016,
+  "tune3_step_speed_p0.7_V14": 2017,
+  "tune3_step_speed_p1.3_V14": 2018
+ },
+ "changed_leaves": {
+  "sensor_feedback.profile.estimator.navigation_prehistory_s": [
+   "<absent>",
+   30.0
+  ],
+  "sensor_feedback.tuning_seeds.tune2_gust_lateral_m13_V26": [
+   "<absent>",
+   2002
+  ],
+  "sensor_feedback.tuning_seeds.tune2_gust_lateral_m7_V75": [
+   "<absent>",
+   2003
+  ],
+  "sensor_feedback.tuning_seeds.tune2_gust_lateral_p13_V82": [
+   "<absent>",
+   2004
+  ],
+  "sensor_feedback.tuning_seeds.tune2_gust_lateral_p7_V14": [
+   "<absent>",
+   2001
+  ],
+  "sensor_feedback.tuning_seeds.tune2_gust_vertical_m3.5_V75": [
+   "<absent>",
+   2005
+  ],
+  "sensor_feedback.tuning_seeds.tune2_gust_vertical_m6.5_V26": [
+   "<absent>",
+   2008
+  ],
+  "sensor_feedback.tuning_seeds.tune2_gust_vertical_p3.5_V14": [
+   "<absent>",
+   2007
+  ],
+  "sensor_feedback.tuning_seeds.tune2_gust_vertical_p6.5_V82": [
+   "<absent>",
+   2006
+  ],
+  "sensor_feedback.tuning_seeds.tune2_ramp_accel_V17_70_rho0.8": [
+   "<absent>",
+   2009
+  ],
+  "sensor_feedback.tuning_seeds.tune2_ramp_brake_V80_25_rho1.2": [
+   "<absent>",
+   2010
+  ],
+  "sensor_feedback.tuning_seeds.tune3_step_altitude_p0.7_V0": [
+   "<absent>",
+   2011
+  ],
+  "sensor_feedback.tuning_seeds.tune3_step_altitude_p0.7_V14": [
+   "<absent>",
+   2013
+  ],
+  "sensor_feedback.tuning_seeds.tune3_step_altitude_p1.3_V0": [
+   "<absent>",
+   2012
+  ],
+  "sensor_feedback.tuning_seeds.tune3_step_altitude_p1.3_V14": [
+   "<absent>",
+   2014
+  ],
+  "sensor_feedback.tuning_seeds.tune3_step_speed_p0.7_V0": [
+   "<absent>",
+   2015
+  ],
+  "sensor_feedback.tuning_seeds.tune3_step_speed_p0.7_V14": [
+   "<absent>",
+   2017
+  ],
+  "sensor_feedback.tuning_seeds.tune3_step_speed_p1.3_V0": [
+   "<absent>",
+   2016
+  ],
+  "sensor_feedback.tuning_seeds.tune3_step_speed_p1.3_V14": [
+   "<absent>",
+   2018
+  ]
+ },
+ "validate_config": "passed",
+ "check_confirmed_facts": "passed"
+}

@@ -119,6 +119,13 @@ def load_sensor_profile(profile):
     count = e['preflight_baro_samples']
     if isinstance(count, bool) or not isinstance(count, int) or count < 0:
         raise ValueError('preflight_baro_samples must be a nonnegative integer')
+    # D5 navigation prehistory: optional and checked only when present. No
+    # default is merged in, so profiles without it keep their exact hash.
+    if 'navigation_prehistory_s' in e:
+        value = e['navigation_prehistory_s']
+        if (isinstance(value, bool) or not isinstance(value, (int, float))
+                or not np.isfinite(value) or value < 0):
+            raise ValueError('estimator.navigation_prehistory_s must be finite and nonnegative')
     if e.get('kind','legacy15') not in ('legacy15','joint_baro'):
         raise ValueError('estimator.kind must be legacy15 or joint_baro')
     for key in ('initial_baro_bias_sigma_m','preflight_reference_sigma_m','preflight_baro_sigma_m',
@@ -157,10 +164,14 @@ class SensorSuite:
         self.gravity = float(gravity)
         names = ("imu", "gnss", "barometer", "magnetometer", "rpm")
         # Appending a child preserves the existing five flight streams exactly.
-        streams = np.random.SeedSequence(int(seed)).spawn(len(names)+2)
+        # Children are keyed by index, so the eighth (navigation prehistory)
+        # leaves the first seven unchanged.
+        streams = np.random.SeedSequence(int(seed)).spawn(len(names)+3)
         self._rng = {name: np.random.default_rng(stream) for name, stream in zip(names, streams)}
         self._preflight_rng = np.random.default_rng(streams[len(names)])
         self._rotor_prehistory_rng = np.random.default_rng(streams[len(names)+1])
+        self._navigation_prehistory_rng = {name: np.random.default_rng(stream) for name, stream in zip(
+            ('imu', 'imu_bias', 'gnss', 'barometer', 'magnetometer'), streams[len(names)+2].spawn(5))}
         self._bias = {"accel": np.asarray(self.profile["imu"].get("accel_bias", [0]*3), dtype=float),
                       "gyro": np.asarray(self.profile["imu"].get("gyro_bias", [0]*3), dtype=float)}
         self._next = {name: 0 for name in ("imu", "gnss", "barometer", "magnetometer", "rpm")}
@@ -183,6 +194,114 @@ class SensorSuite:
                 start <= t < end for start, end in spec.get('outage_windows', []))
             value = np.asarray(rotor_truth)+np.asarray(spec['bias'])+spec['sigma']*rng.normal(size=4)
             yield t, ([] if dropped else [self._packet('rpm', t, value, spec)])
+
+    def navigation_prehistory(self, x_now, xdot_now, duration):
+        """Sample declared steady-trim navigation packets before flight time zero (D5).
+
+        Truth over [-duration, 0): p(t) = p0 + v0*t; attitude, rates, velocity
+        and the specific force from xdot_now stay at their time-zero values,
+        the same steady-trim assumption as the rotor prehistory. The error
+        models repeat sample() term by term. Each sensor continues its flight
+        nominal grid k/rate to negative k on the plant-step ticks.
+
+        Flight sampling is untouched: the eighth seeded child (one grandchild
+        per error source) supplies every draw, and negative sequence numbers
+        leave _seq, and so every flight packet, exactly as without a prehistory.
+        The IMU bias random walk is generated backward from the configured bias,
+        so it ends where the first flight IMU sample starts.
+        Yields (tick time, packets sampled at that tick) in time order.
+        """
+        ticks = int(round(duration/self.dt))
+        if duration <= 0 or abs(duration/self.dt-ticks) > 1e-7:
+            raise ValueError('navigation prehistory must be a positive multiple of the plant step')
+        x = np.asarray(x_now, dtype=float)
+        xd = np.asarray(xdot_now, dtype=float)
+        R = Rotation.from_quat(x[6:10]).as_matrix()
+        rng = self._navigation_prehistory_rng
+        times = [-(ticks-j)*self.dt for j in range(ticks)]
+        names = ['imu', 'gnss'] + [name for name in ('barometer', 'magnetometer')
+                                   if self.profile[name].get('enabled', False)]
+        due = {}
+        for name in names:
+            # Same tolerance as _due: sample at the first tick on or after -m/rate.
+            interval = 1.0/float(self.profile[name]['rate_hz'])
+            m = int(np.floor(duration/interval+1e-9))
+            due[name] = set()
+            for t in times:
+                if m >= 1 and t+1e-9 >= -m*interval:
+                    due[name].add(t)
+                    m -= 1
+
+        def dropped(spec, stream, t):
+            return stream.random() < float(spec.get('dropout_prob', 0.0)) or any(
+                len(window) == 2 and float(window[0]) <= t < float(window[1])
+                for window in spec.get('outage_windows', []))
+
+        imu = self.profile['imu']
+        accel_bias = {}
+        gyro_bias = {}
+        later = 0.0
+        ba = np.asarray(imu.get('accel_bias', [0]*3), dtype=float).copy()
+        bg = np.asarray(imu.get('gyro_bias', [0]*3), dtype=float).copy()
+        for t in sorted(due['imu'], reverse=True):
+            step = np.sqrt(later-t)
+            ba = ba-float(imu.get('accel_bias_rw', 0.0))*step*rng['imu_bias'].normal(size=3)
+            bg = bg-float(imu.get('gyro_bias_rw', 0.0))*step*rng['imu_bias'].normal(size=3)
+            accel_bias[t], gyro_bias[t] = ba, bg
+            later = t
+        g_w = np.array([0., 0., -self.gravity])
+        f_b = R.T @ (xd[3:6]-g_w)
+        period = 1.0/float(imu['rate_hz'])
+        a_sigma = float(imu.get('accel_noise_density', 0.0))/np.sqrt(period)
+        g_sigma = float(imu.get('gyro_noise_density', 0.0))/np.sqrt(period)
+        gnss, baro, mag = self.profile['gnss'], self.profile['barometer'], self.profile['magnetometer']
+        raw = []
+        for t in times:
+            position = x[0:3]+x[3:6]*t
+            if t in due['imu']:
+                lost = dropped(imu, rng['imu'], t)
+                a = f_b+accel_bias[t]+a_sigma*rng['imu'].normal(size=3)
+                w = x[10:13]+gyro_bias[t]+g_sigma*rng['imu'].normal(size=3)
+                for tone in imu.get('gyro_vibration', []):
+                    w += np.asarray(tone['amplitude_rad_s'])*np.sin(
+                        2.*np.pi*float(tone['frequency_hz'])*t + np.asarray(tone.get('phase_rad', [0.]*3)))
+                a = np.clip(a, -float(imu.get('accel_clip', 1e9)), float(imu.get('accel_clip', 1e9)))
+                w = np.clip(w, -float(imu.get('gyro_clip', 1e9)), float(imu.get('gyro_clip', 1e9)))
+                if not lost:
+                    raw.append((t, 'imu', np.r_[a, w], imu))
+            if t in due['gnss']:
+                lost = dropped(gnss, rng['gnss'], t)
+                value = np.r_[position+np.asarray(gnss.get('pos_bias', [0]*3))
+                              + float(gnss.get('pos_sigma', 0))*rng['gnss'].normal(size=3),
+                              x[3:6]+np.asarray(gnss.get('vel_bias', [0]*3))
+                              + float(gnss.get('vel_sigma', 0))*rng['gnss'].normal(size=3)]
+                for window in gnss.get('outlier_windows', []):
+                    if window['start_s'] <= t < window['end_s']:
+                        value += np.r_[window.get('pos_offset_m', [0.]*3), window.get('vel_offset_m_s', [0.]*3)]
+                if not lost:
+                    raw.append((t, 'gnss', value, gnss))
+            if t in due.get('barometer', ()):
+                lost = dropped(baro, rng['barometer'], t)
+                value = [position[2]+float(baro.get('bias', 0.0))+float(baro.get('sigma', 0))*rng['barometer'].normal()]
+                if baro.get('bias_rate_m_s', 0.): value[0] += float(baro['bias_rate_m_s'])*t
+                for window in baro.get('outlier_windows', []):
+                    if window['start_s'] <= t < window['end_s']:
+                        value[0] += float(window.get('height_offset_m', 0.))
+                if not lost:
+                    raw.append((t, 'barometer', value, baro))
+            if t in due.get('magnetometer', ()):
+                lost = dropped(mag, rng['magnetometer'], t)
+                field = np.asarray(mag.get('world_field', [20., 0., 40.]), dtype=float)
+                value = (R.T @ field+np.asarray(mag.get('bias', [0]*3))
+                         + float(mag.get('sigma', 0))*rng['magnetometer'].normal(size=3))
+                if not lost:
+                    raw.append((t, 'magnetometer', value, mag))
+        packets = {t: [] for t in times}
+        for index, (t, kind, value, spec) in enumerate(raw):
+            packets[t].append(Measurement(kind, float(t), float(t+spec.get('latency_s', 0.0)),
+                                          value, index-len(raw)))
+        for t in times:
+            yield t, packets[t]
 
     def _due(self, name, t):
         rate = float(self.profile[name].get("rate_hz", 0.0))

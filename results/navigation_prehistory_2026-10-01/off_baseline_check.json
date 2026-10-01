@@ -1,0 +1,96 @@
+{
+ "purpose": "kj 2026-10-01: reuse E1 prehistory-off results only if five samples (one per controller) are bit-identical on this branch",
+ "procedure": "fast_drone-arena results/sensor_d1_d6_isolation_2026-10-01/e_run.py unchanged, tree_root = this working tree, patch none",
+ "working_tree": {
+  "head": "8bc6b4ea56f6fa3372e99e853f32596494489231",
+  "note": "HEAD plus the uncommitted D5 change"
+ },
+ "all_bit_identical": true,
+ "samples": [
+  {
+   "trial": "full/V13_s4",
+   "case": "gust_lateral_p10_VL",
+   "seed": 4,
+   "ours_trajectory_sha256": "e2a83301eaea0fc07d72d498fc66b23569f4d0722196843c7a231b02c0acebe8",
+   "e1_trajectory_sha256": "e2a83301eaea0fc07d72d498fc66b23569f4d0722196843c7a231b02c0acebe8",
+   "trajectory_bit_identical": true,
+   "sensor_profile_sha256_equal": true,
+   "passed": [
+    false,
+    false
+   ],
+   "model_domain_valid": [
+    false,
+    false
+   ]
+  },
+  {
+   "trial": "navigation_only/F13_s4",
+   "case": "gust_lateral_p10_VL",
+   "seed": 4,
+   "ours_trajectory_sha256": "e8e389737306a21c32deaaea69a421f22977085f5882782852b7d82f72fe89ad",
+   "e1_trajectory_sha256": "e8e389737306a21c32deaaea69a421f22977085f5882782852b7d82f72fe89ad",
+   "trajectory_bit_identical": true,
+   "sensor_profile_sha256_equal": true,
+   "passed": [
+    false,
+    false
+   ],
+   "model_domain_valid": [
+    false,
+    false
+   ]
+  },
+  {
+   "trial": "navigation_only/M17_s4",
+   "case": "gust_lateral_p10_VL",
+   "seed": 4,
+   "ours_trajectory_sha256": "825b887b2624fc2e91713c819676c41c23bedfca518d074fd0b54184d4347195",
+   "e1_trajectory_sha256": "825b887b2624fc2e91713c819676c41c23bedfca518d074fd0b54184d4347195",
+   "trajectory_bit_identical": true,
+   "sensor_profile_sha256_equal": true,
+   "passed": [
+    false,
+    false
+   ],
+   "model_domain_valid": [
+    false,
+    false
+   ]
+  },
+  {
+   "trial": "navigation_only/GSLQR_s4",
+   "case": "gust_lateral_p10_VL",
+   "seed": 4,
+   "ours_trajectory_sha256": "9fba12e230d9f272090475b1e562f192cf31edaa58910cfb8c7060f50f5faf58",
+   "e1_trajectory_sha256": "9fba12e230d9f272090475b1e562f192cf31edaa58910cfb8c7060f50f5faf58",
+   "trajectory_bit_identical": true,
+   "sensor_profile_sha256_equal": true,
+   "passed": [
+    false,
+    false
+   ],
+   "model_domain_valid": [
+    false,
+    false
+   ]
+  },
+  {
+   "trial": "full/CPID_s4",
+   "case": "gust_lateral_p10_VL",
+   "seed": 4,
+   "ours_trajectory_sha256": "450de7875cab8e47981b10e21027938b5b86217dc3c06b2c5026e6afafdc2ace",
+   "e1_trajectory_sha256": "450de7875cab8e47981b10e21027938b5b86217dc3c06b2c5026e6afafdc2ace",
+   "trajectory_bit_identical": true,
+   "sensor_profile_sha256_equal": true,
+   "passed": [
+    true,
+    true
+   ],
+   "model_domain_valid": [
+    true,
+    true
+   ]
+  }
+ ]
+}

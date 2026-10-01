@@ -33,7 +33,7 @@ class JointNavigationFilter(NavigationFilter):
         self.P = P
         self._initial_snapshot = self._snapshot()
 
-    def set_initial_baro_bias(self, value):
+    def set_initial_baro_bias(self, value, time=0.0):
         if self._events: raise RuntimeError('preflight calibration must precede filter events')
         e = self.profile['estimator']
         count = int(e.get('preflight_baro_samples', 0))
@@ -42,7 +42,7 @@ class JointNavigationFilter(NavigationFilter):
         # reference/navigation errors require a cross-covariance model instead.
         self.P[15,15] = (float(e.get('preflight_baro_sigma_m', self.profile['barometer']['sigma']))**2/count
                         + float(e.get('preflight_reference_sigma_m', 0.))**2)
-        super().set_initial_baro_bias(value)
+        super().set_initial_baro_bias(value, time)
 
     def _propagate(self, z, dt):
         if dt <= 0.: return

@@ -80,7 +80,17 @@ class ArenaSensorFeedback:
         self.dt = float(dt)
         self.sensors = SensorSuite(self.profile, dt, seed=seed)
         e = self.profile['estimator']
-        initial = np.asarray(x0,dtype=float).copy()
+        # D5 common navigation prehistory. Absent means 0 and the old path below.
+        self.navigation_prehistory_s = float(e.get('navigation_prehistory_s', 0.))
+        self._x0 = np.asarray(x0, dtype=float).copy()
+        self._navigation_packets = None
+        self._navigation_handover = None
+        start = self._x0.copy()
+        if self.navigation_prehistory_s:
+            # The filter starts at the true state of -T on the steady-trim cruise
+            # (p = p0 + v0 t) with the configured P0; it is never reset at zero.
+            start[0:3] -= self.navigation_prehistory_s*start[3:6]
+        initial = start.copy()
         for key,section in (('initial_position_error_m',slice(0,3)),('initial_velocity_error_m_s',slice(3,6))):
             if key in e: initial[section] += np.asarray(e[key])
         if 'initial_attitude_error_deg' in e:
@@ -92,10 +102,12 @@ class ArenaSensorFeedback:
         else:
             self.filter = NavigationFilter(initial, self.profile)
         preflight_samples = int(self.profile["estimator"].get("preflight_baro_samples", 0))
-        reference = x0[2]+float(e['preflight_reference_error_m']) if 'preflight_reference_error_m' in e else None
-        preflight_bias = self.sensors.preflight_barometer_bias(x0[2], preflight_samples,reference)
+        reference = start[2]+float(e['preflight_reference_error_m']) if 'preflight_reference_error_m' in e else None
+        preflight_bias = self.sensors.preflight_barometer_bias(start[2], preflight_samples,reference)
         if preflight_bias is not None:
-            self.filter.set_initial_baro_bias(preflight_bias)
+            # Preflight calibration precedes the navigation prehistory.
+            self.filter.set_initial_baro_bias(
+                preflight_bias, time=-self.navigation_prehistory_s if self.navigation_prehistory_s else 0.0)
         self.rotors = RotorObserver(x0, self.profile, dt)
         self._state = np.asarray(x0, dtype=float).copy()
         self._last_packets = []
@@ -111,9 +123,32 @@ class ArenaSensorFeedback:
             result['rotor_observer'] = self.rotors._projector.diagnostics
         if self.profile['rotor_observer'].get('prehistory_s', 0.):
             result['rotor_prehistory_s'] = self.profile['rotor_observer']['prehistory_s']
+        if self.navigation_prehistory_s:
+            result['navigation_prehistory'] = dict(self._navigation_handover or {},
+                                                   duration_s=self.navigation_prehistory_s)
         return result
 
+    def _run_navigation_prehistory(self, t, x_true, xdot_true):
+        """Feed steady-trim packets from -T to the filter (packets only, no reset).
+
+        Packets still in transit at zero stay queued in the filter for flight.
+        """
+        if (t != 0. or self._navigation_packets is not None
+                or not np.array_equal(np.asarray(x_true, dtype=float), self._x0)):
+            raise ValueError('navigation prehistory requires first initialization at zero '
+                             'from the constructor state')
+        counts, in_transit = {}, 0
+        for tick, packets in self.sensors.navigation_prehistory(self._x0, xdot_true,
+                                                                self.navigation_prehistory_s):
+            self.filter.advance(tick, packets)
+            for m in packets:
+                counts[m.kind] = counts.get(m.kind, 0)+1
+                in_transit += m.arrival_time > 1e-9
+        self._navigation_packets = dict(counts=counts, in_transit_at_zero=int(in_transit))
+
     def initial_packets(self, t, x_true, xdot_true, *, initial_command=None):
+        if self.navigation_prehistory_s:
+            self._run_navigation_prehistory(t, x_true, xdot_true)
         duration = self.profile['rotor_observer'].get('prehistory_s', 0.)
         if duration:
             if t != 0. or initial_command is None or self.rotors._time != -duration:
@@ -125,9 +160,17 @@ class ArenaSensorFeedback:
         self.filter.advance(t, [m for m in packets if m.kind != "rpm"])
         self._state[:13] = self.filter.state[:13]
         self._state[13:17] = self.rotors.update(initial_command if duration else self.rotors.n, packets, now=t)
+        if self.navigation_prehistory_s:
+            # Handover covariance: what the controller's first estimate carries.
+            sigma = np.sqrt(np.diag(self.filter.P)[:9])
+            self._navigation_handover = dict(
+                self._navigation_packets, sigma_position_m=sigma[0:3].tolist(),
+                sigma_velocity_m_s=sigma[3:6].tolist(), sigma_attitude_rad=sigma[6:9].tolist())
         return packets
 
     def step(self, t, x_true, xdot_true, command):
+        if self.navigation_prehistory_s and self._navigation_packets is None:
+            raise ValueError('navigation prehistory must run through initial_packets before flight')
         packets = self.sensors.sample(t, x_true, xdot_true)
         self.filter.advance(t, [m for m in packets if m.kind != "rpm"])
         self._state[:13] = self.filter.state[:13]
