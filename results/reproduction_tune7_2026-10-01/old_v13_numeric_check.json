@@ -1,0 +1,61 @@
+{
+ "code_state": {
+  "head": "598d46237369e1319cb11ac5fc617ef0709145d1",
+  "tracked_changes": ""
+ },
+ "references": [
+  {
+   "reference": "scripts/data/sensor_reproduction_v13.json",
+   "hash_differences": [
+    "control/arena.py",
+    "control/arena_estimator.py",
+    "control/arena_feedback.py",
+    "control/arena_joint_estimator.py",
+    "control/arena_sensors.py",
+    "control/arena_tune.py",
+    "control/main_distributed.py",
+    "control/main_experiment.py",
+    "control/sensor_binding.py"
+   ],
+   "hash_differences_are_the_known_changes": true,
+   "case": "gust_lateral_p10_VH",
+   "controller": "V13",
+   "seed": 3,
+   "numeric_problems": [],
+   "numeric_match": true,
+   "trajectory_equals_reference": false,
+   "trajectory_equals_a44c718_same_mac": true,
+   "actual_trajectory_sha256": "34afba26b9dff911e39bf9eb32d027d4502098f394059e317f466b7de02a82b7",
+   "compare_catches_1pct_change": true,
+   "run_git_revision": "598d46237369e1319cb11ac5fc617ef0709145d1",
+   "run_git_dirty": false
+  },
+  {
+   "reference": "scripts/data/sensor_legacy_reproduction_v13.json",
+   "hash_differences": [
+    "control/arena.py",
+    "control/arena_estimator.py",
+    "control/arena_feedback.py",
+    "control/arena_joint_estimator.py",
+    "control/arena_sensors.py",
+    "control/arena_tune.py",
+    "control/main_distributed.py",
+    "control/main_experiment.py",
+    "control/sensor_binding.py"
+   ],
+   "hash_differences_are_the_known_changes": true,
+   "case": "gust_lateral_p10_VL",
+   "controller": "V13",
+   "seed": 4,
+   "numeric_problems": [],
+   "numeric_match": true,
+   "trajectory_equals_reference": false,
+   "trajectory_equals_a44c718_same_mac": true,
+   "actual_trajectory_sha256": "313d81f8eb99aaad67b74c785d6ef8bed10b232b9bd7624894297386ed2a39d4",
+   "compare_catches_1pct_change": true,
+   "run_git_revision": "598d46237369e1319cb11ac5fc617ef0709145d1",
+   "run_git_dirty": false
+  }
+ ],
+ "code_unchanged_during_run": true
+}

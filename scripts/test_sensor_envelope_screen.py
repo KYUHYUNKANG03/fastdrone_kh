@@ -76,7 +76,7 @@ def test_failure_retention_partial_resume_and_changed_contract(tmp_path):
 
 
 def test_source_provenance_keeps_active_reproduction_valid():
-    reference = json.loads((CONFIG.parents[1]/'scripts/data/sensor_reproduction_v13.json').read_text())
+    reference = json.loads((CONFIG.parents[1]/'scripts/data/sensor_reproduction_tune7.json').read_text())
     assert reference['runtime_source_sha256'] == runtime_source_hashes()
 
 

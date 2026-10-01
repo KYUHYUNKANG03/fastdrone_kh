@@ -99,12 +99,14 @@ python scripts/sensor_reproduce.py --output results/my_sensor_reproduction
 ```
 
 A reproduction pass means agreement with a recorded outcome, not validation of
-the full operating envelope. The active v13 fixture is a passing 85 m/s V13 run
-with the new observer. Each replay uses a new output folder. The separate
-`scripts/data/sensor_legacy_reproduction_v13.json` fixture preserves the 20 m/s
-legacy-observer regression, including its known model-domain failure. Its fresh
-v13 trajectory is identical to v9 on the pinned Mac. Archived fixtures retain
-their original runtime hashes and require their own code revision.
+the full operating envelope. The active fixture is
+`scripts/data/sensor_reproduction_tune7.json`: a passing 85 m/s V13 run with
+`configs/arena_tune7.json`, recorded at commit 598d462. The earlier `*_v13.json`
+fixtures are kept. Each replay uses a new output folder. The separate
+`scripts/data/sensor_legacy_reproduction_tune7.json` fixture preserves the
+20 m/s legacy-observer regression, including its known model-domain failure.
+Archived fixtures retain their original runtime hashes and require their own
+code revision (`docs/REPRODUCTION_REFERENCES_TUNE7.md`).
 
 Compare the new observer and startup policies without changing controller gains:
 

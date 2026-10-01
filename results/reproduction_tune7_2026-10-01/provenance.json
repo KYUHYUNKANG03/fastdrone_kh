@@ -1,0 +1,227 @@
+{
+ "purpose": "Reproduction references *_tune7.json and V13 evaluation-0 record, made from a clean commit",
+ "file_sha256": {
+  "scripts/data/sensor_reproduction_tune7.json": "3c334add3f25de994c8be7b9454c4c56b7cbfc87f85f0fb7ebc279cab2742c18",
+  "scripts/data/sensor_legacy_reproduction_tune7.json": "5bec88de41a10328de5fbc2a93d2853bae8f1c74352df820684f6caf0ca2ba37",
+  "scripts/data/sensor_reproduction_v13.json": "c92d88fe0ef8f50cfdb55257180a297f373251c35e04c2759c61d18b4e5cc9e6",
+  "scripts/data/sensor_legacy_reproduction_v13.json": "d1ef91ce67b0caacfcbb5c2300cf5120145efd2eb55a2a98ab02e282c1f8ff83",
+  "scripts/sensor_reproduction_record.py": "32e0311ab563ae85a8331fe1c9a62227255a64423b82b2cac4b75c7d4160b053",
+  "configs/arena_tune7.json": "d64230711d38a218c1ec30a7760232eab670c7465950e0c99908b2c8ea9743da",
+  "results/arena/tuning/env_check_tune7/V13.record.json": "f8b933dfd22120862ac8ae4187364e354625eff32c7df0da6b2f933ce93c1e30",
+  "results/arena/tuning/env_check_tune7/V13.jsonl": "3469e8b73bc2ff5f0d860d7fd9450a1fe662dd1ef6ef1c66d7a6358d8a38c3ba"
+ },
+ "runs": {
+  "record_projected": {
+   "run_dir": "results/reproduction_tune7_2026-10-01/projected/run/runs/rotor_projected_warm/V13/arena_20261001T062911972135Z",
+   "git_revision": "598d46237369e1319cb11ac5fc617ef0709145d1",
+   "git_dirty": false,
+   "environment": {
+    "system": "Darwin",
+    "release": "25.6.0",
+    "machine": "arm64",
+    "cpu": "Apple M4",
+    "python": "3.13.7",
+    "packages": {
+     "numpy": "2.3.3",
+     "scipy": "1.16.3",
+     "casadi": "3.7.2",
+     "matplotlib": "3.10.6"
+    },
+    "threads": {
+     "OMP_NUM_THREADS": "1",
+     "OPENBLAS_NUM_THREADS": "1",
+     "VECLIB_MAXIMUM_THREADS": "1",
+     "MKL_NUM_THREADS": "1"
+    }
+   },
+   "config_sha256": "e7ef609705ea447c2082cf063517a2a1b31598421f624851d1a81911c36f8801",
+   "sensor_seed": 3,
+   "sensor_profile_sha256": "6bfd656d8b477dea70a26198b7e0076e988cdb2e0580c9a52164d1a89e0359c5",
+   "scenario_id": "gust_lateral_p10_VH",
+   "controller": "V13",
+   "passed": true,
+   "model_domain_valid": true,
+   "trajectory_sha256": "505c97508482216e2169eeca33a74ab606a181c73ce947df1a75d36874a5150e"
+  },
+  "record_legacy": {
+   "run_dir": "results/reproduction_tune7_2026-10-01/legacy/run/runs/nominal_joint_baro_candidate_v6/V13/arena_20261001T062911944935Z",
+   "git_revision": "598d46237369e1319cb11ac5fc617ef0709145d1",
+   "git_dirty": false,
+   "environment": {
+    "system": "Darwin",
+    "release": "25.6.0",
+    "machine": "arm64",
+    "cpu": "Apple M4",
+    "python": "3.13.7",
+    "packages": {
+     "numpy": "2.3.3",
+     "scipy": "1.16.3",
+     "casadi": "3.7.2",
+     "matplotlib": "3.10.6"
+    },
+    "threads": {
+     "OMP_NUM_THREADS": "1",
+     "OPENBLAS_NUM_THREADS": "1",
+     "VECLIB_MAXIMUM_THREADS": "1",
+     "MKL_NUM_THREADS": "1"
+    }
+   },
+   "config_sha256": "aeb98a51035f590f30db362ca1ee48eca8c75d8c353181d0202b850f3fea9cd3",
+   "sensor_seed": 4,
+   "sensor_profile_sha256": "a719bda956879c6c6059770a21e11afa5c82b8090a447ce419996c6bb048918b",
+   "scenario_id": "gust_lateral_p10_VL",
+   "controller": "V13",
+   "passed": false,
+   "model_domain_valid": false,
+   "trajectory_sha256": "313d81f8eb99aaad67b74c785d6ef8bed10b232b9bd7624894297386ed2a39d4"
+  },
+  "replay_projected": {
+   "run_dir": "results/reproduction_tune7_2026-10-01/replay_projected/run/runs/rotor_projected_warm/V13/arena_20261001T063053458625Z",
+   "git_revision": "598d46237369e1319cb11ac5fc617ef0709145d1",
+   "git_dirty": false,
+   "environment": {
+    "system": "Darwin",
+    "release": "25.6.0",
+    "machine": "arm64",
+    "cpu": "Apple M4",
+    "python": "3.13.7",
+    "packages": {
+     "numpy": "2.3.3",
+     "scipy": "1.16.3",
+     "casadi": "3.7.2",
+     "matplotlib": "3.10.6"
+    },
+    "threads": {
+     "OMP_NUM_THREADS": "1",
+     "OPENBLAS_NUM_THREADS": "1",
+     "VECLIB_MAXIMUM_THREADS": "1",
+     "MKL_NUM_THREADS": "1"
+    }
+   },
+   "config_sha256": "e7ef609705ea447c2082cf063517a2a1b31598421f624851d1a81911c36f8801",
+   "sensor_seed": 3,
+   "sensor_profile_sha256": "6bfd656d8b477dea70a26198b7e0076e988cdb2e0580c9a52164d1a89e0359c5",
+   "scenario_id": "gust_lateral_p10_VH",
+   "controller": "V13",
+   "passed": true,
+   "model_domain_valid": true,
+   "trajectory_sha256": "505c97508482216e2169eeca33a74ab606a181c73ce947df1a75d36874a5150e",
+   "reproduction_pass": true,
+   "problems": [],
+   "trajectory_bit_identical": true,
+   "hash_gate": "passed (sensor_reproduce refuses differing runtime sources)"
+  },
+  "replay_legacy": {
+   "run_dir": "results/reproduction_tune7_2026-10-01/replay_legacy/run/runs/nominal_joint_baro_candidate_v6/V13/arena_20261001T063221474435Z",
+   "git_revision": "598d46237369e1319cb11ac5fc617ef0709145d1",
+   "git_dirty": false,
+   "environment": {
+    "system": "Darwin",
+    "release": "25.6.0",
+    "machine": "arm64",
+    "cpu": "Apple M4",
+    "python": "3.13.7",
+    "packages": {
+     "numpy": "2.3.3",
+     "scipy": "1.16.3",
+     "casadi": "3.7.2",
+     "matplotlib": "3.10.6"
+    },
+    "threads": {
+     "OMP_NUM_THREADS": "1",
+     "OPENBLAS_NUM_THREADS": "1",
+     "VECLIB_MAXIMUM_THREADS": "1",
+     "MKL_NUM_THREADS": "1"
+    }
+   },
+   "config_sha256": "aeb98a51035f590f30db362ca1ee48eca8c75d8c353181d0202b850f3fea9cd3",
+   "sensor_seed": 4,
+   "sensor_profile_sha256": "a719bda956879c6c6059770a21e11afa5c82b8090a447ce419996c6bb048918b",
+   "scenario_id": "gust_lateral_p10_VL",
+   "controller": "V13",
+   "passed": false,
+   "model_domain_valid": false,
+   "trajectory_sha256": "313d81f8eb99aaad67b74c785d6ef8bed10b232b9bd7624894297386ed2a39d4",
+   "reproduction_pass": true,
+   "problems": [],
+   "trajectory_bit_identical": true,
+   "hash_gate": "passed (sensor_reproduce refuses differing runtime sources)"
+  },
+  "old_v13_check_projected": {
+   "run_dir": "results/reproduction_tune7_2026-10-01/old_v13_numeric_check/sensor_reproduction_v13/run/runs/rotor_projected_warm/V13/arena_20261001T062626454235Z",
+   "git_revision": "598d46237369e1319cb11ac5fc617ef0709145d1",
+   "git_dirty": false,
+   "environment": {
+    "system": "Darwin",
+    "release": "25.6.0",
+    "machine": "arm64",
+    "cpu": "Apple M4",
+    "python": "3.13.7",
+    "packages": {
+     "numpy": "2.3.3",
+     "scipy": "1.16.3",
+     "casadi": "3.7.2",
+     "matplotlib": "3.10.6"
+    },
+    "threads": {
+     "OMP_NUM_THREADS": "1",
+     "OPENBLAS_NUM_THREADS": "1",
+     "VECLIB_MAXIMUM_THREADS": "1",
+     "MKL_NUM_THREADS": "1"
+    }
+   },
+   "config_sha256": "9c1b18f412db20f9356e2b5e1ffbd3f28be966cfd3f305e16f6896cec05acf8f",
+   "sensor_seed": 3,
+   "sensor_profile_sha256": "1091868104c933deebc1abe04f7f64729a84450066eeab33dd82aea1a8779701",
+   "scenario_id": "gust_lateral_p10_VH",
+   "controller": "V13",
+   "passed": true,
+   "model_domain_valid": true,
+   "trajectory_sha256": "34afba26b9dff911e39bf9eb32d027d4502098f394059e317f466b7de02a82b7"
+  },
+  "old_v13_check_legacy": {
+   "run_dir": "results/reproduction_tune7_2026-10-01/old_v13_numeric_check/sensor_legacy_reproduction_v13/run/runs/nominal_joint_baro_candidate_v6/V13/arena_20261001T062742353258Z",
+   "git_revision": "598d46237369e1319cb11ac5fc617ef0709145d1",
+   "git_dirty": false,
+   "environment": {
+    "system": "Darwin",
+    "release": "25.6.0",
+    "machine": "arm64",
+    "cpu": "Apple M4",
+    "python": "3.13.7",
+    "packages": {
+     "numpy": "2.3.3",
+     "scipy": "1.16.3",
+     "casadi": "3.7.2",
+     "matplotlib": "3.10.6"
+    },
+    "threads": {
+     "OMP_NUM_THREADS": "1",
+     "OPENBLAS_NUM_THREADS": "1",
+     "VECLIB_MAXIMUM_THREADS": "1",
+     "MKL_NUM_THREADS": "1"
+    }
+   },
+   "config_sha256": "aeb98a51035f590f30db362ca1ee48eca8c75d8c353181d0202b850f3fea9cd3",
+   "sensor_seed": 4,
+   "sensor_profile_sha256": "a719bda956879c6c6059770a21e11afa5c82b8090a447ce419996c6bb048918b",
+   "scenario_id": "gust_lateral_p10_VL",
+   "controller": "V13",
+   "passed": false,
+   "model_domain_valid": false,
+   "trajectory_sha256": "313d81f8eb99aaad67b74c785d6ef8bed10b232b9bd7624894297386ed2a39d4"
+  }
+ },
+ "env_check_tune7": {
+  "git_revision": "598d46237369e1319cb11ac5fc617ef0709145d1",
+  "git_dirty": false,
+  "config_sha256": "e7ef609705ea447c2082cf063517a2a1b31598421f624851d1a81911c36f8801",
+  "status": "complete",
+  "scenario_workers": 1,
+  "prior_objective": 0.4258410417691406
+ },
+ "checks": {
+  "old_v13_numeric_check": "old_v13_numeric_check.json",
+  "clean_vs_uncommitted_record": "compare_env_check_records.json"
+ }
+}

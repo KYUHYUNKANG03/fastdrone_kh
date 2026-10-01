@@ -89,10 +89,10 @@ def audit(config=CONFIG, spec_path=SPEC):
     result['runtime_source_sha256'] = hashes
 
     def fixture():
-        reference = json.loads((ROOT/'scripts/data/sensor_reproduction_v13.json').read_text(encoding='utf-8'))
+        reference = json.loads((ROOT/'scripts/data/sensor_reproduction_tune7.json').read_text(encoding='utf-8'))
         problems = []
         if hashes != canonical_source_hashes(reference['runtime_source_sha256']):
-            problems.append('runtime differs from active v13 reproduction fixture')
+            problems.append('runtime differs from active reproduction fixture')
         if config_sha256(load_config(ROOT/reference['config'])) != reference['config_sha256']:
             problems.append('active reference configuration changed')
         return not problems, problems or ['Source compatibility only; no numerical replay executed.']

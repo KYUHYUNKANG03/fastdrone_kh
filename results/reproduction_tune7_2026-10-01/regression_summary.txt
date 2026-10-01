@@ -1,0 +1,10 @@
+Regression after the reference switch (HEAD 598d462 + step-3 edits), 2026-10-01, Apple M4, thread limits 1
+
+python -m pytest control scripts -q --ignore=control/test_arena_tune_parallel.py
+ERROR control/test_fallback.py::test_recovery_resets
+871 passed, 2 skipped, 1 xfailed, 1 warning, 1 error in 1206.80s (0:20:06)
+
+python -m pytest control/test_arena_tune_parallel.py -q
+11 passed in 1060.48s (0:17:40)
+
+Before the switch (D5 code, old *_v13 references active): 869 passed, 2 failed (scripts/test_sensor_envelope_screen.py::test_source_provenance_keeps_active_reproduction_valid, scripts/test_sensor_preflight.py::test_static_pass_does_not_open_paper_gate: stale runtime hashes by design), 1 error (the same test_fallback fixture error, already present at a44c718).

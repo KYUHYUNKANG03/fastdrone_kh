@@ -46,7 +46,7 @@ jobs:
       - name: Reproduce the projected-observer high-speed reference
         run: python scripts/sensor_reproduce.py --output results/windows_ci/projected
       - name: Reproduce the legacy-observer low-speed reference
-        run: python scripts/sensor_reproduce.py --reference scripts/data/sensor_legacy_reproduction_v13.json --output results/windows_ci/legacy
+        run: python scripts/sensor_reproduce.py --reference scripts/data/sensor_legacy_reproduction_tune7.json --output results/windows_ci/legacy
       - name: Preserve checks, failures, manifests and traces
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1

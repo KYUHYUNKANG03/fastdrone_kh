@@ -40,3 +40,7 @@ Recorded in `results/navigation_prehistory_2026-10-01/tune7_config_check.json`.
 That file holds the `config_sha256` (canonical JSON, `control.arena.config_sha256`),
 the raw-file sha256, the `sensor_profile_sha256` and the field-by-field diff
 against v9.
+
+The V13 evaluation-0 reference record for this configuration
+(`results/arena/tuning/env_check_tune7/`) and the active reproduction
+references are described in `docs/REPRODUCTION_REFERENCES_TUNE7.md`.

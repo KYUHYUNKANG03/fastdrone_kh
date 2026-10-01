@@ -1,0 +1,135 @@
+{
+ "clean": {
+  "git_revision": "598d46237369e1319cb11ac5fc617ef0709145d1",
+  "git_dirty": false,
+  "objective": 0.4258410417691406,
+  "config_sha256": "e7ef609705ea447c2082cf063517a2a1b31598421f624851d1a81911c36f8801"
+ },
+ "dirty": {
+  "git_revision": "8bc6b4ea56f6fa3372e99e853f32596494489231",
+  "git_dirty": true,
+  "objective": 0.4258410417691406,
+  "config_sha256": "e7ef609705ea447c2082cf063517a2a1b31598421f624851d1a81911c36f8801"
+ },
+ "objective_bit_identical": true,
+ "sensor_runtime_source_equal": true,
+ "record_fields_differing": [
+  "finished_utc",
+  "git_dirty",
+  "git_revision"
+ ],
+ "scenarios": 18,
+ "all_verdicts_equal": true,
+ "all_numbers_within_rtol": true,
+ "trajectories_bit_identical": 18,
+ "per_scenario": [
+  {
+   "id": "tune2_gust_lateral_p7_V14",
+   "verdicts_equal": true,
+   "numbers_within_rtol": true,
+   "trajectory_bit_identical": true
+  },
+  {
+   "id": "tune2_gust_lateral_m13_V26",
+   "verdicts_equal": true,
+   "numbers_within_rtol": true,
+   "trajectory_bit_identical": true
+  },
+  {
+   "id": "tune2_gust_lateral_m7_V75",
+   "verdicts_equal": true,
+   "numbers_within_rtol": true,
+   "trajectory_bit_identical": true
+  },
+  {
+   "id": "tune2_gust_lateral_p13_V82",
+   "verdicts_equal": true,
+   "numbers_within_rtol": true,
+   "trajectory_bit_identical": true
+  },
+  {
+   "id": "tune2_gust_vertical_m3.5_V75",
+   "verdicts_equal": true,
+   "numbers_within_rtol": true,
+   "trajectory_bit_identical": true
+  },
+  {
+   "id": "tune2_gust_vertical_p6.5_V82",
+   "verdicts_equal": true,
+   "numbers_within_rtol": true,
+   "trajectory_bit_identical": true
+  },
+  {
+   "id": "tune2_gust_vertical_p3.5_V14",
+   "verdicts_equal": true,
+   "numbers_within_rtol": true,
+   "trajectory_bit_identical": true
+  },
+  {
+   "id": "tune2_gust_vertical_m6.5_V26",
+   "verdicts_equal": true,
+   "numbers_within_rtol": true,
+   "trajectory_bit_identical": true
+  },
+  {
+   "id": "tune2_ramp_accel_V17_70_rho0.8",
+   "verdicts_equal": true,
+   "numbers_within_rtol": true,
+   "trajectory_bit_identical": true
+  },
+  {
+   "id": "tune2_ramp_brake_V80_25_rho1.2",
+   "verdicts_equal": true,
+   "numbers_within_rtol": true,
+   "trajectory_bit_identical": true
+  },
+  {
+   "id": "tune3_step_altitude_p0.7_V0",
+   "verdicts_equal": true,
+   "numbers_within_rtol": true,
+   "trajectory_bit_identical": true
+  },
+  {
+   "id": "tune3_step_altitude_p1.3_V0",
+   "verdicts_equal": true,
+   "numbers_within_rtol": true,
+   "trajectory_bit_identical": true
+  },
+  {
+   "id": "tune3_step_altitude_p0.7_V14",
+   "verdicts_equal": true,
+   "numbers_within_rtol": true,
+   "trajectory_bit_identical": true
+  },
+  {
+   "id": "tune3_step_altitude_p1.3_V14",
+   "verdicts_equal": true,
+   "numbers_within_rtol": true,
+   "trajectory_bit_identical": true
+  },
+  {
+   "id": "tune3_step_speed_p0.7_V0",
+   "verdicts_equal": true,
+   "numbers_within_rtol": true,
+   "trajectory_bit_identical": true
+  },
+  {
+   "id": "tune3_step_speed_p1.3_V0",
+   "verdicts_equal": true,
+   "numbers_within_rtol": true,
+   "trajectory_bit_identical": true
+  },
+  {
+   "id": "tune3_step_speed_p0.7_V14",
+   "verdicts_equal": true,
+   "numbers_within_rtol": true,
+   "trajectory_bit_identical": true
+  },
+  {
+   "id": "tune3_step_speed_p1.3_V14",
+   "verdicts_equal": true,
+   "numbers_within_rtol": true,
+   "trajectory_bit_identical": true
+  }
+ ]
+}
