@@ -121,6 +121,9 @@ class Evaluator:
         self.limits = Acceptance(**config['acceptance'])
         self.paper = PaperCriteria(**config['paper_criteria'])
         self.penalty = float(config['tuning']['objective']['failure_penalty'])
+        # tune8(2026-10-10): 설정이 켜면 본시험 합격 기준(Acceptance, 추력 영역 판정 제외)을 못 넘은 평가도
+        # 실패로 센다. 기본값 False — 기존 설정(tune7 이하)의 목적함수·기록 형식은 그대로다.
+        self.acceptance_failure = bool(config['tuning']['objective'].get('acceptance_failure', False))
         self.scenario_workers = int(scenario_workers)
         self._pool = None
         self._durations = {}          # 시나리오 인덱스 → 직전 평가의 소요 시간[s] (배정 순서용)
@@ -155,6 +158,12 @@ class Evaluator:
             paper = paper_evaluate(result, scenario.profile, self.paper, window=scenario.window,
                                    solve_log=log, n_max=self.native['n_max'])
             failed = bool(row['stop_reason']) or paper['paper_failed']
+            if self.acceptance_failure:
+                accepted = bool(row['tracking_pass'])
+                failed = failed or not accepted
+                entry.update(tracking_pass=accepted,
+                             acceptance_reasons=[r for r in row['failure_reasons']
+                                                 if r != 'propulsion_model_domain'])
             entry.update(stop_reason=row['stop_reason'], paper_reasons=paper['paper_reasons'],
                          window_rmse_velocity=paper['window_rmse_velocity'],
                          window_rmse_z=paper['window_rmse_z'], max_omega=row['max_omega'],

@@ -1,0 +1,711 @@
+{
+  "schema": "arena/1",
+  "purpose": "Fair, reproducible arena for V13/M17/F13/GSLQR/CPID on the pinned team aircraft. SMOKE/PILOT runs only; no superiority claims.",
+  "confirmed": {
+    "source": "kj work order 2026-09-25 section 1 + decisions in this session",
+    "vehicle_profile_id": "light_rocket_v2_pack_forward",
+    "vehicle_mass_kg": 1.17407572,
+    "repository": "protkjj/fast-drone",
+    "base_branch": "control",
+    "plant": "team distributed aero + APC Ct/Cp PCHIP (models.team_light)",
+    "controller_model": "lumped-parameter fit (control.kh_adapter.build_controller_params)",
+    "mission_phases_s": [
+      3.0,
+      15.0,
+      15.0,
+      15.0,
+      7.0
+    ],
+    "mission_takeoff": false,
+    "mission_disturbance": false,
+    "gust_wind_reference": "absolute",
+    "gust_start": "common_trim_cruise",
+    "V_L_m_s": 20.0,
+    "V_H_m_s": 85.0
+  },
+  "vehicle": {
+    "profile_id": "light_rocket_v2_pack_forward",
+    "mass_kg": 1.17407572,
+    "parameter_sha256": "13a1dcc6332987eba93ea4653f4d6087741d1ac085701982ed94c22e6658c807"
+  },
+  "plant": {
+    "class": "models.team_light.control.dynamics.AxialDronePlant",
+    "dt_s": 0.002
+  },
+  "controller_model": {
+    "builder": "control.kh_adapter.build_controller_params",
+    "hover_convention": "plant",
+    "moment_correction": {
+      "file": "configs/controller_moment_model.json",
+      "sha256": "a8f49d3f546ac6d0ba03127ddcb5d4524763718e1966dda8bbb74632e6b02ae6",
+      "applies_to": [
+        "M17",
+        "F13",
+        "GSLQR"
+      ],
+      "note": "트림 밖 피치·요 모멘트 보정(control/moment_correction.py, 보고서 23절). M17 예측, F13 예측·내부 루프, GSLQR 선형화에만 적용. 명목 트림·가용 가속도(a_avail)·V13·CPID는 기존 모델 그대로 — a_avail은 기존 모델로 계산하는 고정된 정의다(튜닝 시나리오와 같은 정의 유지). 이 절 말고는 arena.json과 같아야 한다(시험)."
+    }
+  },
+  "speeds_m_s": {
+    "V_L": 20.0,
+    "V_H": 85.0
+  },
+  "altitude_m": 20.0,
+  "preview_horizon_s": 1.0,
+  "nmpc_common": {
+    "N": 20,
+    "dt_pred_s": 0.05,
+    "dt_ctrl_s": 0.02,
+    "max_iter": 30,
+    "tol": 0.0001,
+    "Q_z": 20.0,
+    "cost_spec": "paper",
+    "warm_start": "measured_state_and_controller_trim_input",
+    "soft_constraints": {}
+  },
+  "controllers": {
+    "V13": {
+      "kind": "V13",
+      "alloc_mode": "A1",
+      "alloc_feedback": true,
+      "time_align": "S1"
+    },
+    "M17": {
+      "kind": "M17",
+      "rotor_floor": "positive_thrust"
+    },
+    "F13": {
+      "kind": "F13",
+      "alloc_mode": "A0",
+      "time_align": "S0"
+    },
+    "GSLQR": {
+      "kind": "GSLQR",
+      "gains": "configs/gains/gslqr.json",
+      "V_table_m_s": [
+        0,
+        5,
+        10,
+        15,
+        20,
+        25,
+        30,
+        35,
+        40,
+        45,
+        50,
+        55,
+        60,
+        65,
+        70,
+        75,
+        80,
+        85
+      ],
+      "trim_substep_m_s": 1.0,
+      "reference_feedforward": "window_acceleration"
+    },
+    "CPID": {
+      "kind": "CPID",
+      "gains": "configs/gains/cpid.json",
+      "design_region_m_s": [
+        0,
+        20
+      ],
+      "integrator_preload": "controller_model_trim",
+      "reference_feedforward": "window_acceleration"
+    }
+  },
+  "seeds": {
+    "main": [
+      1000,
+      1999
+    ],
+    "tuning": [
+      2000,
+      2999
+    ]
+  },
+  "tuning": {
+    "label": "PILOT",
+    "budget": 60,
+    "search": {
+      "method": "compass_log_multiplier",
+      "initial_step": 2.0,
+      "min_step": 1.05
+    },
+    "objective": {
+      "metric": "window_rmse_velocity + window_rmse_z",
+      "failure": "stop_reason or paper_failed or not tracking_pass (Acceptance)",
+      "acceptance_failure": true,
+      "failure_penalty": 1000.0
+    },
+    "parameters": {
+      "NMPC": [
+        "w_v",
+        "Q_z",
+        "w_omega",
+        "r_dev",
+        "r_rate",
+        "terminal"
+      ],
+      "GSLQR": [
+        "q_z",
+        "q_v_h",
+        "q_v_z",
+        "q_phi",
+        "q_omega",
+        "q_n",
+        "r",
+        "q_iz",
+        "q_ivx"
+      ],
+      "CPID": [
+        "Kp_vel",
+        "Ki_vel",
+        "Kp_z",
+        "Kd_z",
+        "Ki_z",
+        "Kp_att",
+        "Kd_att"
+      ]
+    },
+    "scenario_design_note": "kj 결정(2026-09-27): 옛 집합(위 이력)은 제어기 결과로 저속 사례를 골라 본시험보다 약한 쪽으로 치우쳤다(ARENA_STATUS 12절, 재발 사례 tuning-set-must-match-test-severity). 이 집합은 제어기 결과를 보지 않고 본시험 시나리오(아래 scenarios)의 크기·속도·ρ만으로 정했다: 돌풍 = 본시험 피크의 0.7배·1.3배 양쪽 방향(측풍 ±10 -> ±7/±13, 수직풍 ∓5 -> ∓3.5/∓6.5), 속도 = V_L·V_H 근처지만 같지 않은 값(14·26·75·82), 기동 = 제동 1개 + ρ 0.8·1.2. 본시험 id·속도·ρ와 겹치지 않는다(I-4). 제동 끝점(25, 다섯의 배수)은 명목 제어기 모델의 available_acceleration이 감속 방향에서만 28·32 m/s 근처 좁은 구간에서 SLSQP 수렴에 실패하는 것을 피하려고 고른 값이다(가속 방향은 0~85 전 구간 실패 없음) — 물리적 트림 불가가 아니라 그 지점들만의 국소 수치 취약점으로 보이나 확인은 하지 않았다.",
+    "scenarios": [
+      {
+        "id": "tune2_gust_lateral_p7_V14",
+        "type": "gust",
+        "speed": 14.0,
+        "direction": "lateral",
+        "peak_m_s": 7.0,
+        "times_s": [
+          1.0,
+          1.0,
+          2.0
+        ]
+      },
+      {
+        "id": "tune2_gust_lateral_m13_V26",
+        "type": "gust",
+        "speed": 26.0,
+        "direction": "lateral",
+        "peak_m_s": -13.0,
+        "times_s": [
+          1.0,
+          1.0,
+          2.0
+        ]
+      },
+      {
+        "id": "tune2_gust_vertical_p3.5_V14",
+        "type": "gust",
+        "speed": 14.0,
+        "direction": "vertical",
+        "peak_m_s": 3.5,
+        "times_s": [
+          1.0,
+          1.0,
+          2.0
+        ]
+      },
+      {
+        "id": "tune2_gust_vertical_m6.5_V26",
+        "type": "gust",
+        "speed": 26.0,
+        "direction": "vertical",
+        "peak_m_s": -6.5,
+        "times_s": [
+          1.0,
+          1.0,
+          2.0
+        ]
+      },
+      {
+        "id": "tune4_gust_lateral_p13_V83",
+        "type": "gust",
+        "speed": 83.0,
+        "direction": "lateral",
+        "peak_m_s": 13.0,
+        "times_s": [
+          3.0,
+          2.0,
+          7.0
+        ]
+      },
+      {
+        "id": "tune4_gust_lateral_m7_V85",
+        "type": "gust",
+        "speed": 85.0,
+        "direction": "lateral",
+        "peak_m_s": -7.0,
+        "times_s": [
+          3.0,
+          2.0,
+          7.0
+        ]
+      },
+      {
+        "id": "tune4_gust_vertical_p6.5_V83",
+        "type": "gust",
+        "speed": 83.0,
+        "direction": "vertical",
+        "peak_m_s": 6.5,
+        "times_s": [
+          3.0,
+          2.0,
+          7.0
+        ]
+      },
+      {
+        "id": "tune4_gust_vertical_m3.5_V85",
+        "type": "gust",
+        "speed": 85.0,
+        "direction": "vertical",
+        "peak_m_s": -3.5,
+        "times_s": [
+          3.0,
+          2.0,
+          7.0
+        ]
+      },
+      {
+        "id": "tune4_cruise_V83",
+        "type": "cruise",
+        "speed": 83.0,
+        "times_s": [
+          3.0,
+          5.0,
+          7.0
+        ],
+        "evaluation_start_s": 3.0
+      },
+      {
+        "id": "tune4_ramp_accel_V17_70_rho0.8",
+        "type": "reference",
+        "from": 17.0,
+        "to": 70.0,
+        "rho": 0.8,
+        "lead_s": 0.5,
+        "tail_s": 5.0
+      },
+      {
+        "id": "tune4_ramp_brake_V80_25_rho1.2",
+        "type": "reference",
+        "from": 80.0,
+        "to": 25.0,
+        "rho": 1.2,
+        "lead_s": 0.5,
+        "tail_s": 5.0
+      },
+      {
+        "id": "tune4_ramp_accel_V0_26_rho1.2",
+        "type": "reference",
+        "from": 0.0,
+        "to": 26.0,
+        "rho": 1.2,
+        "lead_s": 0.5,
+        "tail_s": 5.0
+      },
+      {
+        "id": "tune4_ramp_accel_V0_83_rho0.8",
+        "type": "reference",
+        "from": 0.0,
+        "to": 83.0,
+        "rho": 0.8,
+        "lead_s": 0.5,
+        "tail_s": 5.0
+      },
+      {
+        "type": "cruise",
+        "speed": 83.0,
+        "times_s": [
+          3.0,
+          5.0,
+          7.0
+        ],
+        "evaluation_start_s": 3.0,
+        "id": "tune4_cruise_V83__state_delay_5ms",
+        "extra_params": {
+          "state_delay_s": 0.005
+        }
+      },
+      {
+        "type": "cruise",
+        "speed": 83.0,
+        "times_s": [
+          3.0,
+          5.0,
+          7.0
+        ],
+        "evaluation_start_s": 3.0,
+        "id": "tune4_cruise_V83__mass_1.15",
+        "perturbation": {
+          "mass": 1.15
+        }
+      },
+      {
+        "id": "tune3_step_altitude_p0.7_V0",
+        "type": "step",
+        "speed": 0.0,
+        "axis": "altitude",
+        "size": 0.7,
+        "durations_s": [
+          8.0
+        ]
+      },
+      {
+        "id": "tune3_step_altitude_p1.3_V0",
+        "type": "step",
+        "speed": 0.0,
+        "axis": "altitude",
+        "size": 1.3,
+        "durations_s": [
+          8.0
+        ]
+      },
+      {
+        "id": "tune3_step_altitude_p0.7_V14",
+        "type": "step",
+        "speed": 14.0,
+        "axis": "altitude",
+        "size": 0.7,
+        "durations_s": [
+          8.0
+        ]
+      },
+      {
+        "id": "tune3_step_altitude_p1.3_V14",
+        "type": "step",
+        "speed": 14.0,
+        "axis": "altitude",
+        "size": 1.3,
+        "durations_s": [
+          8.0
+        ]
+      },
+      {
+        "id": "tune3_step_speed_p0.7_V0",
+        "type": "step",
+        "speed": 0.0,
+        "axis": "speed",
+        "size": 0.7,
+        "durations_s": [
+          8.0
+        ]
+      },
+      {
+        "id": "tune3_step_speed_p1.3_V0",
+        "type": "step",
+        "speed": 0.0,
+        "axis": "speed",
+        "size": 1.3,
+        "durations_s": [
+          8.0
+        ]
+      },
+      {
+        "id": "tune3_step_speed_p0.7_V14",
+        "type": "step",
+        "speed": 14.0,
+        "axis": "speed",
+        "size": 0.7,
+        "durations_s": [
+          8.0
+        ]
+      },
+      {
+        "id": "tune3_step_speed_p1.3_V14",
+        "type": "step",
+        "speed": 14.0,
+        "axis": "speed",
+        "size": 1.3,
+        "durations_s": [
+          8.0
+        ]
+      }
+    ],
+    "scenario_design_note_2": "kj 결정(2026-09-27 저녁): 규칙을 '본시험을 감싼다'에서 '모든 평가 축(본시험 + 설계점검)을 감싼다'로 넓힌다. CPID 고도-계단이 설계 영역 0·10·20 m/s 전부 정착 실패(Kd_z 2→64)했는데, tune2_* 10개 중 순수 고도-추종(새 z 목표로 이동) 신호가 하나도 없어서였다(수직풍은 트림 복귀 신호라 반대 압력을 준다). tune3_step_* 8개를 추가: 설계점검의 매끄러운 고도·속도 계단을 크기 0.7배·1.3배로, 호버(V0)와 V_L 근처(V14, 이미 tune2에서 쓰는 점)에서. 설계점검 자체의 정확한 조건(속도 0·10·20·40·60·85, 크기 ±1)과는 안 겹친다. 제어기 결과를 안 보고 정했다(속도·크기·관찰시간 8s만 고름).",
+    "superseded_scenarios_2026-09-26": "옛 집합(tune_*, 8개, 저속 3개는 8.3절 '실패 없는 사례만' 규칙으로 선정) — results/arena/tuning/main120 전체와 함께 superseded. tune_gust_vertical_p3_V20은 본시험 V_L=20을 그대로 재사용한 결함도 있었다.",
+    "scenario_design_note_3": "2026-10-10 개정(tune8, 규현). tune7 게인으로 돌린 본 실험에서 V13이 V_H(85 m/s)에 닿는 시나리오 대부분에서 발산했다(추종 통과 68/1380). 원인은 튜닝 집합이 고속에서 짧았던 것이다 — 최고 82 m/s, 돌풍 4 s. 튜닝된 V13은 4 Hz 피치 모드가 약 80.6 m/s부터 불안정했고 82 m/s에서 진폭이 두 배 되는 데 약 2.8 s라 4 s 안에 드러나지 않았다. 초기값(prior)은 85 m/s 순항을 통과했다. 탐색이 w_v를 올리고 w_omega를 내려 고속 감쇠를 깎았는데 집합이 그 대가를 보지 못했다. 개정: 규칙 '본시험을 감싼다'를 크기뿐 아니라 속도·시간·섭동에도 적용한다. (1) 고속 돌풍 4개를 83·85 m/s, 본시험과 같은 12 s로. 큰 돌풍(1.3배)은 83, 작은 돌풍(0.7배)은 85 — 속도와 크기의 극단을 한 시나리오에 겹치지 않는다. V_H 위쪽(87 등)은 팀 기체의 확인 범위 0~85 m/s(SPEED_RANGE, docs/VALIDATION.md) 밖이라 쓰지 않고, 위쪽 끝은 V_H 자체로 잡는다 — 본시험과 크기(0.7배)·시드가 다르다. (2) 83 m/s 순항 15 s 추가. (3) 기동의 꼬리를 본시험과 같은 5 s로, 정지 출발 가속 2개(0→26 ρ1.2, 0→83 ρ0.8) 추가. (4) 83 m/s 순항에 본시험 절반 세기 섭동 2개(상태 지연 5 ms, 질량 1.15배) — 안정 여유 조건. 모터 시정수 1.5배·추력 0.85배는 V13 초기값이 넘지 못했고 모터 시정수 1.5배는 F13 초기값도 넘지 못해 넣지 않았다. (5) 목적함수의 실패에 본시험 합격 기준(Acceptance) 미달을 더한다(objective.acceptance_failure). 저속 돌풍 4개와 계단 8개는 그대로다(id·시드 동일). 바뀐 시나리오는 새 id(tune4_*)와 새 시드(2019~2030)를 받는다. 시나리오 시뮬 시간 합은 132.7 s → 233.6 s(1.76배)이고, 예산은 60회다(M17 일정). 본시험 id와 겹치지 않는다(I-4). 한계: 이 개정은 본 실험 결과를 본 뒤에 나왔다 — 재튜닝 뒤 본 실험은 새 시드 구간으로 돌리는 것이 깨끗하다. 근거 진단은 본시험 시드 1000~1004와 튜닝 시드로 돌렸다."
+  },
+  "reporting": {
+    "integrator_at_limit_fraction": 0.01
+  },
+  "acceptance": {
+    "max_z_error": 10.0,
+    "max_velocity_error": 15.0,
+    "max_omega": 35.0,
+    "sustained_omega": 25.0,
+    "sustained_seconds": 0.2,
+    "recovery_z": 0.5,
+    "recovery_velocity": 0.5,
+    "recovery_omega": 1.0,
+    "recovery_hold": 0.5
+  },
+  "paper_criteria": {
+    "z_error": 5.0,
+    "z_error_seconds": 0.5,
+    "omega": 20.0,
+    "omega_seconds": 0.1,
+    "cruise_velocity_floor": 5.0,
+    "cruise_velocity_fraction": 0.25,
+    "cruise_velocity_seconds": 2.0,
+    "consecutive_solver_failures": 3,
+    "recovery_z": 0.5,
+    "recovery_velocity_floor": 0.5,
+    "recovery_velocity_fraction": 0.05,
+    "recovery_hold": 1.0
+  },
+  "scenarios": [
+    {
+      "id": "mission_VH",
+      "type": "mission",
+      "speed": "V_H",
+      "durations_s": [
+        3.0,
+        15.0,
+        15.0,
+        15.0,
+        7.0
+      ],
+      "evaluation_start_s": 3.0
+    },
+    {
+      "id": "gust_lateral_p10_VH",
+      "type": "gust",
+      "speed": "V_H",
+      "direction": "lateral",
+      "peak_m_s": 10.0,
+      "times_s": [
+        3.0,
+        2.0,
+        7.0
+      ]
+    },
+    {
+      "id": "gust_vertical_m5_VH",
+      "type": "gust",
+      "speed": "V_H",
+      "direction": "vertical",
+      "peak_m_s": -5.0,
+      "times_s": [
+        3.0,
+        2.0,
+        7.0
+      ]
+    },
+    {
+      "id": "ref_accel_0_VH_rho1",
+      "type": "reference",
+      "from": 0.0,
+      "to": "V_H",
+      "rho": 1.0,
+      "lead_s": 3.0,
+      "tail_s": 5.0
+    },
+    {
+      "id": "ref_brake_VH_VL_rho1",
+      "type": "reference",
+      "from": "V_H",
+      "to": "V_L",
+      "rho": 1.0,
+      "lead_s": 3.0,
+      "tail_s": 5.0
+    },
+    {
+      "id": "mission_VH_mass1.3",
+      "type": "mission",
+      "speed": "V_H",
+      "durations_s": [
+        3.0,
+        15.0,
+        15.0,
+        15.0,
+        7.0
+      ],
+      "evaluation_start_s": 3.0,
+      "perturbation": {
+        "mass": 1.3
+      }
+    },
+    {
+      "id": "mission_VH_tau2",
+      "type": "mission",
+      "speed": "V_H",
+      "durations_s": [
+        3.0,
+        15.0,
+        15.0,
+        15.0,
+        7.0
+      ],
+      "evaluation_start_s": 3.0,
+      "perturbation": {
+        "motor_tau": 2.0
+      }
+    },
+    {
+      "id": "gust_lateral_p10_VL",
+      "type": "gust",
+      "speed": "V_L",
+      "direction": "lateral",
+      "peak_m_s": 10.0,
+      "times_s": [
+        3.0,
+        2.0,
+        7.0
+      ]
+    },
+    {
+      "id": "gust_vertical_m5_VL",
+      "type": "gust",
+      "speed": "V_L",
+      "direction": "vertical",
+      "peak_m_s": -5.0,
+      "times_s": [
+        3.0,
+        2.0,
+        7.0
+      ]
+    }
+  ],
+  "sensor_feedback": {
+    "schema": "sensor_feedback/1",
+    "mode": "sensors",
+    "seed": 3,
+    "profile": {
+      "schema": "sensor/1",
+      "name": "rotor_projected_warm",
+      "imu": {
+        "rate_hz": 500.0,
+        "accel_noise_density": 0.03,
+        "gyro_noise_density": 0.002,
+        "accel_bias": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "gyro_bias": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "accel_bias_rw": 0.0002,
+        "gyro_bias_rw": 2e-05,
+        "latency_s": 0.0,
+        "dropout_prob": 0.0,
+        "accel_clip": 100.0,
+        "gyro_clip": 50.0
+      },
+      "gnss": {
+        "rate_hz": 10.0,
+        "pos_sigma": 0.8,
+        "vel_sigma": 0.15,
+        "pos_bias": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "vel_bias": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "latency_s": 0.12,
+        "dropout_prob": 0.0,
+        "outage_windows": []
+      },
+      "barometer": {
+        "enabled": true,
+        "rate_hz": 50.0,
+        "sigma": 0.25,
+        "bias": 0.0,
+        "latency_s": 0.02,
+        "dropout_prob": 0.0
+      },
+      "magnetometer": {
+        "enabled": true,
+        "rate_hz": 100.0,
+        "sigma": 0.04,
+        "world_field": [
+          20.0,
+          0.0,
+          40.0
+        ],
+        "bias": [
+          0,
+          0,
+          0
+        ],
+        "latency_s": 0.01,
+        "dropout_prob": 0.0
+      },
+      "rpm": {
+        "enabled": true,
+        "rate_hz": 500.0,
+        "sigma": 8.0,
+        "bias": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "latency_s": 0.004,
+        "dropout_prob": 0.0
+      },
+      "estimator": {
+        "history_s": 2.0,
+        "gnss_pos_sigma": 0.8,
+        "gnss_vel_sigma": 0.15,
+        "baro_sigma": 0.25,
+        "mag_sigma": 0.04,
+        "initial_position_sigma": 0.5,
+        "initial_velocity_sigma": 0.2,
+        "initial_attitude_deg": 1.0,
+        "estimate_baro_bias": true,
+        "baro_bias_tau_s": 1.0,
+        "baro_gnss_max_age_s": 0.25,
+        "initialize_baro_bias": true,
+        "preflight_baro_samples": 100,
+        "trace_updates": false,
+        "preflight_baro_rng": "independent",
+        "kind": "joint_baro",
+        "baro_bias_rw_density_m_sqrt_s": 0.03,
+        "navigation_prehistory_s": 30.0
+      },
+      "rotor_observer": {
+        "source": "telemetry_predictor",
+        "tau_s": 0.02,
+        "motor_tau_s": 0.02,
+        "history_s": 0.5,
+        "max_age_s": 0.05,
+        "prehistory_s": 0.1
+      }
+    },
+    "tuning_seeds": {
+      "tune2_gust_lateral_p7_V14": 2001,
+      "tune2_gust_lateral_m13_V26": 2002,
+      "tune2_gust_vertical_p3.5_V14": 2007,
+      "tune2_gust_vertical_m6.5_V26": 2008,
+      "tune4_gust_lateral_p13_V83": 2019,
+      "tune4_gust_lateral_m7_V85": 2020,
+      "tune4_gust_vertical_p6.5_V83": 2021,
+      "tune4_gust_vertical_m3.5_V85": 2022,
+      "tune4_cruise_V83": 2023,
+      "tune4_ramp_accel_V17_70_rho0.8": 2025,
+      "tune4_ramp_brake_V80_25_rho1.2": 2026,
+      "tune4_ramp_accel_V0_26_rho1.2": 2027,
+      "tune4_ramp_accel_V0_83_rho0.8": 2028,
+      "tune4_cruise_V83__state_delay_5ms": 2029,
+      "tune4_cruise_V83__mass_1.15": 2030,
+      "tune3_step_altitude_p0.7_V0": 2011,
+      "tune3_step_altitude_p1.3_V0": 2012,
+      "tune3_step_altitude_p0.7_V14": 2013,
+      "tune3_step_altitude_p1.3_V14": 2014,
+      "tune3_step_speed_p0.7_V0": 2015,
+      "tune3_step_speed_p1.3_V0": 2016,
+      "tune3_step_speed_p0.7_V14": 2017,
+      "tune3_step_speed_p1.3_V14": 2018
+    }
+  }
+}
