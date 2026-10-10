@@ -267,12 +267,18 @@ if ($passed) {
     Note 'workers_1.2GiB' (Get-Workers '1.2')
     Note 'workers_2.0GiB' (Get-Workers '2.0')
 
+    # The two sensor references pin the tune-final-7 runtime source. tune8 changes one file that these
+    # checks do not execute (control/arena_tune.py), so they run through tune8_sensor_reproduce.py: it
+    # refuses any other source difference and then does the unchanged numeric comparison.
+    $reproTool = Join-Path $HOME 'tune8_sensor_reproduce.py'
+    try { Invoke-WebRequest -Uri "$Raw/tune8_sensor_reproduce.py" -OutFile $reproTool -UseBasicParsing } catch { }
+    if (-not (Test-Path $reproTool)) { Stop-With 'could not download tune8_sensor_reproduce.py - check the network and run again' }
     $repro = @{}
     foreach ($pair in @(@('repro_projected', ''), @('repro_legacy', 'scripts\data\sensor_legacy_reproduction_tune7.json'))) {
         $name = $pair[0]; $ref = $pair[1]
         Say "running $name (about 2-3 min)"
         $dir = Join-Path $out $name
-        $argList = @('scripts\sensor_reproduce.py', '--output', $dir)
+        $argList = @($reproTool, '--root', $Fds, '--output', $dir)
         if ($ref) { $argList += @('--reference', $ref) }
         $t = Measure-Command { & $Vpy @argList *> (Join-Path $out "$name.txt") }
         $ok = $false; $bit = 'n/a'

@@ -52,6 +52,7 @@ irm https://raw.githubusercontent.com/KYUHYUNKANG03/fastdrone_kh/tune8/school/tu
 스크립트가 하는 일:
 1. 새 폴더 `$HOME\fds8`에 코드를 받는다. **tune7 폴더 `$HOME\fds`(튜닝 기록·본 실험 결과)는 건드리지 않는다.**
 2. 점검 약 15분: 환경, 센서 기준 2개, tune7 설정의 V13 튜닝 경로 재현(학교 Windows 값과 비트 일치), 고아 작업자.
+   센서 기준 2개는 tune-final-7 코드 해시에 묶여 있어서 `school/tune8_sensor_reproduce.py`로 돌린다 — 바뀐 파일이 `control/arena_tune.py` 하나뿐인지 확인한 뒤 수치 비교는 원래대로 한다.
 3. 통과하면 튜닝을 숨은 창으로 시작한다. 창을 닫아도 계속 돈다.
 4. 제어기마다 감시 프로세스가 PC가 잠들지 않게 하고, 튜닝이 끝나면 **본 실험 전 관문**을 돌린다.
 
