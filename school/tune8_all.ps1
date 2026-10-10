@@ -353,6 +353,9 @@ foreach ($C in $List) {
         if ($Light -contains $C) { $w = [math]::Min($w, 2) }
         else { $w = [math]::Max(1, $w - 2 * $lightHere.Count) }
     } elseif ($Workers -gt 0) { $w = $Workers }
+    # Measured on PC-61 (2026-10-10): an M17 worker holds about 3.7 GiB from the start, not the 2.0 GiB assumed
+    # above. Three of them do not fit in 16 GiB next to Windows, so M17 never gets more than 2 unless -Workers says so.
+    if (($C -eq 'M17') -and ($Workers -le 0)) { $w = [math]::Min($w, 2) }
     $plan[$C] = [math]::Max(1, $w)
 }
 

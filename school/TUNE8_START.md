@@ -58,6 +58,8 @@ irm https://raw.githubusercontent.com/KYUHYUNKANG03/fastdrone_kh/tune8/school/tu
 
 재부팅·로그오프로 멈췄으면 같은 한 줄을 다시 붙여 넣는다. 끝난 평가는 건너뛰고 이어 간다.
 
+M17 작업자는 시작부터 하나에 약 3.7 GiB를 쓴다(PC-61 실측, 스크립트 가정은 2.0 GiB). 16 GiB PC에서 3개는 들어가지 않으므로 스크립트가 M17을 2개로 제한한다.
+
 ## 진행 확인
 
 ```powershell
