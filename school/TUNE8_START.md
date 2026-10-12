@@ -103,3 +103,21 @@ tar -a -c -f "$HOME\tune8_$env:COMPUTERNAME.zip" -C $HOME\fds8 results/arena/tun
 - 본 실험 설정(spec)과 시드. 이 개정은 본 실험 결과를 본 뒤에 나왔으므로 새 시드 구간으로 돌리는 것이 깨끗하다.
 - 60회 예산은 M17 일정에 맞춘 값이다. I-4에 따라 다섯 제어기 모두 같은 예산이어야 한다.
 - 초기값을 새 집합으로 미리 돌려 본 결과(리눅스 진단 환경): V13은 23개 전부 통과(목적함수 0.348), GSLQR은 정지 출발 가속 2개만 실패(87.4), CPID는 설계 영역(0~20 m/s) 밖 13개 실패(565.4). 그대로 둔 12개 시나리오의 V13 점수는 학교 tune7 기록과 1e-12 안에서 같다. F13도 23개 전부 통과(0.314). M17은 한 평가가 길어 사전 확인 없이 시작한다.
+
+## 본 실험 (main8)
+
+관문을 통과한 제어기부터 PC마다 따로 시작한다. tune7 본 실험(main7)과 같은 겹치기 실행이다 — 시행 하나는
+(시나리오, 제어기, 시드) 단위로 독립이라 PC마다 자기 제어기만 돌리고 나중에 합친다.
+
+```powershell
+irm "https://raw.githubusercontent.com/KYUHYUNKANG03/fastdrone_kh/tune8/school/main8_chain.ps1" -OutFile $HOME\main8_chain.ps1; powershell -NoProfile -ExecutionPolicy Bypass -File $HOME\main8_chain.ps1 -Controllers F13 -Topic <ntfy 주제>
+```
+
+`-Controllers`는 PC-61 `M17`, PC-62 `F13`, PC-63 `V13,CPID`, PC-64 `GSLQR`.
+
+- 튜닝이 60회에 끝날 때까지 기다리고(튜닝을 새로 시작하지는 않는다), 관문 결과를 확인한 뒤 시작한다.
+  관문이 FAIL이면 그 PC는 본 실험을 시작하지 않고 멈춘다.
+- 설정은 `school/main8_make_spec.py`가 만든다: 기준 설정 `configs/arena_tune8.json`, 기록 `tune8_final`,
+  시드 1020~1039(사다리 1020~1029). tune7 본 실험이 쓴 1000~1019는 다시 쓰지 않는다.
+- 시나리오 구성은 main7과 같다(V_H 85, 섭동 표, 돌풍, 임무, V13 사다리). 시행 수도 같다(V13+CPID 6810, 나머지 2280).
+- 결과는 `fds8\results\main8\<PC>_<제어기>`. M17은 작업자 2개로 제한한다.
