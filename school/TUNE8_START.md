@@ -121,3 +121,18 @@ irm "https://raw.githubusercontent.com/KYUHYUNKANG03/fastdrone_kh/tune8/school/m
   시드 1020~1039(사다리 1020~1029). tune7 본 실험이 쓴 1000~1019는 다시 쓰지 않는다.
 - 시나리오 구성은 main7과 같다(V_H 85, 섭동 표, 돌풍, 임무, V13 사다리). 시행 수도 같다(V13+CPID 6810, 나머지 2280).
 - 결과는 `fds8\results\main8\<PC>_<제어기>`. M17은 작업자 2개로 제한한다.
+
+### 한 제어기를 여러 PC에 나눠 돌리기
+
+`-Shards`(전체 조각 수)와 `-Index`(이 PC가 맡을 조각)를 주면 된다. 모든 PC가 같은 설정과 같은 조각 파일을
+만들고(둘 다 결정적이다) 자기 조각만 돌린 뒤, 결과 폴더를 나중에 합친다(`control.main_distributed merge`).
+
+```powershell
+irm "https://raw.githubusercontent.com/KYUHYUNKANG03/fastdrone_kh/tune8/school/main8_chain.ps1" -OutFile $HOME\main8_chain.ps1; powershell -NoProfile -ExecutionPolicy Bypass -File $HOME\main8_chain.ps1 -Controllers M17 -Shards 12 -Index 0,1 -Topic <ntfy 주제>
+```
+
+- 튜닝한 PC(M17은 PC-61)가 `-Index 0,1`, 나머지 PC가 `2,3` / `4,5` / ... 를 맡는다. 같은 번호를 두 PC가 맡으면 안 된다.
+- 새 PC는 처음에 fds8 설치와 점검(약 15분)을 스스로 한 뒤, 튜닝 기록이 들어올 때까지 기다린다.
+- 튜닝 기록(`<제어기>.record.json`, `<제어기>.gate.json`)을 찾는 곳: 바탕화면, 다운로드, USB 등 드라이브 맨 위,
+  GitHub `tune8` 브랜치의 `records/`. 튜닝한 PC는 관문을 통과하면 이 두 파일을 ntfy 알림으로 보낸다.
+- 들어온 기록은 쓰기 전에 검사한다: 60회 완료, `arena_tune8` 설정, 그 기록으로 돈 관문 PASS.
