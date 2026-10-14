@@ -8,6 +8,7 @@
 # B. One controller split over several PCs (-Shards = total pieces, -Index = the pieces this PC runs):
 #   tuning PC : ... -Controllers M17 -Shards 12 -Index 0,1 -Topic <ntfy topic>
 #   other PCs : ... -Controllers M17 -Shards 12 -Index 2,3 -Topic <ntfy topic>    (4,5 / 6,7 / 8,9 / 10,11)
+#   add -Queue on a PC that is still running another main8 run: it waits until that run is done, then starts
 #   Every PC makes the same spec and the same shards file (both are deterministic), runs only its indices,
 #   and writes to its own folder; the folders are merged afterwards (control.main_distributed merge).
 #   A PC that did not tune the controller needs <C>.record.json (and <C>.gate.json if available) from the
@@ -32,6 +33,7 @@ param(
     [int]$Workers = 0,
     [int]$Shards = 0,
     [string]$Index = '',
+    [switch]$Queue,
     [int]$PollSeconds = 300
 )
 
@@ -99,6 +101,7 @@ if (-not $Run) {
     $argList = @('-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', $PSCommandPath, '-Run', '-Controllers', ($Controllers -join ','), '-PollSeconds', "$PollSeconds", '-Workers', "$Workers", '-Shards', "$Shards")
     if ($Split) { $argList += @('-Index', ($RunIdx -join ',')) }
     if ($Topic) { $argList += @('-Topic', $Topic) }
+    if ($Queue) { $argList += '-Queue' }
     Start-Process powershell -WindowStyle Hidden -ArgumentList $argList
     Say "main8 chain started in the background for $Tag on $Pc. Log: $Work\chain_$LogTag.log. You can close this window."
     exit 0
@@ -110,6 +113,31 @@ try {
     Add-Type -Namespace Main8 -Name Power -MemberDefinition '[DllImport("kernel32.dll")] public static extern uint SetThreadExecutionState(uint flags);'
     [Main8.Power]::SetThreadExecutionState([uint32]2147483649) | Out-Null
 } catch { Say "could not set keep-awake: $($_.Exception.Message)" }
+
+# ---------------- queued: wait until no other main8 chain, shard worker or tuning runs on this PC ----------------
+# (-Queue) e.g. PC-62 takes M17 pieces while its F13 main8 is still running; starting both at once would
+# oversubscribe 8 cores and 16 GB. Nothing is set up or checked until the PC is free.
+if ($Queue) {
+    $mine = "*-Controllers $($Controllers -join ',') *"
+    $noted = $false
+    while ($true) {
+        $busy = @(Get-CimInstance Win32_Process | Where-Object {
+            $cl = $_.CommandLine
+            $cl -and $_.ProcessId -ne $PID -and (
+                ($cl -like '*main8_chain.ps1*-Run*' -and $cl -notlike $mine) -or
+                ($cl -like '*main_distributed*run-shard*') -or
+                ($cl -like '*control.arena_tune *'))
+        })
+        if ($busy.Count -eq 0) { break }
+        if (-not $noted) {
+            Say "queued: $($busy.Count) other main8/tuning processes are running on this PC - starting when they finish"
+            Send-Note 'queued - starts by itself when the main8 run already on this PC finishes'
+            $noted = $true
+        }
+        Start-Sleep -Seconds $PollSeconds
+    }
+    if ($noted) { Say 'this PC is free now - starting' }
+}
 
 # ---------------- 0. fds8 set up and checked (quick when already done) ----------------
 $TuneAll = Join-Path $HOME 'tune8_all.ps1'
