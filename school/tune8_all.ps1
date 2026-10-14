@@ -40,6 +40,10 @@ $WindowsEnvObjective = '0.4628760206058794'
 $RepoUrl = 'https://github.com/KYUHYUNKANG03/fastdrone_kh.git'
 $Raw = 'https://raw.githubusercontent.com/KYUHYUNKANG03/fastdrone_kh/tune8/school'
 $PyUrl = 'https://www.python.org/ftp/python/3.13.7/python-3.13.7-amd64.exe'
+# Portable git for a PC without Git for Windows: unzipped into $HOME\mingit, no installer, no admin rights.
+$MinGitUrl = 'https://github.com/git-for-windows/git/releases/download/v2.51.0.windows.1/MinGit-2.51.0-64-bit.zip'
+$MinGitSha = 'C2C955A21FA99889D83F485F24FA5D9A38FFFC2D509D4022385510E11C26B250'
+$MinGitDir = Join-Path $HOME 'mingit'
 $Fds = Join-Path $HOME 'fds8'
 $Vpy = Join-Path $Fds '.venv\Scripts\python.exe'
 $Config = 'configs/arena_tune8.json'
@@ -50,6 +54,8 @@ $Light = @('GSLQR', 'CPID')
 $Gib = @{ M17 = '2.0'; F13 = '1.2'; V13 = '0.6'; GSLQR = '0.6'; CPID = '0.6' }
 
 try { [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12 } catch { }
+# Windows PowerShell 5.1 downloads and unzips many times slower while it draws a progress bar
+$ProgressPreference = 'SilentlyContinue'
 
 function Say([string]$Text) { Write-Host ("[{0}] {1}" -f (Get-Date -Format 'HH:mm:ss'), $Text) }
 function Send-Note([string]$Message) {
@@ -156,7 +162,28 @@ if ($Watch) {
 Say "tune8_all on $env:COMPUTERNAME"
 
 # ---------------- 1. git and Python 3.13 ----------------
-if (-not (Get-Command git -ErrorAction SilentlyContinue)) { Stop-With 'git not found - install Git for Windows (https://git-scm.com/download/win) and run this line again' }
+function Use-Git {
+    if (Get-Command git -ErrorAction SilentlyContinue) { return $true }
+    $exe = Join-Path $MinGitDir 'cmd\git.exe'
+    if (-not (Test-Path $exe)) {
+        Say "git not found - unpacking portable MinGit 2.51.0 into $MinGitDir (about 40 MB, 1-2 min)"
+        $zip = Join-Path $HOME 'MinGit-2.51.0-64-bit.zip'
+        try { Invoke-WebRequest -Uri $MinGitUrl -OutFile $zip -UseBasicParsing } catch { Say "MinGit download failed: $($_.Exception.Message)"; return $false }
+        if ((Get-FileHash $zip -Algorithm SHA256).Hash -ne $MinGitSha) {
+            Say 'MinGit download has an unexpected SHA256 - not using it'
+            Remove-Item $zip -Force -ErrorAction SilentlyContinue
+            return $false
+        }
+        try { Expand-Archive -Path $zip -DestinationPath $MinGitDir -Force } catch { Say "MinGit unzip failed: $($_.Exception.Message)"; return $false }
+        Remove-Item $zip -Force -ErrorAction SilentlyContinue
+    }
+    if (-not (Test-Path $exe)) { return $false }
+    # this process and the processes it starts; main8_chain.ps1 adds the same folder for itself
+    $env:Path = (Join-Path $MinGitDir 'cmd') + ';' + $env:Path
+    return [bool](Get-Command git -ErrorAction SilentlyContinue)
+}
+if (-not (Use-Git)) { Stop-With 'git not found and portable MinGit could not be set up - install Git for Windows (https://git-scm.com/download/win) and run this line again' }
+Say "git: $((Get-Command git).Source)"
 
 function Find-Py313 {
     $candidates = @(
@@ -183,9 +210,10 @@ if (-not (Test-Path $Vpy)) {
         Say 'Python 3.13 not found - installing 3.13.7 for this user (about 1-2 min)'
         $installer = Join-Path $HOME 'python-3.13.7-amd64.exe'
         try { Invoke-WebRequest -Uri $PyUrl -OutFile $installer -UseBasicParsing } catch { Stop-With "Python download failed: $($_.Exception.Message)" }
-        Start-Process $installer -ArgumentList '/quiet', 'InstallAllUsers=0', 'PrependPath=0', 'Include_launcher=1', 'Include_test=0' -Wait
+        # no py launcher: an all-users launcher needs admin rights, and this script finds python.exe by path
+        Start-Process $installer -ArgumentList '/quiet', 'InstallAllUsers=0', 'PrependPath=0', 'Include_launcher=0', 'InstallLauncherAllUsers=0', 'Include_test=0' -Wait
         $py313 = Find-Py313
-        if (-not $py313) { Stop-With 'Python 3.13 install did not complete - install python 3.13.7 from python.org (Install Now) and run again' }
+        if (-not $py313) { Stop-With 'Python 3.13 install did not complete - install python 3.13.7 from python.org (untick 'Use admin privileges', Install Now) and run again' }
     }
     Say "Python 3.13: $py313"
 }

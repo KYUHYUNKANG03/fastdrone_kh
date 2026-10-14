@@ -121,6 +121,13 @@ if ($Topic) { $setupArgs += @('-Topic', $Topic) }
 & powershell @setupArgs *> (Join-Path $Work "setup_$LogTag.log")
 if ($LASTEXITCODE -ne 0) { Stop-With "fds8 setup/checks failed - see $Work\setup_$LogTag.log" }
 if (-not (Test-Path $Vpy)) { Stop-With 'fds8\.venv not found after setup' }
+# a PC without Git for Windows uses the portable MinGit that tune8_all.ps1 unpacked; the shard workers
+# record the git revision, and merge refuses rows without it
+if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
+    $minGit = Join-Path $HOME 'mingit\cmd'
+    if (Test-Path (Join-Path $minGit 'git.exe')) { $env:Path = "$minGit;$env:Path" }
+    else { Stop-With 'git not found after setup' }
+}
 
 Set-Location $Fds
 $head = (git rev-parse HEAD).Trim()

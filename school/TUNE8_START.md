@@ -136,3 +136,17 @@ irm "https://raw.githubusercontent.com/KYUHYUNKANG03/fastdrone_kh/tune8/school/m
 - 튜닝 기록(`<제어기>.record.json`, `<제어기>.gate.json`)을 찾는 곳: 바탕화면, 다운로드, USB 등 드라이브 맨 위,
   GitHub `tune8` 브랜치의 `records/`. 튜닝한 PC는 관문을 통과하면 이 두 파일을 ntfy 알림으로 보낸다.
 - 들어온 기록은 쓰기 전에 검사한다: 60회 완료, `arena_tune8` 설정, 그 기록으로 돈 관문 PASS.
+
+### 아무것도 없는 새 PC
+
+Git과 Python이 없는 PC에서도 같은 한 줄이면 된다. 관리자 권한은 필요 없다.
+- git이 없으면 MinGit 2.51.0(설치 없는 압축본, SHA256 고정)을 `$HOME\mingit`에 풀어 쓴다.
+- Python 3.13이 없으면 3.13.7을 이 사용자에게만 조용히 설치한다(py 런처는 설치하지 않는다).
+- 그다음 venv, 패키지, 점검(약 15분)은 다른 PC와 같다. 설치까지 합쳐 30분쯤 걸린다.
+
+M17 작업자는 하나에 약 3.7 GiB를 쓰므로 메모리 16 GB PC여야 한다(작업 관리자 > 성능 > 메모리).
+
+### M17 3대 분할 (2026-10-14)
+
+`-Shards 6`으로 PC-61 `-Index 0,1`, PC-59 `-Index 2,3`, PC-60 `-Index 4,5`. 튜닝 실측으로 잡은 추정은
+모든 시행이 끝까지 돌 때 4.3~5.3일이다. 일찍 멈추는 시행이 있으면 그만큼 짧아진다.
