@@ -9,3 +9,6 @@
 /results/**/*.xml -whitespace
 # Downloaded Windows evidence is hashed verbatim, including its CRLF bytes.
 /results/windows_sensor_v13/** -text -whitespace
+# Tuning records copied from school PCs for split main runs: their SHA256 is pinned by the gate and the
+# main spec, so keep the Windows bytes (CRLF) exactly as written.
+/records/*.json -text -whitespace
