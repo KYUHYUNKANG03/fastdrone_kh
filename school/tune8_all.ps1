@@ -213,7 +213,7 @@ if (-not (Test-Path $Vpy)) {
         # no py launcher: an all-users launcher needs admin rights, and this script finds python.exe by path
         Start-Process $installer -ArgumentList '/quiet', 'InstallAllUsers=0', 'PrependPath=0', 'Include_launcher=0', 'InstallLauncherAllUsers=0', 'Include_test=0' -Wait
         $py313 = Find-Py313
-        if (-not $py313) { Stop-With 'Python 3.13 install did not complete - install python 3.13.7 from python.org (untick 'Use admin privileges', Install Now) and run again' }
+        if (-not $py313) { Stop-With 'Python 3.13 install did not complete - install python 3.13.7 from python.org (untick "Use admin privileges", Install Now) and run again' }
     }
     Say "Python 3.13: $py313"
 }
