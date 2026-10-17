@@ -155,3 +155,34 @@ M17 작업자는 하나에 약 3.7 GiB를 쓰므로 메모리 16 GB PC여야 한
   점검에서 멈췄다. AVX-512가 있는 CPU라 numpy·OpenBLAS의 계산 경로가 다른 것으로 보인다. M17은 i7-10700에서만 돌린다.
 - PC-62는 F13 본실험이 아직 돌고 있어서 `-Queue`를 붙인다. 이 PC의 다른 main8 체인·조각 작업자·튜닝이 모두 끝날
   때까지 아무것도 하지 않고 기다렸다가 시작한다(5분마다 확인, 대기 시작 때 ntfy 알림 한 번).
+
+## 센서 실험 (sensor8, PC-63, 2026-10-17)
+
+tune8 게인을 그대로 두고 센서 조건만 하나씩 바꿔 V13·F13·GSLQR(V_L 시나리오는 CPID 포함)을 비교한다.
+PC-63 한 대에서 돈다. PC-63의 main8(V13·CPID)이 쓴 fds8를 그대로 쓰고, F13·GSLQR 기록은 GitHub `records/`에서 받는다.
+
+```powershell
+irm "https://raw.githubusercontent.com/KYUHYUNKANG03/fastdrone_kh/tune8/school/sensor8_chain.ps1" -OutFile $HOME\sensor8_chain.ps1; powershell -NoProfile -ExecutionPolicy Bypass -File $HOME\sensor8_chain.ps1 -Topic <ntfy 주제>
+```
+
+중간 결과(언제든, 돌고 있는 실험은 건드리지 않는다): 바탕화면에 `sensor8_PC-63_rows_<날짜>.zip`이 생긴다.
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File $HOME\sensor8_chain.ps1 -Collect
+```
+
+- 무엇을 돌리나(`school/sensor8_run.py`에 고정): 시나리오 5개(V_H 횡돌풍 +10, V_H 수직돌풍 −5, V_H 가속 ρ1,
+  V_H 감속 ρ1, V_L 횡돌풍 +10)와 모델 오차 2개(V_H 순항 moment_25, mass_1.3), 시드 1020~1039, 조건 27개.
+  - 0순위: truth(센서 없음, 시드 없이 1회), nominal(main8 프로파일 그대로 — main8 재현 확인 겸 기준선)
+  - 1순위(INDI 경로): IMU 지연 2/5/10 ms, rpm 지연 10/20/40 ms, rpm 100 Hz, rpm 끊김 200 ms, gyro 잡음 ×3/×5,
+    gyro 진동 150 Hz, rpm 잡음 ×4
+  - 2순위(항법): GNSS 잡음 ×3, GNSS 지연 0.3 s, GNSS 끊김 3 s, GNSS 높이 튐 3 m, 기압계 잡음 ×4, 기압계 드리프트, 초기 추정 오차
+  - 3순위: degraded(중간 수준 묶음), stress(`configs/sensors/stress.json`의 센서 값)
+  - 4순위: 모델 오차 시나리오 × {기준, gyro ×3, rpm 20 ms, IMU 2 ms}
+- 추정기 설정(ESKF 공분산 등)은 기준 프로파일 그대로다. 센서가 가정보다 나빠졌을 때의 민감도를 본다.
+- 7,542 시행, 작업자 7개 기준 main8 실측으로 약 3일, 여유를 두면 4일. 조건 순서대로 돌고, 레인마다 조건 하나의
+  시행을 고르게 나눠 받아서 중간에 끊어도 끝난 조건은 제어기 비교가 완결돼 있다. 조건 하나가 끝날 때마다 ntfy 알림.
+- 결과는 `fds8\results\sensor8\PC-63\lane*\trials\*.json`(시행마다 한 줄 요약 + 추정 오차), 그림용 궤적은
+  시드 1020과 truth만 `traces\*.npz`(zip에는 안 넣는다, 필요하면 `-Collect -Traces`).
+- 끝나면 `summary.md`를 ntfy로 보내고 zip을 바탕화면에 만든다. 재부팅·로그오프 뒤에는 같은 한 줄로 이어 돈다.
+- 다른 main8·튜닝이 돌고 있으면 시작하지 않는다(`-Queue`를 붙이면 끝날 때까지 기다렸다 시작).
