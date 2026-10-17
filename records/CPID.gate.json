@@ -1,0 +1,60 @@
+{
+ "schema": "tune8-gate/1",
+ "controller": "CPID",
+ "gate_pass": true,
+ "gains": {
+  "source": "tuned",
+  "record": "C:\\Users\\USER\\fds8\\results\\arena\\tuning\\tune8\\CPID.record.json",
+  "record_sha256": "61c9c555f798adac356fc8640faf8a4c1948b0e9606f33d82610aa3d9ee9ff2a",
+  "tuning_git_revision": "f5dfa079adbaccce13d6009b50ae296f5659082b",
+  "best_values": {
+   "Kp_vel": 8.0,
+   "Ki_vel": 0.15,
+   "Kp_z": 4.0,
+   "Kd_z": 4.0,
+   "Ki_z": 0.5,
+   "Kp_att": 1.0,
+   "Kd_att": 1.0
+  },
+  "best_objective": 565.3469833113357,
+  "prior_objective": 565.3780831397859,
+  "budget": 60
+ },
+ "config": "configs/arena_tune8.json",
+ "config_sha256": "f0bb414658361f68e29b838425c0485074c6c32b339c83921162485dc8118767",
+ "rows": [
+  {
+   "id": "gate_cruise_VL",
+   "sensor_seed": 2901,
+   "required": true,
+   "skipped": false,
+   "tracking_pass": true,
+   "stop_reason": null,
+   "failure_reasons": [],
+   "rmse_velocity": 0.06699576380733846,
+   "rmse_z": 0.07226702402400463,
+   "max_velocity_error": 0.12386266707901228,
+   "max_z_error": 0.14472777514498247,
+   "max_omega": 0.6798278117394029,
+   "motor_saturation_fraction": 0.0,
+   "simulated_seconds": 15.0,
+   "trajectory_sha256": "596c237691f4db9d8e3a5b95cefe93e573f5608a62e2ffad446e46fdb817f813"
+  },
+  {
+   "id": "gate_cruise_VH",
+   "sensor_seed": 2902,
+   "required": true,
+   "skipped": true,
+   "skip_reason": "outside design region 0-20 m/s (scenario reaches 85 m/s)"
+  },
+  {
+   "id": "gate_cruise_VH__state_delay_5ms",
+   "sensor_seed": 2903,
+   "required": false,
+   "skipped": true,
+   "skip_reason": "outside design region 0-20 m/s (scenario reaches 85 m/s)"
+  }
+ ],
+ "note": "Required rows: nominal cruise at V_L and V_H (tracking_pass). Informational rows are recorded only. Seeds 2901-2903 are tuning-range seeds unused by tuning scenarios; no main-test seed is used. The gate reports pass/fail and selects nothing.",
+ "created_utc": "2026-10-10T19:25:29.671205+00:00"
+}

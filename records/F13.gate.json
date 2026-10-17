@@ -1,0 +1,81 @@
+{
+ "schema": "tune8-gate/1",
+ "controller": "F13",
+ "gate_pass": true,
+ "gains": {
+  "source": "tuned",
+  "record": "C:\\Users\\space\\fds8\\results\\arena\\tuning\\tune8\\F13.record.json",
+  "record_sha256": "3d553662c5be20258a4672dd6f9851270f51b0e9c934733959c706f9efe29553",
+  "tuning_git_revision": "f5dfa079adbaccce13d6009b50ae296f5659082b",
+  "best_values": {
+   "w_v": 10.0,
+   "Q_z": 20.0,
+   "w_omega": 0.25,
+   "r_dev": 0.02,
+   "r_rate": 0.05,
+   "terminal": 5.0
+  },
+  "best_objective": 0.2528096258965768,
+  "prior_objective": 0.3085331025312424,
+  "budget": 60
+ },
+ "config": "configs/arena_tune8.json",
+ "config_sha256": "f0bb414658361f68e29b838425c0485074c6c32b339c83921162485dc8118767",
+ "rows": [
+  {
+   "id": "gate_cruise_VL",
+   "sensor_seed": 2901,
+   "required": true,
+   "skipped": false,
+   "tracking_pass": true,
+   "stop_reason": null,
+   "failure_reasons": [],
+   "rmse_velocity": 0.07082577913227284,
+   "rmse_z": 0.06516446184292284,
+   "max_velocity_error": 0.12466625056529272,
+   "max_z_error": 0.13418560091312415,
+   "max_omega": 0.2747949559622651,
+   "motor_saturation_fraction": 0.0,
+   "simulated_seconds": 15.0,
+   "trajectory_sha256": "b3bbdc15f66c5b0f1bc1877d45c55a52bb1b37e2f3ef79b9e8cdb1c9ca614517"
+  },
+  {
+   "id": "gate_cruise_VH",
+   "sensor_seed": 2902,
+   "required": true,
+   "skipped": false,
+   "tracking_pass": true,
+   "stop_reason": null,
+   "failure_reasons": [],
+   "rmse_velocity": 0.08277409327279767,
+   "rmse_z": 0.06695606774697405,
+   "max_velocity_error": 0.17646285162706768,
+   "max_z_error": 0.14131123949897528,
+   "max_omega": 0.8215485569592066,
+   "motor_saturation_fraction": 6.666666666666667e-05,
+   "simulated_seconds": 15.0,
+   "trajectory_sha256": "525d5907eaa3305a47b64f48ef91114cc68803f3b52a70499176899a10705411"
+  },
+  {
+   "id": "gate_cruise_VH__state_delay_5ms",
+   "sensor_seed": 2903,
+   "required": false,
+   "skipped": false,
+   "tracking_pass": false,
+   "stop_reason": null,
+   "failure_reasons": [
+    "gust_not_recovered"
+   ],
+   "rmse_velocity": 0.11365301658897764,
+   "rmse_z": 0.09241325460532478,
+   "max_velocity_error": 0.2584782257272794,
+   "max_z_error": 0.15201515344194405,
+   "max_omega": 1.2916564556989012,
+   "motor_saturation_fraction": 0.00023333333333333333,
+   "simulated_seconds": 15.0,
+   "trajectory_sha256": "1dd2e22a4cb3b2e83d4ff7adfbccabe29076832ce908b88d380af82ba0aea929"
+  }
+ ],
+ "note": "Required rows: nominal cruise at V_L and V_H (tracking_pass). Informational rows are recorded only. Seeds 2901-2903 are tuning-range seeds unused by tuning scenarios; no main-test seed is used. The gate reports pass/fail and selects nothing.",
+ "created_utc": "2026-10-11T10:42:47.404375+00:00"
+}
