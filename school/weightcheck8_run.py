@@ -6,7 +6,8 @@ F13 -> V13-0 차이에는 인터페이스와 가중치가 섞여 있다. 상태 
   F13-w1     : F13 튜닝값 + w_omega 1.0(V13 값)
   V13-0-w025 : V13-0(A0, 피드백 없음, S0) + w_omega 0.25(F13 값)
   F13-sV     : F13 튜닝값 + 상태 가중치 전부 V13 값(w_v 5, w_omega 1, terminal 10)
-조건은 sensor8의 imu_latency_5ms, 시나리오 V_H 횡돌풍 +10 m/s, 시드 1020~1039. 기준 설정·기록·시나리오·시드·
+조건·시나리오 묶음은 GROUPS(우선순위 순): IMU 5 ms·명목 센서 x V_H 횡돌풍 +10 m/s·0->V_H 가속(rho 1), 시드 1020~1039.
+(첫 판 results/weightcheck8은 IMU 5 ms 횡돌풍의 F13-w1·V13-0-w025를 끝냈다 — 이 판은 그 둘을 다시 돌리지 않는다.) 기준 설정·기록·시나리오·시드·
 센서 프로파일·시행 함수와 판정은 sensor8/ablation8과 같다. 결과 폴더와 레인 규칙도 ablation8과 같다.
 
     python weightcheck8_run.py plan     --root <fds> --out <fds>/results/weightcheck8
@@ -33,9 +34,12 @@ VARIANTS = {
     'V13-0-w025': dict(label='V13', flags=V13_0, cost=dict(w_omega=0.25)),
     'F13-sV': dict(label='F13', flags=None, cost=dict(w_v=5.0, w_omega=1.0, terminal=10.0)),
 }
-GUST = 'main_gust_lateral_+10_V_H'
-COND = 'imu_latency_5ms'
-ORDER = ['F13-w1', 'V13-0-w025', 'F13-sV']     # 우선순위: 핵심 질문(F13에 V13의 각속도 가중치)부터
+GUST, ACCEL = 'main_gust_lateral_+10_V_H', 'main_ref_accel_VH_rho1'
+IMU5 = 'imu_latency_5ms'
+GROUPS = [(IMU5, ACCEL, 'F13-w1'), (IMU5, ACCEL, 'V13-0-w025'),
+          ('nominal', GUST, 'F13-w1'), ('nominal', GUST, 'V13-0-w025'),
+          ('nominal', ACCEL, 'F13-w1'), ('nominal', ACCEL, 'V13-0-w025'),
+          (IMU5, GUST, 'F13-sV')]
 
 
 def runner_sha256():
@@ -57,7 +61,7 @@ def setup(root):
         raise SystemExit(f'{s8.BASE}: hash {config_sha256(base)[:12]} is not the tune8 config')
     native = baseline_params()
     spec, pool = s8.scenario_dicts(root, base, native)
-    scen = [s for s in pool if s['id'] == GUST]
+    scen = [s for s in pool if s['id'] in (GUST, ACCEL)]
     tuned, used = tuned_overrides(base, root/s8.RUN_DIR, ['V13', 'F13'])
     configs, overrides = {}, {}
     for v, d in VARIANTS.items():
@@ -82,33 +86,37 @@ def build_plan(root):
     from control.validation_suite import source_hashes
     st = setup(root)
     nominal = resolve_feedback(st['base'])
-    cond = next(c for c in s8.CONDITIONS if c['name'] == COND)
-    profile = s8.apply_changes(nominal.profile, cond['changes'], root)
-    profile['name'] = f"{nominal.profile['name']}+{COND}"
-    profile = load_sensor_profile(profile)
-    condition = dict(name=COND, note=cond['note'], changes=cond['changes'], profile=profile,
-                     profile_sha256=resolve_feedback(st['base'], mode='sensors', profile=profile)
-                     .metadata['sensor_profile_sha256'])
+    conditions = []
+    for name in dict.fromkeys(c for c, _, _ in GROUPS):
+        cond = next(c for c in s8.CONDITIONS if c['name'] == name)
+        profile = s8.apply_changes(nominal.profile, cond['changes'], root)
+        if cond['changes']:
+            profile['name'] = f"{nominal.profile['name']}+{name}"
+        profile = load_sensor_profile(profile)
+        conditions.append(dict(name=name, note=cond['note'], changes=cond['changes'], profile=profile,
+                               profile_sha256=resolve_feedback(st['base'], mode='sensors', profile=profile)
+                               .metadata['sensor_profile_sha256']))
     trials = []
-    for order, v in enumerate(ORDER):
+    for order, (cname, sid, v) in enumerate(GROUPS):
         label = VARIANTS[v]['label']
-        reason = excluded_from(st['configs'][v], label, st['built'][GUST])
+        reason = excluded_from(st['configs'][v], label, st['built'][sid])
         if reason:
-            raise SystemExit(f'{v} excluded: {reason}')
+            raise SystemExit(f'{v} excluded from {sid}: {reason}')
         for seed in s8.SEEDS:
-            trials.append(dict(trial_id=f'{COND}/{GUST}/{v}/seed_{seed}', condition=COND, order=order,
-                               scenario_id=GUST, variant=v, controller=label, sensor_seed=seed,
-                               est_seconds=s8.EST[GUST][label]))
+            trials.append(dict(trial_id=f'{cname}/{sid}/{v}/seed_{seed}', condition=cname, order=order,
+                               scenario_id=sid, variant=v, controller=label, sensor_seed=seed,
+                               est_seconds=s8.EST[sid][label]))
     return dict(schema=PLAN_SCHEMA,
-                purpose='weightcheck8: swap state cost weights between F13 and V13-0 under IMU latency 5 ms '
-                        '(V_H lateral gust, seeds 1020-1039) to separate interface from cost-weight effects.',
+                purpose='weightcheck8: swap state cost weights between F13 and V13-0 (nominal and IMU latency 5 ms, '
+                        'V_H lateral gust and 0->V_H accel, seeds 1020-1039) to separate interface from cost-weight effects.',
+                groups=[dict(order=i, condition=c, scenario_id=s, variant=v) for i, (c, s, v) in enumerate(GROUPS)],
                 base_config=dict(path=s8.BASE, config_sha256=s8.BASE_SHA),
                 tuned=dict(run_dir=s8.RUN_DIR, records={k: s8.RECORDS[k] for k in ('V13', 'F13')},
                            values=st['tuned']),
                 variants=VARIANTS, cost_weights={v: st['overrides'][v][VARIANTS[v]['label']] for v in VARIANTS},
                 derived_config_sha256=st['config_sha'], seeds=s8.SEEDS, trace_seed=s8.TRACE_SEED,
                 source_sha256=source_hashes(), runner_sha256=runner_sha256(),
-                conditions=[condition], trials=trials)
+                conditions=conditions, trials=trials)
 
 
 def plan_path(out):
@@ -130,7 +138,7 @@ def cmd_plan(root, out):
     if path.exists() and path.read_text(encoding='utf-8') != text:
         raise SystemExit(f'{path} exists and differs - use a new output folder')
     s8.write_atomic(path, text)
-    for v in ORDER:
+    for v in VARIANTS:
         print(v, plan['cost_weights'][v])
     print(f"total {len(plan['trials'])} trials, plan sha256 {s8.sha256_file(path)}")
 
@@ -177,10 +185,10 @@ class Runner:
         self.st = st
         self.factories = {v: ArenaFactory(st['configs'][v], st['native'], overrides=st['overrides'][v])
                           for v in VARIANTS}
-        self.condition = plan['conditions'][0]
+        self.conditions = {c['name']: c for c in plan['conditions']}
         self.trials = {t['trial_id']: t for t in plan['trials']}
         self.source = plan['source_sha256']
-        self._trim = None
+        self._trim = {}
 
     def hashes(self, variant):
         label = VARIANTS[variant]['label']
@@ -197,10 +205,11 @@ class Runner:
         label = VARIANTS[v]['label']
         config = self.st['configs'][v]
         s = self.st['built'][trial['scenario_id']]
-        if self._trim is None:
-            self._trim = me.trim_status(self.st['native'], s)
-        status, detail = self._trim
-        row = dict(trial_id=trial['trial_id'], condition=COND, scenario_id=s.id, scenario_type=s.type,
+        cond = self.conditions[trial['condition']]
+        if s.id not in self._trim:
+            self._trim[s.id] = me.trim_status(self.st['native'], s)
+        status, detail = self._trim[s.id]
+        row = dict(trial_id=trial['trial_id'], condition=cond['name'], scenario_id=s.id, scenario_type=s.type,
                    controller=label, variant=v, cost_weights=self.plan['cost_weights'][v], case=s.cases[0],
                    window=list(s.window), sensor_seed=trial['sensor_seed'], **self.hashes(v),
                    trim_detail={f'{k:g}': d for k, d in detail.items()},
@@ -212,7 +221,7 @@ class Runner:
         paper = PaperCriteria(**config['paper_criteria'])
         try:
             metrics, result, log = suite_run(self.factories[v], label, s.profile, s.cases[0], limits,
-                                             feedback='sensors', sensor_profile=self.condition['profile'],
+                                             feedback='sensors', sensor_profile=cond['profile'],
                                              sensor_seed=trial['sensor_seed'])
             metrics.update(paper_evaluate(result, s.profile, paper, window=s.window, solve_log=log,
                                           n_max=self.st['native']['n_max']))
@@ -221,7 +230,7 @@ class Runner:
             result = None
         row.update(skipped=False, skip_reason=None, **metrics)
         row['estimation_error'] = s8.estimation_error(result)
-        if result is not None and row.get('sensor_profile_sha256') != self.condition['profile_sha256']:
+        if result is not None and row.get('sensor_profile_sha256') != cond['profile_sha256']:
             raise SystemExit(f"{trial['trial_id']}: sensor profile differs from the plan")
         return row, result
 
@@ -261,7 +270,7 @@ def cmd_run_lane(root, out, pc, index, only=None):
             row, result = runner.run_trial(trial)
         except Exception as exc:
             import traceback
-            row = dict(trial_id=trial_id, condition=COND, scenario_id=trial['scenario_id'],
+            row = dict(trial_id=trial_id, condition=trial['condition'], scenario_id=trial['scenario_id'],
                        controller=trial['controller'], variant=trial['variant'], sensor_seed=trial['sensor_seed'],
                        **runner.hashes(trial['variant']), skipped=False, skip_reason=None, passed=False,
                        tracking_pass=False, model_domain_valid=False, failure_reasons=['runner_exception'],
@@ -293,11 +302,11 @@ def cmd_summary(out, pc):
     plan, plan_sha = load_plan(out)
     rows = done_rows(out, pc)
     lines = [f'# weightcheck8 summary ({pc})', '', f'plan sha256 {plan_sha[:12]}, {len(rows)}/{len(plan["trials"])} done',
-             '', f'{COND}, {GUST}: tracking pass / done', '', '| variant | cost weights | pass |', '|---|---|---:|']
-    for v in ORDER:
-        got = [rows[t['trial_id']] for t in plan['trials'] if t['variant'] == v and t['trial_id'] in rows]
+             '', '| condition | scenario | variant | pass |', '|---|---|---|---:|']
+    for g in plan['groups']:
+        got = [rows[t['trial_id']] for t in plan['trials'] if t['order'] == g['order'] and t['trial_id'] in rows]
         cell = f"{sum(bool(r.get('tracking_pass')) for r in got)}/{len(got)}" if got else '-'
-        lines.append(f"| {v} | {plan['cost_weights'][v]['cost_weights']} | {cell} |")
+        lines.append(f"| {g['condition']} | {g['scenario_id'].replace('main_', '')} | {g['variant']} | {cell} |")
     folder = Path(out)/pc
     folder.mkdir(parents=True, exist_ok=True)
     s8.write_atomic(folder/'summary.md', '\n'.join(lines) + '\n')
