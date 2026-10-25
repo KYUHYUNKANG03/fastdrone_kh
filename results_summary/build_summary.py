@@ -54,7 +54,21 @@ COLS = ['experiment', 'trial_id', 'group', 'scenario_id', 'scenario_type', 'cont
         'failure_reasons', 'stop_reason', 'window_rmse_velocity', 'window_rmse_z', 'window_max_velocity_error',
         'window_max_z_error', 'window_max_omega', 'max_omega', 'motor_saturation_fraction', 'optimizer_calls',
         'optimizer_failures', 'simulated_seconds', 'wall_seconds', 'host', 'platform', 'git_revision',
-        'est_pos_rms_m', 'est_vel_rms_m_s', 'est_att_rms_deg', 'est_rate_rms_rad_s', 'trajectory_sha256']
+        'est_pos_rms_m', 'est_vel_rms_m_s', 'est_att_rms_deg', 'est_rate_rms_rad_s', 'mission_stop_phase',
+        'mission_brake_rmse_velocity', 'trajectory_sha256']
+
+MISSION_PHASES = [(3.0, '초기 호버'), (18.0, '가속'), (33.0, '순항'), (48.0, '감속'), (55.0, '최종 호버')]  # 누적 끝 시각(s)
+
+
+def mission_extra(r):
+    if r.get('scenario_type') != 'mission' or r.get('skipped'):
+        return '', None
+    stop = ''
+    if r.get('stop_reason'):
+        t = r.get('simulated_seconds') or 0.0
+        stop = next((name for end, name in MISSION_PHASES if t < end), MISSION_PHASES[-1][1])
+    brake = next((p.get('rmse_velocity') for p in (r.get('phases') or []) if p.get('name') == '감속'), None)
+    return stop, brake
 
 
 def group_of(name, r):
@@ -69,6 +83,7 @@ def flat(name, r):
     def e(k):
         return (ee.get(k) or {}).get('rms') if isinstance(ee, dict) else None
     reasons = r.get('failure_reasons') or []
+    stop_phase, brake_rmse = mission_extra(r)
     return dict(experiment=name, trial_id=r.get('trial_id'), group=group_of(name, r), scenario_id=r.get('scenario_id'),
                 scenario_type=r.get('scenario_type'), controller=r.get('controller'),
                 variant=r.get('variant') or r.get('controller'), sensor_seed=r.get('sensor_seed'),
@@ -84,7 +99,8 @@ def flat(name, r):
                 simulated_seconds=r.get('simulated_seconds'), wall_seconds=r.get('wall_seconds'),
                 host=m.get('hostname'), platform=m.get('system'), git_revision=r.get('git_revision'),
                 est_pos_rms_m=e('position_m'), est_vel_rms_m_s=e('velocity_m_s'), est_att_rms_deg=e('attitude_deg'),
-                est_rate_rms_rad_s=e('body_rate_rad_s'), trajectory_sha256=r.get('trajectory_sha256'))
+                est_rate_rms_rad_s=e('body_rate_rad_s'), mission_stop_phase=stop_phase,
+                mission_brake_rmse_velocity=brake_rmse, trajectory_sha256=r.get('trajectory_sha256'))
 
 
 def write_csv(path, rows):
@@ -216,6 +232,36 @@ def t_main8_numeric(rows):
                      f'{dom}/{npass(rs)}'])
     return md_table(['제어기', '추종 통과', '실패', 'NMPC 5회 연속 실패로 중단', '발산 중단',
                      'NMPC 호출 대비 실패율', 'V_H 시행 끝까지 진행', '통과 중 프로펠러 자료 범위 이탈'], body)
+
+
+def t_mission(rows):
+    body = []
+    for c in CTRL:
+        rs = ran([r for r in rows if r['controller'] == c and r['group'] == 'mission'])
+        if not rs:
+            continue
+        stops = defaultdict(int)
+        ended = []
+        for r in rs:
+            if r['tracking_pass']:
+                continue
+            if r['stop_reason']:
+                kind = 'NMPC 연속 실패로' if r['stop_reason'].startswith('5 consecutive optimizer') else (
+                    '발산으로' if r['stop_reason'].startswith('body-rate or altitude divergence') else r['stop_reason'][:20])
+                stops[f"{r['mission_stop_phase']} 구간에서 {kind} 중단"] += 1
+            else:
+                ended.append(r)
+        parts = [f'{k} {v}' for k, v in sorted(stops.items())]
+        if ended:
+            why = defaultdict(int)
+            for r in ended:
+                for x in r['failure_reasons'].split(';'):
+                    if x and x != 'propulsion_model_domain':
+                        why[x] += 1
+            parts.append(f"끝까지 진행했으나 판정 미달 {len(ended)} (" + ', '.join(f'{k} {v}' for k, v in sorted(why.items())) + ')')
+        br = [r['mission_brake_rmse_velocity'] for r in rs if r['mission_brake_rmse_velocity'] is not None]
+        body.append([c, f'{npass(rs)}/{len(rs)}', '; '.join(parts) or '–', f'{median(br):.2f}' if br else '–'])
+    return md_table(['제어기', '통과', '실패 내역', '감속 구간 속도 RMSE 중앙값 (m/s)'], body, left=1)
 
 
 def t_compute(F):
@@ -441,6 +487,7 @@ def main():
     plat, tot, up, down = t_platform(F['ablation8'], F['sensor8'])
     tables = dict(
         overview=t_overview(F), main8_groups=t_main8_groups(F['main8']), main8_rho=t_main8_rho(F['main8']),
+        mission=t_mission(F['main8']),
         main8_numeric=t_main8_numeric(F['main8']), compute=t_compute(F), sensor8_core=t_sensor8_core(F['sensor8']),
         sensor8_mismatch=t_sensor8_mismatch(F['sensor8']), sensor8_tests=t_sensor8_tests(F['sensor8']),
         estimation=t_estimation(F['sensor8']), ablation=t_ablation(F['ablation8'], F['sensor8']),
