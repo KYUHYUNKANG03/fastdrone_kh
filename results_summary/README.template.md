@@ -1,0 +1,151 @@
+# fast-drone 시뮬레이션 결과 종합 (2026-10, tune8 게인)
+
+85 m/s급 고속 쿼드로터(팀 기체 `light_rocket_v2_pack_forward`, 1.174 kg)에서 NMPC–INDI 결합 제어기와 비교 제어기를 시뮬레이션으로 비교한 결과를 한곳에 모았다. 이 README와 `tables/`, `data/`만 보면 사람이든 LLM이든 결과를 바로 읽을 수 있게 만들었다. 모든 표는 `build_summary.py`가 시행별 원자료(JSON)에서 다시 계산해 채운 값이다(손으로 옮긴 숫자 없음).
+
+> LLM에게 읽힐 때: 이 README 전체와 `tables/*.md`를 함께 주면 된다. 시행 단위 질문은 `data/*_trials.csv`(열 설명은 아래 "파일과 열" 절)로 답할 수 있다.
+
+## 1. 한눈에 보기
+
+- **예비 비교(main8, 5개 제어기)**: 어느 한 제어기도 모든 영역을 지배하지 않았다. M17(NMPC 단독)은 0→85 m/s 가속에 가장 강하지만 고강도 감속과 계산 비용에 약하다. GSLQR은 감속·돌풍·센서 열화에 강하지만 0→85 m/s 가속을 거의 못 한다. V13·F13(NMPC–INDI)은 그 중간이다.
+- **V13 대 F13 (같은 절차로 튜닝한 두 NMPC–INDI)**: 114개 시나리오의 추종 통과 수는 F13이 조금 많다(아래 표). 반면 V13은 NMPC 연속 실패로 인한 중단이 약 1/11, 같은 PC에서 계산 시간이 약 1/3.6이다.
+- **센서 조건(sensor8)**: IMU 지연 5 ms에서 85 m/s 횡돌풍 통과는 V13 20/20, F13 0/20(시드별 짝 비교 p ≈ 2×10⁻⁶). INDI가 없는 GSLQR은 IMU 지연 10 ms까지도 돌풍·감속에 영향이 없다. GNSS 잡음 3배에서는 모든 제어기가 실패한다.
+- **구성요소(ablation8)**: V13의 IMU 지연 강건성은 INDI 쪽 구성요소(A1·C1·S1)에서 오지 않는다(셋을 다 뺀 V13-0도 통과). 총추력 보존 배분 A1은 감속에 이롭고(명목 7 → 17/20, IMU 지연 5 ms 8 → 17/20) IMU 지연이 있는 가속에는 불리하다(20 → 9/20).
+- **가중치 맞바꿈(weightcheck8, 논문 미인용)**: 튜닝은 F13의 각속도 가중치를 0.25로 낮추고 V13은 1.0을 유지했다. 이 가중치만 맞바꾸면 IMU 지연 돌풍 결과도 맞바뀐다(F13+w_ω 1.0 → 19/20, V13-0+w_ω 0.25 → 0/20). 즉 지연 강건성의 직접 요인은 NMPC의 각속도 감쇠 가중치이고, 같은 튜닝 절차가 구조에 따라 다른 가중치를 고른 것이 V13/F13 차이로 나타났다.
+
+## 2. 실험 목록
+
+{{overview}}
+
+- 시드: 모든 본시험은 센서 잡음 시드 1020–1039(20개, 사다리 시험은 1020–1029). 같은 시드 = 같은 잡음 수열이라 제어기·조건 사이를 시드별로 짝지어 비교한다. 튜닝 시드(2001–2030)와 분리.
+- 이전 main7(tune7 게인)은 V13이 80.6 m/s 이상에서 4 Hz 피치 모드로 불안정해진 튜닝 문제가 드러나 폐기했고, 튜닝 시나리오를 고속 쪽으로 보강한 tune8로 다시 튜닝한 뒤 main8을 새 시드 구간에서 돌렸다.
+
+## 3. 공통 설정
+
+| 항목 | 값 |
+|---|---|
+| 기체 | 1.174 kg, 원통 동체 0.32 m × 0.075 m, 로터 4개(팔 0.115 m, 5.5 in APC 프로펠러), 추력축 = 동체 x |
+| 모터 | 최대 3,456 rad/s(33,000 rpm), 1차 지연 20 ms |
+| 기준 속도 | V_L = 20 m/s, V_H = 85 m/s (기체 모델 확인 범위 0–85 m/s의 상한) |
+| 플랜트 | 2 ms 적분, 분포형 동체 공력 + APC 계수(전진비 보간) |
+| NMPC 공통 | 50 Hz, 예측 20단계 × 0.05 s(1 s), CasADi + IPOPT(반복 30회) |
+| INDI | 500 Hz, 각가속도·로터 추력 50 Hz 저역통과 |
+| 센서(명목) | IMU 500 Hz(가속도 0.03 m/s²/√Hz, 자이로 0.002 rad/s/√Hz), GNSS 10 Hz(0.8 m, 0.15 m/s, 120 ms), 기압계 50 Hz(0.25 m, 20 ms), 지자기 100 Hz(10 ms), 회전수 500 Hz(8 rad/s, 4 ms, 모터 모델로 지연 보상) |
+| 상태 추정 | 16차 오차 상태 칼만 필터(ESKF), 지연 측정 2 s 이력 재전파. 모든 제어기는 참 상태가 아니라 추정값으로 제어 |
+
+**제어기**
+
+| 이름 | 구조 |
+|---|---|
+| V13 (제안) | 13상태 NMPC가 가상입력 [총추력 T, 각가속도 α]를 출력(회전은 ω̇ = α로 단순화) → INDI가 A1(총추력 보존 제약 배분) + C1(배분 결과를 NMPC 입력 변화 비용 기준으로 피드백) + S1(로터 추력을 자이로 차분과 같은 시각·필터로 정렬)로 모터 명령 결정 |
+| F13 (선행 구조) | Sun et al.(IEEE T-RO 2022) 방식 재구성: 13상태 NMPC가 로터별 추력 4개를 출력(강체 회전식 J·ω̇ = M − ω×Jω 사용) → INDI는 비제약 배분 A0, 정렬 S0, 피드백 없음 |
+| V13-0/1/2 | 구성요소 시험용. V13-0 = A0/–/S0(INDI 쪽은 F13과 같음), V13-1 = A1/–/S0, V13-2 = A1/C1/S0. 모두 V13 튜닝값 사용(재튜닝 없음) |
+| M17 | 로터 회전수·모터 응답을 포함한 17상태 NMPC 단독(모터 명령 직접 출력) |
+| GSLQR | 0–85 m/s, 5 m/s 간격 18개 트림점의 LQR 이득을 속도로 보간 |
+| CPID | 다중 루프 PID. 설계 영역 0–20 m/s 시험에만 참가(그 밖은 `skipped`) |
+
+**튜닝**: 다섯 제어기 모두 같은 절차 — 23개 튜닝 시나리오(저속·고속 돌풍, 계단, 83–85 m/s 순항·가감속, 고속 순항 섭동), 목적함수 = 속도·고도 RMSE 합 + 판정 미달 벌점, 로그 배율 좌표 탐색 60회. 기록은 저장소 `records/*.record.json`. NMPC 결과 가중치:
+
+| 제어기 | w_v | Q_z | w_ω(각속도) | r_dev | r_rate | 종단 배율 |
+|---|---:|---:|---:|---:|---:|---:|
+| V13 | 5 | 20 | 1 | 0.02 | 0.2 | 10 |
+| F13 | 10 | 20 | 0.25 | 0.02 | 0.05 | 5 |
+| M17 | 10 | 20 | 0.25 | 0.04 | 0.1 | 20 |
+
+(세 제어기 모두 초기값 w_v 5, w_ω 1, r_rate 0.1, 종단 10에서 출발. 입력 가중치 r_dev·r_rate는 입력 척도가 달라 제어기끼리 직접 비교하지 않는다.)
+
+**판정(tracking_pass)**: 고도 오차 ≤ 10 m, 속도 오차 ≤ 15 m/s, 각속도 ≤ 35 rad/s 이고 25 rad/s 초과가 0.2 s 넘게 지속되지 않을 것. 돌풍 시험은 추가로 돌풍 직전 0.5 s 동안 고도 0.5 m·속도 0.5 m/s·각속도 1 rad/s 이내(준비 조건), 돌풍 뒤 같은 범위를 0.5 s 유지(회복 조건). NMPC가 5회 연속 해를 못 내거나 발산하면 중단 = 실패. `full_pass`는 여기에 프로펠러 자료 범위 안(`model_domain_valid`)까지 요구하는 더 엄격한 판정이다. 아래 표의 "통과"는 모두 tracking_pass.
+
+## 4. 결과
+
+### 4.1 main8 — 예비 비교 (5개 제어기, 시드 20개)
+
+{{main8_groups}}
+
+ρ = 요구 가속도 / 가용 가속도. 기동별 ρ 분해:
+
+{{main8_rho}}
+
+시나리오 114개 전체 표: [`tables/main8_by_scenario.md`](tables/main8_by_scenario.md).
+
+수치 강건성(NMPC 실패)과 모델 범위:
+
+{{main8_numeric}}
+
+계산 비용(Python + CasADi/IPOPT, 단일 스레드, 실시간 아님 — 상대 비교용):
+
+{{compute}}
+
+### 4.2 sensor8 — 센서 조건 (V13 / F13 / GSLQR, V_L 돌풍은 CPID 포함, 시드 20개)
+
+셀은 통과 수(/20, truth는 시드 없이 1회). 조건 이름: `truth` 센서 없이 참 상태, `nominal` 명목 센서, `imu_latency_Nms` IMU 전송 지연(보상 없음), `rpm_latency_Nms` 회전수 지연(모터 모델로 보상), `rpm_rate_100hz`, `rpm_outage_200ms`, `gyro_noise_x3/x5` 자이로 백색잡음 배율, `gyro_vibration_150hz`, `rpm_noise_x4`, `gnss_noise_x3`, `gnss_latency_300ms`, `gnss_outage_3s`, `gnss_outlier_3m`, `baro_noise_x4`, `baro_drift_5cm_s`, `initial_error` 초기 추정 오차, `degraded`·`stress` 묶음 조건. 추정기 설정은 고정하고 센서만 바꿨다.
+
+{{sensor8_core}}
+
+모델 오차를 겹친 V_H 순항:
+
+{{sensor8_mismatch}}
+
+V13 대 F13 시드별 짝 비교(양측 부호 검정; 전체 약 130개 비교에 Bonferroni를 적용하면 유의 기준 p < 4×10⁻⁴):
+
+{{sensor8_tests}}
+
+추정 오차(추정 상태 − 참 상태, 시행 전체 RMS의 중앙값, 모든 제어기):
+
+{{estimation}}
+
+명목 조건 결과는 main8과 같은 시드에서 비트 단위로 같았다(같은 Windows 환경).
+
+### 4.3 ablation8 — 구성요소 시험 (시드 20개, Linux 클라우드)
+
+{{ablation}}
+
+F13 행은 sensor8(PC-63) 결과. 구성요소별 시드 짝 비교(결과가 엇갈린 시드가 있는 비교만):
+
+{{ablation_tests}}
+
+main8 사다리 시험(Windows PC-63, 시드 10개, ρ 다섯 개 합; V13 명목은 main8 본시험의 같은 시드):
+
+{{ladder}}
+
+### 4.4 weightcheck8 — 비용 가중치 맞바꿈 (논문 미인용, Linux 클라우드)
+
+{{weightcheck}}
+
+첫 판(IMU 5 ms 횡돌풍)은 F13-w1·V13-0-w025 각 20회를 끝냈고, F13-sV와 가속 묶음은 중간에 멈췄다(숫자는 끝난 시행만).
+
+### 4.5 플랫폼(Windows 대 Linux) 재현성
+
+같은 설정·시드의 V13을 클라우드(Linux)와 PC-63(Windows)에서 각각 돌린 비교. 결과 값은 상대 10⁻¹¹ 수준으로 같지만, 판정 경계의 시드는 엇갈린다 — {{platform_total}}. 대부분 감속(큰 회전을 동반해 작은 수치 차이에도 결과가 갈림).
+
+{{platform}}
+
+## 5. 해석할 때 주의할 점
+
+1. **튜닝된 제어기끼리의 비교다.** V13과 F13은 같은 절차로 각자 튜닝했고 가중치가 다르다(특히 각속도 가중치 1 대 0.25). IMU 지연 차이는 이 가중치 차이와 직접 연결된다(4.4절).
+2. **프로펠러 자료 범위**: 85 m/s 부근에서는 프로펠러 계수표(30,000 rpm 자료 형상)의 가정 범위를 벗어나는 표본이 생긴다. 통과 시행의 상당수(V13·F13 약 3/4)가 일부 표본에서 범위를 벗어났다 — `full_pass`/`model_domain_valid` 열 참고.
+3. **감속 결과의 변동**: 감속 통과 수는 같은 설정에서도 ±3 정도 흔들린다(4.5절, sensor8에서 결과에 영향이 없어야 할 조건 사이에서도 V13 감속이 11–18/20).
+4. **계산 시간**: Python 구현 기준이고 실시간(20 ms 주기)이 아니다. main8의 제어기별 값은 서로 다른 PC에서 측정했다. 같은 PC 비교는 sensor8 행을 쓴다.
+5. **구성요소 변형은 재튜닝하지 않았다**(V13 튜닝값 그대로).
+6. 시뮬레이션 연구다. 실기체 비행 검증은 없다.
+
+## 6. 파일과 열
+
+```
+results_summary/
+  README.md                 이 문서(README.template.md + build_summary.py가 채운 표)
+  tables/*.md               위 표들 + main8_by_scenario.md(114개 시나리오 전체)
+  data/<실험>_trials.csv    시행 1개 = 1행
+  data/aggregate_pass_counts.csv   (실험, 묶음/조건, 시나리오, 제어기, 변형)별 통과 수 집계
+  figures/                  그림 3개: fig1 구조도(F13/V13), fig2 IMU 지연·자이로 잡음에 따른 통과 수(sensor8), fig3 V_H 횡돌풍 |ω| 시간 응답(시드 1020, 명목 대 IMU 5 ms)
+  build_summary.py          원자료에서 위 파일을 다시 만드는 스크립트
+```
+
+`*_trials.csv` 열: `experiment`, `trial_id`, `group`(main8은 묶음 reference/gust/mission/table7…, 나머지는 센서 조건), `scenario_id`, `scenario_type`, `controller`, `variant`(V13-0 등 변형; 없으면 controller와 같음), `sensor_seed`, `skipped`(설계 영역 밖이라 미시행), `tracking_pass`, `full_pass`, `model_domain_valid`, `prop_domain_outside_fraction`, `failure_reasons`(; 구분), `stop_reason`, `window_rmse_velocity`·`window_rmse_z`(평가 구간 RMSE), `window_max_velocity_error`·`window_max_z_error`·`window_max_omega`, `max_omega`, `motor_saturation_fraction`, `optimizer_calls`·`optimizer_failures`, `simulated_seconds`·`wall_seconds`, `host`·`platform`, `git_revision`, `est_*_rms`(sensor8 이후, 추정 오차 RMS), `trajectory_sha256`(궤적 해시 — 같으면 비트 동일).
+
+시나리오 id: `main_gust_<lateral|vertical>_<풍속>_<V_L|V_H>`(트림 순항 3 s 뒤 2 s 1−cos 돌풍, 총 12 s), `main_ref_<accel_VL|accel_VH|brake_VH>_rho<ρ>`(0→V, V_H→V_L), `main_mission_V_H`(호버 3 s·가속 15 s·순항 15 s·감속 15 s·호버 7 s), `main_t7_<기본 기동>__<섭동>`(질량·추력·공력·무게중심·외력·모멘트·모터 시상수·회전수 지연·상태 지연·면내 항력).
+
+## 7. 재현
+
+- 코드: 이 저장소 `tune8` 브랜치. 실행기 `school/sensor8_run.py`, `school/ablation8_run.py`, `school/weightcheck8_run.py`(계획·레인·실행·요약). main8은 `control/main_distributed.py` 캠페인.
+- 튜닝 기록: `records/` (sha256은 각 실행기 상단에 고정).
+- 같은 OS·패키지(numpy 2.3.3, scipy 1.16.3, casadi 3.7.2, 스레드 1개)에서 같은 시드면 궤적 해시까지 같다. 다른 OS에서는 4.5절 수준의 차이가 난다.
