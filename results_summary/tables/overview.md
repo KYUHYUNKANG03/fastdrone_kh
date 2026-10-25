@@ -1,5 +1,6 @@
 | 실험 | 내용 | 행 수 | 실행된 시행 | 실행 환경 | 파일 |
 |---|---|---:|---:|---:|---:|
+| `tune8` | 튜닝: 5개 제어기 × 평가 60회 × 튜닝 시나리오 23개(+게이트) | 300 평가 | 6394 시나리오 실행 | Windows PC-61~64 | `data/tune8_evaluations.csv` |
 | `main8` | 예비 비교: 5개 제어기 × 114 시나리오 | 11400 | 10020 | Windows PC-61~64 | `data/main8_trials.csv` |
 | `main8_ladder` | V13 구성요소 사다리(명목·섭동 3종, 시드 10개) | 2250 | 2250 | Windows PC-63 | `data/main8_ladder_trials.csv` |
 | `sensor8` | 센서 조건 27개 × 핵심 시나리오 7개, V13/F13/GSLQR(+CPID) | 7542 | 7542 | Windows PC-63 | `data/sensor8_trials.csv` |

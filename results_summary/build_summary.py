@@ -7,7 +7,8 @@ README.template.md ({{name}} markers). Standard library only.
     python results_summary/build_summary.py \
         --main8 <dir with results/main8/*/shard*/trials/*.json> [--main8 <dir> ...] \
         --sensor8 <dir with lane*/trials/*.json> \
-        --ablation8 results/ablation8/CLOUD --weightcheck8 results/weightcheck8/CLOUD results/weightcheck8b/CLOUD
+        --ablation8 results/ablation8/CLOUD --weightcheck8 results/weightcheck8/CLOUD results/weightcheck8b/CLOUD \
+        --tune8 <dir with pc6x/results/arena/tuning/tune8/*.jsonl>
 """
 import argparse
 import csv
@@ -46,6 +47,86 @@ def load_all(a):
         wc += load_dir(str(Path(d)/'lane*'/'trials'/'*.json'))
     exp['weightcheck8'] = wc
     return exp
+
+
+def load_tune8(root):
+    """tune8 튜닝 기록: 제어기별 평가 이력(jsonl), 기록(record), 게이트(gate)."""
+    out = {}
+    for f in sorted(glob.glob(str(Path(root)/'*'/'results'/'arena'/'tuning'/'tune8'/'*.jsonl'))):
+        c = Path(f).stem
+        evals = [json.loads(x) for x in Path(f).read_text(encoding='utf-8').splitlines() if x.strip()]
+        rec = json.loads(Path(f).with_name(f'{c}.record.json').read_text(encoding='utf-8'))
+        gate_path = Path(f).with_name(f'{c}.gate.json')
+        gate = json.loads(gate_path.read_text(encoding='utf-8')) if gate_path.exists() else None
+        out[c] = dict(evals=evals, record=rec, gate=gate, host=Path(f).parts[-6])
+    return out
+
+
+def truthy(x):
+    return x in (True, 'True')
+
+
+def tune8_csv(T, path):
+    with open(path, 'w', newline='', encoding='utf-8') as fh:
+        w = csv.writer(fh)
+        w.writerow(['controller', 'host', 'eval_index', 'cache_hit', 'parameters', 'objective', 'scenario_id',
+                    'tracking_pass', 'failed', 'window_rmse_velocity', 'window_rmse_z', 'max_omega', 'score'])
+        for c, t in T.items():
+            for d in t['evals']:
+                for sc in (d.get('scenarios') or []):
+                    w.writerow([c, t['host'], d['index'], d['cache_hit'], json.dumps(d['values']), d['objective'],
+                                sc['id'], truthy(sc['tracking_pass']), truthy(sc.get('failed')),
+                                sc.get('window_rmse_velocity'), sc.get('window_rmse_z'), sc.get('max_omega'),
+                                sc.get('score')])
+
+
+def t_tuning(T):
+    body = []
+    for c in ('V13', 'F13', 'M17', 'GSLQR', 'CPID'):
+        if c not in T:
+            continue
+        ev = T[c]['evals']
+        rec = T[c]['record']
+        b = min((i for i in range(len(ev)) if ev[i].get('scenarios')), key=lambda i: ev[i]['objective'])
+        nfail = lambda d: sum(truthy(x.get('failed')) for x in (d.get('scenarios') or []))
+        changed = {k: (rec['prior'][k], v) for k, v in rec['best_values'].items() if rec['prior'].get(k) != v}
+        ch = ', '.join(f'{k} {a:g}→{v:g}' for k, (a, v) in changed.items()) or '변화 없음'
+        gate = T[c]['gate']
+        body.append([c, T[c]['host'], len(ev), f"{ev[0]['objective']:.4g}", f"{ev[b]['objective']:.4g}",
+                     f"{nfail(ev[0])}/{len(ev[0].get('scenarios') or [])}", f"{nfail(ev[b])}/{len(ev[b].get('scenarios') or [])}", ch,
+                     ('통과' if gate and gate.get('gate_pass') else ('미통과' if gate else '–'))])
+    return md_table(['제어기', 'PC', '평가 수', '목적함수(초기값)', '목적함수(최선)', '실패 시나리오(초기값)',
+                     '실패 시나리오(최선)', '바뀐 값(초기→최선)', '게이트'], body, left=1)
+
+
+def t_tuning_omega(T):
+    body = []
+    for c in ('V13', 'F13', 'M17'):
+        if c not in T:
+            continue
+        byw = defaultdict(list)
+        for d in T[c]['evals']:
+            byw[round(d['values']['w_omega'], 4)].append(d)
+        for wv in sorted(byw):
+            ds = byw[wv]
+            done = [d for d in ds if d.get('scenarios')] or ds
+            best = min(done, key=lambda d: d['objective'])
+            nf = sum(truthy(x.get('failed')) for x in (best.get('scenarios') or []))
+            body.append([c, f'{wv:g}', len(ds), f"{best['objective']:.4g}", nf])
+    return md_table(['제어기', '각속도 가중치 w_ω', '이 값으로 평가한 횟수', '그중 최선 목적함수', '최선 평가의 실패 시나리오 수'], body)
+
+
+def t_gate(T):
+    body = []
+    for c in ('V13', 'F13', 'M17', 'GSLQR', 'CPID'):
+        g = (T.get(c) or {}).get('gate')
+        if not g:
+            continue
+        for r in g['rows']:
+            body.append([c, r['id'], '필수' if r.get('required') else '참고', 'skip' if r.get('skipped') else
+                         ('통과' if r.get('tracking_pass') else '실패'),
+                         '' if r.get('rmse_velocity') is None else f"{r['rmse_velocity']:.3f}"])
+    return md_table(['제어기', '게이트 시나리오', '구분', '결과', '속도 RMSE (m/s)'], body, left=3)
 
 
 # ─────────────────────────────────────────────── per-trial CSV
@@ -160,7 +241,7 @@ def sel(rows, **kw):
 
 
 # ─────────────────────────────────────────────── tables
-def t_overview(F):
+def t_overview(F, T=None):
     body = []
     meta = {
         'main8': ('예비 비교: 5개 제어기 × 114 시나리오', 'Windows PC-61~64'),
@@ -172,6 +253,11 @@ def t_overview(F):
     for k, rows in F.items():
         rs = ran(rows)
         body.append([f'`{k}`', meta[k][0], len(rows), len(rs), meta[k][1], f'`data/{k}_trials.csv`'])
+    if T:
+        n = sum(len(t['evals']) for t in T.values())
+        sc = sum(len(d.get('scenarios') or []) for t in T.values() for d in t['evals'])
+        body.insert(0, ['`tune8`', f'튜닝: {len(T)}개 제어기 × 평가 60회 × 튜닝 시나리오 23개(+게이트)', f'{n} 평가', f'{sc} 시나리오 실행',
+                        'Windows PC-61~64', '`data/tune8_evaluations.csv`'])
     return md_table(['실험', '내용', '행 수', '실행된 시행', '실행 환경', '파일'], body, left=2)
 
 
@@ -262,6 +348,85 @@ def t_mission(rows):
         br = [r['mission_brake_rmse_velocity'] for r in rs if r['mission_brake_rmse_velocity'] is not None]
         body.append([c, f'{npass(rs)}/{len(rs)}', '; '.join(parts) or '–', f'{median(br):.2f}' if br else '–'])
     return md_table(['제어기', '통과', '실패 내역', '감속 구간 속도 RMSE 중앙값 (m/s)'], body, left=1)
+
+
+PERT = ['aero_1.5', 'aero_2.0', 'cg_y_0.1', 'cg_z_0.1', 'force_0.7g', 'force_1.4g', 'inplane_drag_1x', 'mass_0.7',
+        'mass_1.3', 'moment_25', 'moment_50', 'motor_tau_2', 'rotor_delay_5ms', 'state_delay_10ms', 'state_delay_30ms',
+        'thrust_0.7', 'thrust_1.3']
+PERT_KO = {'aero_1.5': '동체 공력 1.5배', 'aero_2.0': '동체 공력 2배', 'cg_y_0.1': '무게중심 y 0.1', 'cg_z_0.1': '무게중심 z 0.1',
+           'force_0.7g': '외력 0.7g', 'force_1.4g': '외력 1.4g', 'inplane_drag_1x': '로터 면내 항력', 'mass_0.7': '질량 0.7배',
+           'mass_1.3': '질량 1.3배', 'moment_25': '외부 모멘트 25%', 'moment_50': '외부 모멘트 50%', 'motor_tau_2': '모터 시상수 2배',
+           'rotor_delay_5ms': '회전수 피드백 지연 5 ms(보상 없음)', 'state_delay_10ms': '상태 지연 10 ms', 'state_delay_30ms': '상태 지연 30 ms',
+           'thrust_0.7': '추력 계수 0.7배', 'thrust_1.3': '추력 계수 1.3배'}
+BASES = [('cruise_VL', '순항 V_L'), ('cruise_VH', '순항 V_H'), ('accel_VL_rho1', '가속 0→V_L'), ('accel_VH_rho1', '가속 0→V_H'),
+         ('brake_VH_rho1', '감속 V_H→V_L')]
+
+
+def t_perturbation(rows):
+    def cellc(sid):
+        parts = []
+        for c in CTRL:
+            rs = ran(sel(rows, controller=c, scenario_id=sid))
+            parts.append(str(npass(rs)) if rs else '–')
+        return '/'.join(parts)
+    body = [['섭동 없음'] + [cellc(f'main_t7_{b}') for b, _ in BASES]]
+    for p in PERT:
+        body.append([PERT_KO[p]] + [cellc(f'main_t7_{b}__{p}') for b, _ in BASES])
+    robust = []
+    for b, _ in BASES:
+        parts = []
+        for c in CTRL:
+            rr = [ran(sel(rows, controller=c, scenario_id=f'main_t7_{b}__{p}')) for p in PERT]
+            if not any(rr):
+                parts.append('–')
+            else:
+                parts.append(str(sum(npass(x) >= 19 for x in rr)))
+        robust.append('/'.join(parts))
+    body.append(['**19회 이상 통과한 섭동 수 (17개 중)**'] + [f'**{x}**' for x in robust])
+    return md_table(['섭동 (셀: V13/F13/M17/GSLQR/CPID 통과 수, /20)'] + [lab for _, lab in BASES], body)
+
+
+def t_rmse(rows):
+    body = []
+    for kind, label in (('accel_VL', '가속 0→V_L'), ('accel_VH', '가속 0→V_H'), ('brake_VH', '감속 V_H→V_L')):
+        for rho in ('0.5', '0.8', '1', '1.2', '1.5'):
+            cells = []
+            for c in CTRL:
+                rs = [r for r in ran(sel(rows, controller=c, scenario_id=f'main_ref_{kind}_rho{rho}')) if r['stop_reason'] == '']
+                v = [r['window_rmse_velocity'] for r in rs if r['window_rmse_velocity'] is not None]
+                m = [r['window_max_velocity_error'] for r in rs if r['window_max_velocity_error'] is not None]
+                cells.append(f'{median(v):.2f} / {median(m):.1f} ({len(rs)})' if v else '–')
+            body.append([label, rho] + cells)
+    return md_table(['기동', 'ρ'] + [f'{c} RMSE / 최대 (n)' for c in CTRL], body, left=1)
+
+
+def t_fullpass(rows):
+    body = []
+    for c in CTRL:
+        rs = ran(sel(rows, controller=c))
+        body.append([c, f'{npass(rs)}/{len(rs)}', f"{sum(r['full_pass'] for r in rs)}/{len(rs)}"])
+    return md_table(['제어기', '추종 통과(tracking_pass)', '추종 + 프로펠러 자료 범위 안(full_pass)'], body)
+
+
+def t_reasons(rows):
+    names = [('optimizer_stop', 'NMPC 연속 실패 중단'), ('diverge', '발산 중단'), ('altitude_error', '고도 오차 초과'),
+             ('velocity_error', '속도 오차 초과'), ('omega_peak', '각속도 순간 초과'), ('omega_sustained', '각속도 지속 초과'),
+             ('pre_gust_not_settled', '돌풍 전 준비 미달'), ('gust_not_recovered', '돌풍 후 미회복'),
+             ('final_hover_not_settled', '최종 호버 미정착')]
+    body = []
+    for key, lab in names:
+        row = [lab]
+        for c in CTRL:
+            rs = [r for r in ran(sel(rows, controller=c)) if not r['tracking_pass']]
+            if key == 'optimizer_stop':
+                n = sum(r['stop_reason'].startswith('5 consecutive optimizer') for r in rs)
+            elif key == 'diverge':
+                n = sum(r['stop_reason'].startswith('body-rate or altitude divergence') for r in rs)
+            else:
+                n = sum(key in r['failure_reasons'].split(';') for r in rs)
+            row.append(n)
+        body.append(row)
+    return md_table(['실패 원인(한 시행에 여러 개 가능)'] + CTRL, body)
 
 
 def t_compute(F):
@@ -463,8 +628,12 @@ def main():
     ap.add_argument('--sensor8', required=True)
     ap.add_argument('--ablation8', required=True)
     ap.add_argument('--weightcheck8', nargs='+', required=True)
+    ap.add_argument('--tune8', required=True, help='folder with pc6x/results/arena/tuning/tune8/*.jsonl')
     a = ap.parse_args()
     raw = load_all(a)
+    T = load_tune8(a.tune8)
+    (HERE/'data').mkdir(exist_ok=True)
+    tune8_csv(T, HERE/'data'/'tune8_evaluations.csv')
     F = {k: [flat(k, r) for r in v] for k, v in raw.items()}
     for k, rows in F.items():
         write_csv(HERE/'data'/f'{k}_trials.csv', sorted(rows, key=lambda r: str(r['trial_id'])))
@@ -486,8 +655,10 @@ def main():
                                     round(median(mo), 3) if mo else ''])
     plat, tot, up, down = t_platform(F['ablation8'], F['sensor8'])
     tables = dict(
-        overview=t_overview(F), main8_groups=t_main8_groups(F['main8']), main8_rho=t_main8_rho(F['main8']),
-        mission=t_mission(F['main8']),
+        overview=t_overview(F, T), main8_groups=t_main8_groups(F['main8']), main8_rho=t_main8_rho(F['main8']),
+        mission=t_mission(F['main8']), perturbation=t_perturbation(F['main8']), rmse=t_rmse(F['main8']),
+        fullpass=t_fullpass(F['main8']), reasons=t_reasons(F['main8']), tuning=t_tuning(T),
+        tuning_omega=t_tuning_omega(T), gate=t_gate(T),
         main8_numeric=t_main8_numeric(F['main8']), compute=t_compute(F), sensor8_core=t_sensor8_core(F['sensor8']),
         sensor8_mismatch=t_sensor8_mismatch(F['sensor8']), sensor8_tests=t_sensor8_tests(F['sensor8']),
         estimation=t_estimation(F['sensor8']), ablation=t_ablation(F['ablation8'], F['sensor8']),
