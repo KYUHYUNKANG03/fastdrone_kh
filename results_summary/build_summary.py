@@ -1,4 +1,5 @@
-"""Build results_summary/ from the raw per-trial JSON rows of main8, sensor8, ablation8 and weightcheck8.
+"""Build results_summary/ from the raw per-trial JSON rows of main8, sensor8 and ablation8 (+ tune8 history,
+mission figure reruns).
 
 Raw rows (one JSON per trial) are not in git (bulky). This script reads them, writes one compact CSV per
 experiment (data/), an aggregate pass-count CSV, markdown tables (tables/), and fills README.md from
@@ -7,8 +8,9 @@ README.template.md ({{name}} markers). Standard library only.
     python results_summary/build_summary.py \
         --main8 <dir with results/main8/*/shard*/trials/*.json> [--main8 <dir> ...] \
         --sensor8 <dir with lane*/trials/*.json> \
-        --ablation8 results/ablation8/CLOUD --weightcheck8 results/weightcheck8/CLOUD results/weightcheck8b/CLOUD \
-        --tune8 <dir with pc6x/results/arena/tuning/tune8/*.jsonl>
+        --ablation8 results/ablation8/CLOUD \
+        --tune8 <dir with pc6x/results/arena/tuning/tune8/*.jsonl> \
+        --mission-rerun <dir with <CONTROLLER>_<SEED>.json from school/mission_trace.py>
 """
 import argparse
 import csv
@@ -42,10 +44,6 @@ def load_all(a):
     exp['main8_ladder'] = [r for r in m8 if str(r.get('batch', '')).startswith('ladder')]
     exp['sensor8'] = load_dir(str(Path(a.sensor8)/'lane*'/'trials'/'*.json'))
     exp['ablation8'] = load_dir(str(Path(a.ablation8)/'lane*'/'trials'/'*.json'))
-    wc = []
-    for d in a.weightcheck8:
-        wc += load_dir(str(Path(d)/'lane*'/'trials'/'*.json'))
-    exp['weightcheck8'] = wc
     return exp
 
 
@@ -248,7 +246,6 @@ def t_overview(F, T=None):
         'main8_ladder': ('V13 구성요소 사다리(명목·섭동 3종, 시드 10개)', 'Windows PC-63'),
         'sensor8': ('센서 조건 27개 × 핵심 시나리오 7개, V13/F13/GSLQR(+CPID)', 'Windows PC-63'),
         'ablation8': ('V13-0/1/2/V13 × 명목·IMU 5 ms × 돌풍·가속·감속', 'Linux 클라우드'),
-        'weightcheck8': ('F13↔V13-0 비용 가중치 맞바꿈(IMU 5 ms) — 논문 미인용', 'Linux 클라우드'),
     }
     for k, rows in F.items():
         rs = ran(rows)
@@ -589,22 +586,6 @@ def t_ladder(rows, m8rows):
     return md_table(head, body)
 
 
-def t_weightcheck(rows, s8rows, abl):
-    body = []
-    def w(rs):
-        return cell(rs)
-    body.append(['F13 (튜닝값, PC-63)', 'w_v 10, w_ω 0.25, terminal 5', w(sel(s8rows, group='imu_latency_5ms', scenario_id='main_gust_lateral_+10_V_H', controller='F13')),
-                 w(sel(s8rows, group='imu_latency_5ms', scenario_id='main_ref_accel_VH_rho1', controller='F13'))])
-    for v, lab in (('F13-w1', 'F13 + w_ω 1.0'), ('F13-sV', 'F13 + w_v 5, w_ω 1, terminal 10')):
-        body.append([v, lab, w(sel(rows, variant=v, group='imu_latency_5ms', scenario_id='main_gust_lateral_+10_V_H')),
-                     w(sel(rows, variant=v, group='imu_latency_5ms', scenario_id='main_ref_accel_VH_rho1'))])
-    body.append(['V13-0 (튜닝값 V13)', 'w_v 5, w_ω 1, terminal 10', w(sel(abl, variant='V13-0', group='imu_latency_5ms', scenario_id='main_gust_lateral_+10_V_H')),
-                 w(sel(abl, variant='V13-0', group='imu_latency_5ms', scenario_id='main_ref_accel_VH_rho1'))])
-    body.append(['V13-0-w025', 'V13-0 + w_ω 0.25', w(sel(rows, variant='V13-0-w025', group='imu_latency_5ms', scenario_id='main_gust_lateral_+10_V_H')),
-                 w(sel(rows, variant='V13-0-w025', group='imu_latency_5ms', scenario_id='main_ref_accel_VH_rho1'))])
-    return md_table(['구성', '상태 비용 가중치', 'IMU 5 ms 횡돌풍 V_H', 'IMU 5 ms 가속 0→V_H'], body, left=2)
-
-
 def t_platform(abl, s8rows):
     body = []
     tot = up = down = 0
@@ -622,12 +603,43 @@ def t_platform(abl, s8rows):
 
 
 # ─────────────────────────────────────────────── main
+def t_mission_rerun(folder, m8):
+    """그림 4용 통합 임무 재계산(Linux 클라우드) — 같은 시드의 main8(Windows) 기록과 나란히, CSV도 쓴다."""
+    rows = []
+    for f in sorted(glob.glob(str(Path(folder)/'*_*.json'))):
+        c, seed = Path(f).stem.split('_')
+        m = json.loads(Path(f).read_text(encoding='utf-8'))
+        reasons = [x for x in m.get('failure_reasons', []) if x != 'propulsion_model_domain']
+        ref = sel(m8, scenario_id='main_mission_V_H', controller=c, sensor_seed=int(seed))
+        ref = ref[0] if ref else None
+        rows.append(dict(controller=c, sensor_seed=int(seed), platform='Linux cloud',
+                         tracking_pass=not reasons, failure_reasons=';'.join(m.get('failure_reasons', [])),
+                         stop_reason=m.get('stop_reason') or '', simulated_seconds=round(m['simulated_seconds'], 3),
+                         max_velocity_error=round(m['max_velocity_error'], 3),
+                         motor_saturation_fraction=round(m.get('motor_saturation_fraction', float('nan')), 4),
+                         wall_seconds=round(m['wall_seconds'], 1),
+                         main8_tracking_pass=ref['tracking_pass'] if ref else '',
+                         main8_max_velocity_error=round(ref['window_max_velocity_error'], 3) if ref else '',
+                         main8_simulated_seconds=round(ref['simulated_seconds'], 3) if ref else '',
+                         main8_host=ref['host'] if ref else ''))
+    with open(HERE/'data'/'mission_rerun.csv', 'w', newline='', encoding='utf-8') as fh:
+        w = csv.DictWriter(fh, fieldnames=list(rows[0]))
+        w.writeheader()
+        w.writerows(rows)
+    yn = lambda x: '통과' if truthy(x) else '실패'
+    body = [[r['controller'], r['sensor_seed'],
+             f"{r['main8_max_velocity_error']:.1f} ({yn(r['main8_tracking_pass'])}, {r['main8_simulated_seconds']:g} s)",
+             f"{r['max_velocity_error']:.1f} ({yn(r['tracking_pass'])}, {r['simulated_seconds']:g} s)"] for r in rows]
+    return md_table(['제어기', '시드', 'main8 Windows: 최대 속도 오차 m/s (판정, 진행 시간)',
+                     '재계산 Linux: 최대 속도 오차 m/s (판정, 진행 시간)'], body, left=2)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--main8', action='append', required=True)
     ap.add_argument('--sensor8', required=True)
     ap.add_argument('--ablation8', required=True)
-    ap.add_argument('--weightcheck8', nargs='+', required=True)
+    ap.add_argument('--mission-rerun', required=True, help='folder with <CONTROLLER>_<SEED>.json from school/mission_trace.py')
     ap.add_argument('--tune8', required=True, help='folder with pc6x/results/arena/tuning/tune8/*.jsonl')
     a = ap.parse_args()
     raw = load_all(a)
@@ -664,7 +676,7 @@ def main():
         estimation=t_estimation(F['sensor8']), ablation=t_ablation(F['ablation8'], F['sensor8']),
         ablation_tests=t_ablation_tests(F['ablation8'], F['sensor8']),
         ladder=t_ladder(F['main8_ladder'], F['main8']),
-        weightcheck=t_weightcheck(F['weightcheck8'], F['sensor8'], F['ablation8']), platform=plat,
+        mission_rerun=t_mission_rerun(a.mission_rerun, F['main8']), platform=plat,
         platform_total=f'{tot}회 중 {up + down}회 (클라우드만 통과 {up}, PC-63만 통과 {down})')
     (HERE/'tables').mkdir(exist_ok=True)
     for k, v in tables.items():

@@ -1,5 +1,20 @@
 # fast-drone-sensor-fusion
 
+> **팀원용 안내 — 시뮬레이션 결과는 [`results_summary/README.md`](results_summary/README.md)부터 읽는다 (2026-11, 공군 학술대회 본선용)**
+>
+> 이 `tune8` 브랜치에 그동안 돌린 시뮬레이션이 모두 정리돼 있다. Claude·GPT에 물어볼 때는 이 저장소의 `tune8` 브랜치를 주고 "results_summary/README.md부터 읽어"라고 하면 된다. 표는 `results_summary/tables/`, 시행 단위 원자료는 `results_summary/data/*.csv`, 그림은 `results_summary/figures/`.
+>
+> | 실험 | 내용 | 규모 | 돌린 곳 |
+> |---|---|---:|---|
+> | tune8 | 제어기 5개(V13·F13·M17·GSLQR·CPID) 같은 절차 자동 튜닝 | 평가 300회(튜닝 시나리오 23개, 시나리오 실행 6,394회) | 전산실 PC-61~64 |
+> | main8 | 본 비교: 5개 제어기 × 시나리오 114개 × 시드 20개 (돌풍·가감속·통합 임무·섭동) | 10,020회 | 전산실 PC-61~64 |
+> | main8 ladder | V13 구성요소를 하나씩 뺀 변형(V13-0/1/2) | 2,250회 | 전산실 PC-63 |
+> | sensor8 | 센서 조건 27개(IMU 지연·자이로 잡음·GNSS 등) × 핵심 시나리오 7개 | 7,542회 | 전산실 PC-63 |
+> | ablation8 | IMU 지연 5 ms·명목에서 V13 구성요소 제거 | 480회 | 클라우드 |
+> | 통합 임무 재계산 | 그림 4용 궤적 3회(V13 시드 1020·1024, F13 시드 1020) | 3회 | 클라우드 |
+>
+> 아래 영어 본문은 그 이전(V12 단계) 저장소 설명이라 현재 결과와 다르다.
+
 Sensor fusion and sensor-uncertainty experiments for **High-Speed Multicopter
 Control Architecture Robust to Disturbances and Sensor Uncertainty:
 NMPC–INDI Interface Separation and Sensor–Controller Matching**.

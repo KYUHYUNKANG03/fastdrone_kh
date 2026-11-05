@@ -1216,7 +1216,3 @@ sensor8,truth,main_t7_cruise_VH__mass_1.3,V13,V13,1,1,1,1,0,0,0.001
 sensor8,truth,main_t7_cruise_VH__moment_25,F13,F13,1,1,1,1,0,0,1.104
 sensor8,truth,main_t7_cruise_VH__moment_25,GSLQR,GSLQR,1,1,1,1,0,0,0.818
 sensor8,truth,main_t7_cruise_VH__moment_25,V13,V13,1,1,1,1,0,0,1.065
-weightcheck8,imu_latency_5ms,main_gust_lateral_+10_V_H,F13,F13-sV,2,2,2,2,0,0,0.472
-weightcheck8,imu_latency_5ms,main_gust_lateral_+10_V_H,F13,F13-w1,20,20,19,19,1,0,0.532
-weightcheck8,imu_latency_5ms,main_gust_lateral_+10_V_H,V13,V13-0-w025,20,20,0,0,0,9,33.975
-weightcheck8,imu_latency_5ms,main_ref_accel_VH_rho1,F13,F13-w1,4,4,4,0,0,0,2.003

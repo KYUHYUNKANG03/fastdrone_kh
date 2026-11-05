@@ -1,0 +1,4 @@
+controller,sensor_seed,platform,tracking_pass,failure_reasons,stop_reason,simulated_seconds,max_velocity_error,motor_saturation_fraction,wall_seconds,main8_tracking_pass,main8_max_velocity_error,main8_simulated_seconds,main8_host
+F13,1020,Linux cloud,False,incomplete;simulation_error;final_hover_not_settled;propulsion_model_domain,5 consecutive optimizer failures,37.36,5.214,0.0048,1207.1,False,5.214,37.3,PC-62
+V13,1020,Linux cloud,False,velocity_error;propulsion_model_domain,,55.0,15.212,0.027,487.9,True,12.819,55.0,PC-63
+V13,1024,Linux cloud,False,velocity_error;propulsion_model_domain,,55.0,22.832,0.0317,497.3,False,17.383,55.0,PC-63
