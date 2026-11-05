@@ -1,5 +1,11 @@
 # fastdrone_kh — 고정 로켓형 기체 모델과 Python 사전 비교
 
+> **최신 시뮬레이션 결과는 `tune8` 브랜치에 있다 (2026-11, 공군 학술대회 본선용)**
+>
+> 이 기본 브랜치는 2026-09에 기체 모델을 공유하던 시점의 기록이고, 아래 "사전 비교" 결과는 지금 결과가 아니다. 그 뒤 튜닝(tune8)·본 비교(main8)·센서 조건(sensor8)·구성요소 시험(ablation8)까지 돌린 결과는 모두 **[`tune8` 브랜치의 `results_summary/README.md`](https://github.com/KYUHYUNKANG03/fastdrone_kh/blob/tune8/results_summary/README.md)** 에 정리돼 있다.
+>
+> Claude·GPT에 이 저장소를 줄 때는 "tune8 브랜치의 results_summary/README.md부터 읽어"라고 덧붙이면 된다. 바로 가기: https://github.com/KYUHYUNKANG03/fastdrone_kh/tree/tune8/results_summary
+
 팀에서 함께 사용할 **`light_rocket_v2_pack_forward` 한 기체**를 정리한 저장소다. 예전 8 kg 모델, 다른 배터리 위치 후보, 과거 기체의 결과는 현재 파일 목록에서 제외했다. 원본 팀 저장소는 [protkjj/fast-drone](https://github.com/protkjj/fast-drone)이며, 여기는 새 기체와 연결 코드를 공유하는 별도 저장소다.
 
 기체는 고정했고, 제어기 비교와 통합 미션은 아직 보완 중이다. **트림이 된다는 것과 모든 제어기가 임무를 성공한다는 것은 다르다.** 실패한 시험도 결과에 포함했다. 실제 RBD1을 재현한 모델이나 실기 비행 검증 결과는 아니다.
